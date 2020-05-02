@@ -10,9 +10,7 @@ import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
 import divinerpg.registry.ModArmor;
-import divinerpg.registry.ModBlocks;
 import divinerpg.registry.ModItems;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -133,11 +131,10 @@ public class TileEntityKingCompressior extends ModUpdatableTileEntity implements
 
             case KingSetCreation:
                 absorbedSets.clear();
-
-//                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ModArmor.king_helmet));
-//                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ModArmor.king_chestplate));
-//                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ModArmor.king_leggings));
-//                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ModArmor.king_boots));
+                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ModArmor.king_helmet));
+                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ModArmor.king_chestplate));
+                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ModArmor.king_leggings));
+                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ModArmor.king_boots));
                 break;
 
             case Infusion:
