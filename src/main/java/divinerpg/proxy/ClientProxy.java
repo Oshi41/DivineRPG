@@ -8,6 +8,7 @@ import divinerpg.events.EventBowZoom;
 import divinerpg.events.EventClientLogin;
 import divinerpg.events.EventTooltip;
 import divinerpg.objects.blocks.tile.entity.*;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
 import divinerpg.objects.blocks.tile.render.*;
 import divinerpg.objects.entities.assets.render.PlayerHatRender;
 import divinerpg.particle.*;
@@ -95,6 +96,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStatue.class, new RenderStatue());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEdenChest.class, new RenderEdenChest());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNightmareBed.class, new RenderNightmareBed());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPillar.class, new RenderPillar());
     }
 
     @Override

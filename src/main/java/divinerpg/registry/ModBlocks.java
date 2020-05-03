@@ -1685,6 +1685,8 @@ public class ModBlocks {
         register(registry, new BlockSingleUseSpawner("termasect_spawner", EntityTermasect.class, 20 * 5, 5,
                 // should spawn above
                 new BlockPos(0, 11, 0)));
+
+        register(registry, new Pillar("pillar"));
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
