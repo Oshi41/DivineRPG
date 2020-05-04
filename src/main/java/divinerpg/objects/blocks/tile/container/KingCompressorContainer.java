@@ -1,202 +1,112 @@
 package divinerpg.objects.blocks.tile.container;
 
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressior;
+import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.Iterator;
 
 public class KingCompressorContainer extends Container {
-    private final InventoryPlayer inventoryPlayer;
-    private final TileEntityKingCompressior tile;
+    private final TileEntityKingCompressor tile;
     private final int lastInvIndex;
 
-    public KingCompressorContainer(InventoryPlayer inventoryPlayer, TileEntityKingCompressior tile) {
-        this.inventoryPlayer = inventoryPlayer;
+    public KingCompressorContainer(InventoryPlayer inventoryPlayer, TileEntityKingCompressor tile) {
         this.tile = tile;
 
-        List<EntityEquipmentSlot> armorSlots = Arrays.asList(EntityEquipmentSlot.HEAD,
-                EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET);
-        List<EntityEquipmentSlot> handSlots = Arrays.asList(EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND);
+        Iterator<EntityEquipmentSlot> iterator = Arrays.asList(
+                EntityEquipmentSlot.HEAD,
+                EntityEquipmentSlot.CHEST,
+                EntityEquipmentSlot.LEGS,
+                EntityEquipmentSlot.FEET,
+                EntityEquipmentSlot.MAINHAND,
+                EntityEquipmentSlot.OFFHAND
+        ).iterator();
 
-        int baseOffset = 8;
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 2; i++) {
+                int x = 8 + i * 60;
+                int y = 8 + j * 22;
 
-        // output
-        for (int i = 0; i < armorSlots.size(); i++) {
-            final EntityEquipmentSlot slot = armorSlots.get(i);
+                EntityEquipmentSlot slot = iterator.next();
 
-            addSlotToContainer(new Slot(tile,
-                    armorSlots.get(i).getSlotIndex(),
-                    152,
-                    baseOffset + i * 18) {
-                @Override
-                public boolean isItemValid(ItemStack stack) {
-                    return EntityLiving.getSlotForItemStack(stack) == slot && tile.isItemValidForSlot(this.getSlotIndex(), stack);
-                }
+                addSlotToContainer(new Slot(tile, slot.getSlotIndex(), x, y) {
+                    @Override
+                    public boolean isItemValid(ItemStack stack) {
+                        if (!tile.isItemValidForSlot(this.getSlotIndex(), stack))
+                            return false;
 
-                @Override
-                public int getSlotStackLimit() {
-                    return 1;
-                }
+                        EntityEquipmentSlot forSlot = EntityLiving.getSlotForItemStack(stack);
 
-                @Nullable
-                @SideOnly(Side.CLIENT)
-                public String getSlotTexture() {
-                    return ItemArmor.EMPTY_SLOT_NAMES[slot.getIndex()];
-                }
-            });
-        }
-        for (int i = 0; i < handSlots.size(); i++) {
-            final EntityEquipmentSlot slot = handSlots.get(i);
+                        if (forSlot == EntityEquipmentSlot.MAINHAND) {
+                            return stack.getItem().isDamageable();
+                        }
 
-            addSlotToContainer(new Slot(tile,
-                    handSlots.get(i).getSlotIndex(),
-                    134 + i * 18,
-                    85) {
-                @Override
-                public boolean isItemValid(ItemStack stack) {
-                    return EntityLiving.getSlotForItemStack(stack) == slot && tile.isItemValidForSlot(this.getSlotIndex(), stack);
-                }
-
-                @Override
-                public int getSlotStackLimit() {
-                    return 1;
-                }
-
-                @Nullable
-                @SideOnly(Side.CLIENT)
-                public String getSlotTexture() {
-                    if (slot == EntityEquipmentSlot.OFFHAND) {
-                        return "minecraft:items/empty_armor_slot_shield";
+                        return forSlot == slot;
                     }
 
-                    return super.getSlotTexture();
-                }
-            });
-        }
+                    @Nullable
+                    @Override
+                    public String getSlotTexture() {
 
-        int startIndex = armorSlots.size() + handSlots.size();
+                        switch (slot) {
+                            case OFFHAND:
+                                return "minecraft:items/empty_armor_slot_shield";
 
-        // input
-        for (int i = 0; i < armorSlots.size(); i++) {
-            final EntityEquipmentSlot slot = armorSlots.get(i);
+                            case MAINHAND:
+                                return super.getSlotTexture();
 
-            addSlotToContainer(new Slot(tile,
-                    armorSlots.get(i).getSlotIndex() + startIndex,
-                    baseOffset,
-                    baseOffset + i * 18) {
-                @Override
-                public boolean isItemValid(ItemStack stack) {
-                    return EntityLiving.getSlotForItemStack(stack) == slot && tile.isItemValidForSlot(this.getSlotIndex(), stack);
-                }
-
-                @Override
-                public int getSlotStackLimit() {
-                    return 1;
-                }
-
-                @Nullable
-                @SideOnly(Side.CLIENT)
-                public String getSlotTexture() {
-                    return ItemArmor.EMPTY_SLOT_NAMES[slot.getIndex()];
-                }
-            });
-        }
-        for (int i = 0; i < handSlots.size(); i++) {
-            final EntityEquipmentSlot slot = handSlots.get(i);
-
-            addSlotToContainer(new Slot(tile,
-                    handSlots.get(i).getSlotIndex() + +startIndex,
-                    baseOffset + i * 18,
-                    85) {
-                @Override
-                public boolean isItemValid(ItemStack stack) {
-                    return EntityLiving.getSlotForItemStack(stack) == slot && tile.isItemValidForSlot(this.getSlotIndex(), stack);
-                }
-
-                @Override
-                public int getSlotStackLimit() {
-                    return 1;
-                }
-
-                @Nullable
-                @SideOnly(Side.CLIENT)
-                public String getSlotTexture() {
-                    if (slot == EntityEquipmentSlot.OFFHAND) {
-                        return "minecraft:items/empty_armor_slot_shield";
+                            default:
+                                return ItemArmor.EMPTY_SLOT_NAMES[slot.getIndex()];
+                        }
                     }
-
-                    return super.getSlotTexture();
-                }
-            });
+                });
+            }
         }
 
-        // fuel
-        lastInvIndex = startIndex * 2;
-        addSlotToContainer(new Slot(tile, lastInvIndex, 80, 85) {
+        addSlotToContainer(new Slot(tile, 6, 37, 51) {
             @Override
             public boolean isItemValid(ItemStack stack) {
-                return tile.getBurnTime(stack) > 0;
+                return tile.isItemValidForSlot(this.getSlotIndex(), stack);
             }
         });
 
-        bindPlayerInventory(baseOffset, 111);
-    }
+        this.addSlotToContainer(new SlotFurnaceOutput(inventoryPlayer.player, tile, 7, 143 + 5, 43 + 5));
 
-    private void bindPlayerInventory(int topX, int topY) {
+        lastInvIndex = tile.getSizeInventory() - 1;
 
-        //player inv
+        //
+        // Player inv
+        //
+
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, topX + j * 18, topY));
+                this.addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
-            topY += 18;
         }
 
-        topY += 4;
-
-        //player hotbar
         for (int k = 0; k < 9; ++k) {
-            this.addSlotToContainer(new Slot(inventoryPlayer, k, topX + k * 18, topY));
+            this.addSlotToContainer(new Slot(inventoryPlayer, k, 8 + k * 18, 142));
         }
     }
 
-    public int getCookTimePercentage() {
-        int cookTime = tile.getField(1);
-        if (cookTime == 0)
-            return 0;
-
-        double value = cookTime * 1.0 / tile.getCookTimeLength();
-        int precantages = (int) Math.ceil(value * 100);
-        return MathHelper.clamp(precantages, 0, 100);
-    }
-
-
-    public Set<String> getAbsorbedSets() {
-        return tile.getAbsorbedSets();
-    }
-
-    public int getLimit() {
-        return tile.getKingCreationLimit();
+    /**
+     * Gets tile reference
+     *
+     * @return
+     */
+    public TileEntityKingCompressor getTile() {
+        return tile;
     }
 
     @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
-        listener.sendAllWindowProperties(this, tile);
+    public boolean canInteractWith(EntityPlayer playerIn) {
+        return tile.isUsableByPlayer(playerIn);
     }
 
     @Override
@@ -225,12 +135,8 @@ public class KingCompressorContainer extends Container {
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        return tile.isUsableByPlayer(playerIn);
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
+        listener.sendAllWindowProperties(this, tile);
     }
 }

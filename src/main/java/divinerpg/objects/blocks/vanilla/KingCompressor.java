@@ -2,9 +2,10 @@ package divinerpg.objects.blocks.vanilla;
 
 import divinerpg.DivineRPG;
 import divinerpg.api.Reference;
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressior;
+import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.proxy.GUIHandler;
 import divinerpg.registry.DivineRPGTabs;
+import divinerpg.registry.ModBlocks;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -12,12 +13,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,28 +47,33 @@ public class KingCompressor extends BlockContainer {
         if (!worldIn.isRemote) {
             TileEntity entity = worldIn.getTileEntity(pos);
 
-            if (entity instanceof TileEntityKingCompressior)
+            if (entity instanceof TileEntityKingCompressor)
                 playerIn.openGui(DivineRPG.instance, GUIHandler.KingCompressorGuiId, worldIn, pos.getX(), pos.getY(), pos.getZ());
 
         }
 
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        return true;
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityKingCompressior();
+        return new TileEntityKingCompressor();
     }
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (tileEntity instanceof TileEntityKingCompressior && !((TileEntityKingCompressior) tileEntity).keepInventory)
+        if (tileEntity instanceof TileEntityKingCompressor && !((TileEntityKingCompressor) tileEntity).keepInventory)
             InventoryHelper.dropInventoryItems(worldIn, pos, ((IInventory) tileEntity));
 
         super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(ModBlocks.king_compression_still);
     }
 
     @Override

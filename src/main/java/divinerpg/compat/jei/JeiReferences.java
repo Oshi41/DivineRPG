@@ -14,4 +14,5 @@ public class JeiReferences {
     public static final String LORD_VATTICUS_CATEGORY = Reference.MODID + ":lord_vatticus";
     public static final String ZELUS_CATEGORY = Reference.MODID + ":zelus";
     public static final String ARCANA_EXTRACTOR_CATEGORY = Reference.MODID + ":arcana_extractor";
+    public static final String KING_ARMOR_CREATION = Reference.MODID + ":king_armor_creation";
 }

@@ -1,8 +1,7 @@
 package divinerpg.objects.blocks.tile.container.gui;
 
 import divinerpg.api.Reference;
-import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
+import divinerpg.objects.blocks.tile.container.KingCompressorContainerOld;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -10,14 +9,16 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class KIngCompressionGUI extends GuiContainer {
-    public static final ResourceLocation Texture = new ResourceLocation(Reference.MODID, "textures/gui/king_compression_gui.png");
-    private final TileEntityKingCompressor tile;
+public class KIngCompressionGUIOld extends GuiContainer {
+    private final ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/gui/king_compression_gui.png");
+    private KingCompressorContainerOld container;
 
-    public KIngCompressionGUI(KingCompressorContainer inventorySlotsIn) {
+    public KIngCompressionGUIOld(KingCompressorContainerOld inventorySlotsIn) {
         super(inventorySlotsIn);
+        container = inventorySlotsIn;
 
-        tile = inventorySlotsIn.getTile();
+        this.xSize = 176;
+        this.ySize = 193;
     }
 
     @Override
@@ -30,26 +31,24 @@ public class KIngCompressionGUI extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1, 1, 1, 1);
-        this.mc.getTextureManager().bindTexture(Texture);
+        this.mc.getTextureManager().bindTexture(texture);
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
-        int k = (int) Math.floor(tile.getBurningTicks() * 13.0 / tile.getCookTimeLength());
-        this.drawTexturedModalRect(this.guiLeft + 39, this.guiTop + 36 + 14 - k, 176, 14 - k, 14, k + 1);
+        int k = (int) Math.floor(container.getCookTimePercentage() / 100.0 * 13);
+        this.drawTexturedModalRect(this.guiLeft + 81, this.guiTop + 69 + 14 - k, 176, 14 - k, 14, k + 1);
 
-        k = (int) Math.floor(tile.getCurrentCookTime() * 24.0 / tile.getCookTimeLength());
-        this.drawTexturedModalRect(this.guiLeft + 112, this.guiTop + 48, 176, 14, k + 1, 16);
-
-        Set<String> sets = tile.getAbsorbedSets();
+        Set<String> sets = container.getAbsorbedSets();
         String text = "King compressor";
 
         int stringWidth = this.fontRenderer.getStringWidth(text);
 
-        int topX = 90 + this.guiLeft;
-        int topY = 7 + this.guiTop;
+        int topX = this.guiLeft + (this.xSize / 2 - stringWidth / 2);
+        int topY = guiTop + 6;
         this.fontRenderer.drawString(text, topX, topY, 16777215);
 
-        String numbers = String.format("%s / %s", sets.size(), tile.getLimit());
-        this.fontRenderer.drawString(numbers, topX, topY + fontRenderer.FONT_HEIGHT, 16777215);
+
+        String numbers = String.format("%s / %s", sets.size(), container.getLimit());
+        this.fontRenderer.drawString(numbers, this.guiLeft + (this.xSize / 2 - fontRenderer.getStringWidth(numbers) / 2), topY + fontRenderer.FONT_HEIGHT + 5, 16777215);
 
         drawToolTip(sets, mouseX, mouseY, topX, topY, stringWidth, fontRenderer.FONT_HEIGHT);
     }

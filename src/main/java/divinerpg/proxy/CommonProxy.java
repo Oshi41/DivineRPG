@@ -94,7 +94,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityInfusionTable.class, Reference.MODID + ":te_infusion_table");
         GameRegistry.registerTileEntity(TileEntityDreamLamp.class, Reference.MODID + ":te_dream_lamp");
         GameRegistry.registerTileEntity(TileEntityNightmareBed.class, Reference.MODID + ":te_bed");
-        GameRegistry.registerTileEntity(TileEntityKingCompressior.class, Reference.MODID + ":te_king_compressor");
+        GameRegistry.registerTileEntity(TileEntityKingCompressor.class, Reference.MODID + ":te_king_compressor");
         GameRegistry.registerTileEntity(TileEntitySingleUseSpawner.class, Reference.MODID + ":te_single_use_spawner");
         GameRegistry.registerTileEntity(TileEntityPillar.class, Reference.MODID + ":te_pillar");
     }

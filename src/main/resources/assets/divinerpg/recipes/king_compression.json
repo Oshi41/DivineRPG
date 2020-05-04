@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "divinerpg:king_compression"
+  },
+  "pattern": [
+    "IAI",
+    "XOX",
+    "ICI"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "O": {
+      "item": "minecraft:emerald_ore"
+    },
+    "A": {
+      "item": "minecraft:anvil"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "C": {
+      "item": "minecraft:king_ingot"
+    }
+  }
+}

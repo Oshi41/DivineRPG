@@ -1,9 +1,7 @@
 package divinerpg.compat.jei;
 
 import divinerpg.DivineRPG;
-import divinerpg.compat.jei.base.SmelterCategory;
-import divinerpg.compat.jei.base.TripleRecipeWrapper;
-import divinerpg.compat.jei.base.VillagerCategory;
+import divinerpg.compat.jei.base.*;
 import divinerpg.objects.blocks.tile.container.gui.ArcaniumExtractorGUI;
 import divinerpg.objects.entities.container.gui.*;
 import divinerpg.objects.entities.entity.arcana.*;
@@ -101,6 +99,8 @@ public class JEICompat implements IModPlugin {
                 JeiReferences.ARCANA_EXTRACTOR_CATEGORY,
                 "Arcanium Extractor",
                 new ItemStack(ModItems.chargedCollector)));
+
+        registry.addRecipeCategories(new KingCreationCategory(guiHelper));
     }
 
     @Override
@@ -129,12 +129,13 @@ public class JEICompat implements IModPlugin {
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.oceanfireFurnace), VanillaRecipeCategoryUid.SMELTING);
 
         registry.addRecipeCatalyst(new ItemStack(ModBlocks.arcaniumExtractor), JeiReferences.ARCANA_EXTRACTOR_CATEGORY);
+        registry.addRecipes(Arrays.asList(new KingRecipeWrapper()), JeiReferences.KING_ARMOR_CREATION);
     }
 
-    private void registerVillagerRecepies(IModRegistry registry, List<MerchantRecipe> receipes, String name){
+    private void registerVillagerRecepies(IModRegistry registry, List<MerchantRecipe> receipes, String name) {
         registry.addRecipes(receipes
-        .stream()
+                .stream()
                 .map(TripleRecipeWrapper::new)
-        .collect(Collectors.toList()), name);
+                .collect(Collectors.toList()), name);
     }
 }

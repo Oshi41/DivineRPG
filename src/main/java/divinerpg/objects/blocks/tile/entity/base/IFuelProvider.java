@@ -2,9 +2,8 @@ package divinerpg.objects.blocks.tile.entity.base;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public interface IFuelProvider extends IInventory {
 
@@ -87,7 +86,7 @@ public interface IFuelProvider extends IInventory {
      *
      * @return
      */
-    NonNullList<ItemStack> getInventoryRef();
+    IItemHandlerModifiable getInventoryRef();
 
     /**
      * Update burning tick
@@ -150,7 +149,7 @@ public interface IFuelProvider extends IInventory {
     @Override
     default ItemStack getStackInSlot(int index) {
         if (0 <= index && index < getSizeInventory()) {
-            return getInventoryRef().get(index);
+            return getInventoryRef().getStackInSlot(index);
         }
 
         return ItemStack.EMPTY;
@@ -158,21 +157,21 @@ public interface IFuelProvider extends IInventory {
 
     @Override
     default ItemStack decrStackSize(int index, int count) {
-        ItemStack result = ItemStackHelper.getAndSplit(getInventoryRef(), index, count);
+        ItemStack result = getInventoryRef().extractItem(index, count, false);
         markDirty();
         return result;
     }
 
     @Override
     default ItemStack removeStackFromSlot(int index) {
-        ItemStack result = ItemStackHelper.getAndRemove(getInventoryRef(), index);
+        ItemStack result = getInventoryRef().extractItem(index, Integer.MAX_VALUE, false);
         markDirty();
         return result;
     }
 
     @Override
     default int getSizeInventory() {
-        return getInventoryRef().size();
+        return getInventoryRef().getSlots();
     }
 
     @Override
@@ -182,7 +181,7 @@ public interface IFuelProvider extends IInventory {
 
     @Override
     default void setInventorySlotContents(int index, ItemStack stack) {
-        this.getInventoryRef().set(index, stack);
+        this.getInventoryRef().setStackInSlot(index, stack);
 
         if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit()) {
             stack.setCount(this.getInventoryStackLimit());
@@ -193,7 +192,14 @@ public interface IFuelProvider extends IInventory {
 
     @Override
     default boolean isEmpty() {
-        return getInventoryRef().stream().noneMatch(ItemStack::isEmpty);
+        IItemHandlerModifiable items = getInventoryRef();
+
+        for (int i = 0; i < items.getSlots(); i++) {
+            if (!items.getStackInSlot(i).isEmpty())
+                return false;
+        }
+
+        return true;
     }
 
     @Override

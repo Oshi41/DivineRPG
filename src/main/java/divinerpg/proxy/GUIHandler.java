@@ -104,7 +104,7 @@ public class GUIHandler implements IGuiHandler {
             case DREAM_LAMP_GUI_ID:
                 return new DreamLampGUI(new ContainerDreamLamp(player.inventory, world, (TileEntityDreamLamp) tileEntity));
             case KingCompressorGuiId:
-                return new KIngCompressionGUI(new KingCompressorContainer(player.inventory, (TileEntityKingCompressior) tileEntity));
+                return new KIngCompressionGUI(new KingCompressorContainer(player.inventory, (TileEntityKingCompressor) tileEntity));
 
             default:
                 return null;
@@ -156,7 +156,7 @@ public class GUIHandler implements IGuiHandler {
                 return new ContainerDreamLamp(player.inventory, world, (TileEntityDreamLamp) tileEntity);
 
             case KingCompressorGuiId:
-                return new KingCompressorContainer(player.inventory, (TileEntityKingCompressior) tileEntity);
+                return new KingCompressorContainer(player.inventory, (TileEntityKingCompressor) tileEntity);
 
             default:
                 return null;
