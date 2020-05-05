@@ -51,7 +51,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-        ModItems.nightmareBed.setTileEntityItemStackRenderer(new RenderItemNightmareBed());
         InitLog.init();
         Music_Iceika = EnumHelperClient.addMusicType("iceika_music", ModSounds.ICEIKA_MUSIC, 1200, 12000);
     }
