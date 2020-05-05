@@ -3,12 +3,14 @@ package divinerpg.utils.multiblock;
 import com.google.common.base.Predicate;
 import divinerpg.api.DivineAPI;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiStructure;
+import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.block.state.pattern.BlockStateMatcher;
 import net.minecraft.block.state.pattern.FactoryBlockPattern;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -68,10 +70,12 @@ public class Matcher implements IMultiStructure {
     /**
      * Building pattern
      */
-    public void build() {
+    public Matcher build() {
         pattern = factory.build();
-        createdStructurePattern = factory.build();
+        createdStructurePattern = createdStructurefactory.build();
         structure = makePredicateArray();
+
+        return this;
     }
 
     /**
@@ -112,6 +116,8 @@ public class Matcher implements IMultiStructure {
         if (world == null)
             return;
 
+        List<IMultiblockTile> tiles = new ArrayList<>();
+
         for (int i = 0; i < pattern.getPalmLength(); ++i) {
             for (int j = 0; j < pattern.getThumbLength(); ++j) {
                 for (int k = 0; k < pattern.getFingerLength(); ++k) {
@@ -128,9 +134,16 @@ public class Matcher implements IMultiStructure {
                     } else {
                         setBlock(world, pos, buildedStructureState);
                     }
+
+                    TileEntity entity = world.getTileEntity(pos);
+                    if (entity instanceof IMultiblockTile) {
+                        tiles.add((IMultiblockTile) entity);
+                    }
                 }
             }
         }
+
+        tiles.forEach(IMultiblockTile::recheckStructure);
     }
 
     /**
@@ -202,11 +215,17 @@ public class Matcher implements IMultiStructure {
                         for (int j = 0; j < pattern.getThumbLength(); ++j) {
                             for (int k = 0; k < pattern.getFingerLength(); ++k) {
 
+                                IBlockState current = structure[k][j][i];
+                                IBlockState structureCurrent = replaceMap.get(current);
+
+                                IBlockState corner = structure[0][0][0];
+                                IBlockState structureCorner = replaceMap.get(corner);
+
                                 // searching from regular pre build structure pattern
-                                addPossibleCorners(result, world, i, j, k, pos, structure[0][0][0].getBlock(), structure[k][j][i].getBlock(), enumfacing, enumfacing1);
+                                addPossibleCorners(result, world, i, j, k, pos, corner.getBlock(), current.getBlock(), enumfacing, enumfacing1);
 
                                 // searching coreners from already built structure
-                                addPossibleCorners(result, world, i, j, k, pos, replaceMap.get(structure[0][0][0]).getBlock(), replaceMap.get(structure[k][j][i]).getBlock(), enumfacing, enumfacing1);
+                                addPossibleCorners(result, world, i, j, k, pos, structureCorner.getBlock(), structureCurrent.getBlock(), enumfacing, enumfacing1);
                             }
                         }
                     }

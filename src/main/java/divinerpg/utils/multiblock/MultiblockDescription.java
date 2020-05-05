@@ -20,34 +20,39 @@ public class MultiblockDescription {
      */
     private static final Map<ResourceLocation, IMultiStructure> multiStructures;
 
+    /**
+     * Wekk known id of king compressor
+     */
+    public static final ResourceLocation KING_COMPRESSOR;
+
     static {
         multiStructures = new HashMap<>();
-
         //
         // Example
         //
-        Matcher kingCompressor = new Matcher()
-                .aisle(
-                        "non",
-                        "ooo",
-                        "non")
-                .aisle(
-                        "non",
-                        "olo",
-                        "nbn")
-                .aisle(
-                        "non",
-                        "oao",
-                        "non")
-                .where('n', Blocks.NETHER_BRICK.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.NETHER_BRICK))
-                .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
-                .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.king_compression_still.getDefaultState())
-                .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ICON_BARS))
-                .where('a', Blocks.AIR.getDefaultState(), ModBlocks.structure_block.getDefaultState());
 
-        kingCompressor.build();
+        KING_COMPRESSOR = new ResourceLocation(Reference.MODID, "king_compressor");
 
-        register(new ResourceLocation(Reference.MODID, "king_compressor"), kingCompressor);
+        register(KING_COMPRESSOR,
+                new Matcher()
+                        .aisle(
+                                "aaa",
+                                "aaa",
+                                "aaa")
+                        .aisle(
+                                "ooo",
+                                "oko",
+                                "ooo")
+                        .aisle(
+                                "pop",
+                                "pAp",
+                                "pop")
+                        .where('a', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
+                        .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
+                        .where('k', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
+                        .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.PILLAR))
+                        .where('A', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
+                        .build());
     }
 
     public static void register(ResourceLocation id, IMultiStructure structure) {

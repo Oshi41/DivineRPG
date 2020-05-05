@@ -15,7 +15,7 @@ public class TileEntityPillar extends ModUpdatableTileEntity {
     private ItemStackHandler inventory;
 
     public TileEntityPillar() {
-        inventory = new DivineStackHandler(1, integer -> markDirty(), this::isSlotValid);
+        inventory = new DivineStackHandler(1, integer -> markDirty(), this::isSlotValid, 1);
     }
 
     protected boolean isSlotValid(int slot, ItemStack stack) {

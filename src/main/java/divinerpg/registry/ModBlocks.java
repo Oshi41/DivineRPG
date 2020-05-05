@@ -1,8 +1,5 @@
 package divinerpg.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import divinerpg.DivineRPG;
 import divinerpg.dimensions.TwilightTree;
 import divinerpg.dimensions.eden.EdenTree;
@@ -1049,11 +1046,11 @@ public class ModBlocks {
     @ObjectHolder("vethea_portal")
     public static final BlockModPortal vetheaPortal = null;
 
-    @ObjectHolder("king_compression")
-    public static final Block king_compression = null;
+    @ObjectHolder("king_compressor_part")
+    public static final Block king_compressor_part = null;
 
-    @ObjectHolder("king_compression_still")
-    public static final Block king_compression_still = null;
+    @ObjectHolder("king_compressor")
+    public static final Block king_compressor = null;
 
     //newSpawners
     @ObjectHolder("sunstorm_spawner")
@@ -1065,6 +1062,8 @@ public class ModBlocks {
 
     @ObjectHolder("structure_block")
     public static final StructureBlock structure_block = null;
+    @ObjectHolder("pillar")
+    public static final Block pillar = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
@@ -1690,8 +1689,8 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockModSlab("frozen_double_slab", BlockModPlank.EnumType.FROZEN, true));
         registerItemlessBlock(registry, new BlockModSlab("eucalyptus_double_slab", BlockModPlank.EnumType.EUCALYPTUS, true));
 
-        register(registry, new KingCompressor("king_compression", true));
-        register(registry, new KingCompressor("king_compression_still", false));
+        registerItemlessBlock(registry, new KingCompressor("king_compressor"));
+        register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5));
 
         //
         // newSpawners
@@ -1701,7 +1700,7 @@ public class ModBlocks {
         register(registry, new BlockSingleUseSpawner("experienced_cori_spawner", EntityExperiencedCori.class, 20 * 5, 5, new BlockPos(0, 11, 0)));
 
         register(registry, new Pillar("pillar"));
-        register(registry, new StructureBlock());
+        registerItemlessBlock(registry, new StructureBlock());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

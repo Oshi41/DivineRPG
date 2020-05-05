@@ -50,6 +50,9 @@ public class GUIHandler implements IGuiHandler {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
         Entity entityByID = world.getEntityByID(x);
 
+        if (tileEntity == null)
+            return null;
+
         switch (ID) {
             case COALSTONE_FURNACE_GUI_ID:
                 return new CoalstoneFurnaceGUI(player.inventory, (TileEntityModFurnace) tileEntity);

@@ -51,6 +51,6 @@ public interface IMultiStructure {
      * @param match
      */
     default void constructStructure(World world, @Nonnull BlockPattern.PatternHelper match) {
-        constructStructure(world, match.getFrontTopLeft(), match.getForwards(), match.getUp(), true);
+        constructStructure(world, match.getFrontTopLeft(), match.getForwards(), match.getUp(), false);
     }
 }

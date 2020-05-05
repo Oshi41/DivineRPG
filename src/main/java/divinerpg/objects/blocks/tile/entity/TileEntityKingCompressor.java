@@ -7,11 +7,10 @@ import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.config.Config;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
-import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
+import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
 import divinerpg.objects.blocks.tile.entity.pillar.DivineStackHandler;
-import divinerpg.registry.ModBlocks;
 import divinerpg.registry.ModItems;
-import net.minecraft.block.Block;
+import divinerpg.utils.multiblock.MultiblockDescription;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -22,7 +21,6 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
@@ -33,7 +31,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TileEntityKingCompressor extends ModUpdatableTileEntity implements IFuelProvider, ITickable, IInteractionObject {
+public class TileEntityKingCompressor extends TileEntityDivineMultiblock implements IFuelProvider, ITickable, IInteractionObject {
 
     //region Fields
     /**
@@ -44,7 +42,7 @@ public class TileEntityKingCompressor extends ModUpdatableTileEntity implements 
         put(ModItems.divineStone, 250);
         put(ModItems.arlemiteIngot, (int) Math.ceil(500 / 3.0));
     }};
-    private final ResourceLocation id = new ResourceLocation(Reference.MODID, "king_compressor");
+    private static final ResourceLocation id = new ResourceLocation(Reference.MODID, "king_compressor");
 
     /**
      * Id's of fuel slots
@@ -86,6 +84,8 @@ public class TileEntityKingCompressor extends ModUpdatableTileEntity implements 
     //endregion
 
     public TileEntityKingCompressor() {
+        super(MultiblockDescription.findById(MultiblockDescription.KING_COMPRESSOR),
+                id.toString(), null);
         burnTime = 0;
         cookTime = 0;
         fuelSlots = new HashSet<Integer>() {{
@@ -171,22 +171,7 @@ public class TileEntityKingCompressor extends ModUpdatableTileEntity implements 
 
     @Override
     public void changeBurnState(boolean isBurning) {
-        TileEntity tileentity = world.getTileEntity(pos);
-
-        Block block = isBurning
-                ? ModBlocks.king_compression
-                : ModBlocks.king_compression_still;
-
-        if (world.getBlockState(pos).getBlock() != block) {
-            keepInventory = true;
-            world.setBlockState(pos, block.getDefaultState(), 3);
-            keepInventory = false;
-
-            if (tileentity != null) {
-                tileentity.validate();
-                world.setTileEntity(pos, tileentity);
-            }
-        }
+        // ignored
     }
 
     @Override
@@ -277,7 +262,6 @@ public class TileEntityKingCompressor extends ModUpdatableTileEntity implements 
     public String getGuiID() {
         return id.toString();
     }
-
 
     private void recheckRecipe(int slot) {
         // should call anyway

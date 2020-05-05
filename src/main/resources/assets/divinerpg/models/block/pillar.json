@@ -1,10 +1,8 @@
 {
-  "parent": "block/block",
   "textures": {
-    "particle": "blocks/enchanting_table_bottom",
-    "bottom": "blocks/enchanting_table_bottom",
-    "top": "blocks/enchanting_table_top",
-    "side": "blocks/enchanting_table_side"
+    "side": "blocks/quartz_block_lines",
+    "top": "blocks/quartz_block_lines_top",
+    "particle": "blocks/quartz_block_lines"
   },
   "elements": [
     {
@@ -15,68 +13,96 @@
       ],
       "to": [
         16,
-        12,
+        4,
         16
       ],
       "faces": {
         "down": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
-          "texture": "#bottom",
+          "texture": "#top",
           "cullface": "down"
         },
         "up": {
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ],
           "texture": "#top"
         },
         "north": {
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ],
           "texture": "#side",
           "cullface": "north"
         },
         "south": {
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ],
           "texture": "#side",
           "cullface": "south"
         },
         "west": {
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ],
           "texture": "#side",
           "cullface": "west"
         },
         "east": {
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ],
           "texture": "#side",
           "cullface": "east"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        12,
+        2
+      ],
+      "to": [
+        14,
+        16,
+        14
+      ],
+      "faces": {
+        "down": {
+          "texture": "#top"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "down": {
+          "texture": "#top"
+        },
+        "up": {
+          "texture": "#top"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
         }
       }
     }

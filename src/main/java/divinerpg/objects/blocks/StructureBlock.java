@@ -3,20 +3,28 @@ package divinerpg.objects.blocks;
 import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
+import divinerpg.utils.PositionHelper;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class StructureBlock extends BlockMod {
     private static final IProperty<EnumPlaceholder> PlaceholderProperty;
@@ -35,26 +43,44 @@ public class StructureBlock extends BlockMod {
     }
 
     @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing clickFacing, float hitX, float hitY, float hitZ) {
+        return searchTile(worldIn, pos, t -> t.click(playerIn)) != null;
+    }
+
+    @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public EnumPushReaction getMobilityFlag(IBlockState state) {
+        return EnumPushReaction.DESTROY;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
+        searchTile(worldIn, pos, IMultiblockTile::recheckStructure);
+    }
 
-        for (EnumFacing facing : EnumFacing.values()) {
-            BlockPos currentPos = pos.offset(facing);
-
-            TileEntity tileEntity = worldIn.getTileEntity(currentPos);
-            if (tileEntity instanceof IMultiblockTile) {
-                ((IMultiblockTile) tileEntity).recheckStructure();
-                return;
-            } else {
-                IBlockState neighbour = worldIn.getBlockState(currentPos);
-                worldIn.notifyBlockUpdate(currentPos, neighbour, neighbour, 3);
-            }
-        }
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        searchTile(worldIn, pos, IMultiblockTile::recheckStructure);
     }
 
     @Override
@@ -89,5 +115,24 @@ public class StructureBlock extends BlockMod {
                 .findFirst().orElse(EnumPlaceholder.AIR);
 
         return withPlaceHolder(placeholder);
+    }
+
+    @Nullable
+    private IMultiblockTile searchTile(World world, BlockPos pos, @Nullable Consumer<IMultiblockTile> callback) {
+
+        BlockPos tilePos = PositionHelper.searchInRadius(world, pos, 4, p -> world.getTileEntity(p) instanceof IMultiblockTile);
+
+        TileEntity tile = world.getTileEntity(tilePos);
+
+        if (tile instanceof IMultiblockTile) {
+            if (callback != null) {
+                callback.accept((IMultiblockTile) tile);
+            }
+
+            return ((IMultiblockTile) tile);
+        }
+
+
+        return null;
     }
 }

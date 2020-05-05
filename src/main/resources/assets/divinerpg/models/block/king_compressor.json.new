@@ -1,0 +1,56 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
+    "textures": {
+        "king_compressor_bottom": "divinerpg:blocks/king_compressor_bottom",
+        "king_compressor_top": "divinerpg:blocks/king_compressor_top",
+        "king_compressor_side": "divinerpg:blocks/king_compressor_side",
+        "king_compressor_front": "divinerpg:blocks/king_compressor_front"
+    },
+    "display": {
+        "gui": {
+            "rotation": [ 30, 45, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 0.625, 0.625, 0.625 ]
+        },
+        "ground": {
+            "rotation": [ 0, 0, 0 ],
+            "translation": [ 0, 3, 0 ],
+            "scale": [ 0.25, 0.25, 0.25 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "head": {
+            "rotation": [ 0, 180, 0 ],
+            "translation": [ 0, 0, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, 315, 0 ],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [ 0.4, 0.4, 0.4 ]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 75, 315, 0 ],
+            "translation": [ 0, 2.5, 0 ],
+            "scale": [ 0.375, 0.375, 0.375 ]
+        }
+    },
+    "elements": [
+        {
+            "name": "Cube",
+            "from": [ -16, -16, -16 ], 
+            "to": [ 32, 32, 32 ], 
+            "faces": {
+                "north": { "texture": "#king_compressor_side", "uv": [ 0, 0, 16, 16 ] },
+                "east": { "texture": "#king_compressor_front", "uv": [ 0, 0, 16, 16 ], "tintindex": 0 },
+                "south": { "texture": "#king_compressor_side", "uv": [ 0, 0, 16, 16 ] },
+                "west": { "texture": "#king_compressor_front", "uv": [ 0, 0, 16, 16 ] },
+                "up": { "texture": "#king_compressor_bottom", "uv": [ 0, 0, 16, 16 ] },
+                "down": { "texture": "#king_compressor_top", "uv": [ 0, 0, 16, 16 ] }
+            }
+        }
+    ]
+}

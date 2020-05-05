@@ -4,6 +4,7 @@ import divinerpg.events.DimensionHelper;
 import divinerpg.objects.items.base.ItemMod;
 import divinerpg.registry.DivineRPGTabs;
 import divinerpg.registry.ModBlocks;
+import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.portals.description.IPortalDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.pattern.BlockPattern;
@@ -15,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -79,6 +81,14 @@ public class ItemTwilightClock extends ItemMod {
                         }
                     }
                 }
+            }
+        }
+
+
+        // todo Remove
+        if (!worldIn.isRemote) {
+            if (MultiblockDescription.getAll().stream().anyMatch(x -> x.createStructure(worldIn, pos))) {
+                player.sendMessage(new TextComponentString("Is build"));
             }
         }
 

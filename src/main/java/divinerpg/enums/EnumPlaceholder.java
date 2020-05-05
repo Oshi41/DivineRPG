@@ -1,5 +1,6 @@
 package divinerpg.enums;
 
+import divinerpg.api.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IStringSerializable;
@@ -10,13 +11,19 @@ public enum EnumPlaceholder implements IStringSerializable {
     AIR(Blocks.AIR.getRegistryName()),
     OBSIDIAN(Blocks.OBSIDIAN.getRegistryName()),
     NETHER_BRICK(Blocks.NETHER_BRICK.getRegistryName()),
-    ICON_BARS(Blocks.IRON_BARS.getRegistryName());
+    ICON_BARS(Blocks.IRON_BARS.getRegistryName()),
+    ANVIL(Blocks.ANVIL.getRegistryName()),
+    PILLAR("pillar");
 
 
     private final ResourceLocation blockId;
 
     EnumPlaceholder(ResourceLocation blockId) {
         this.blockId = blockId;
+    }
+
+    EnumPlaceholder(String divineName) {
+        this(new ResourceLocation(Reference.MODID, divineName));
     }
 
     /**
