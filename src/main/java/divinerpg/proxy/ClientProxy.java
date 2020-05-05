@@ -2,18 +2,13 @@ package divinerpg.proxy;
 
 import divinerpg.api.Reference;
 import divinerpg.client.ArcanaRenderer;
-import divinerpg.client.render.RenderItemNightmareBed;
 import divinerpg.enums.ParticleType;
 import divinerpg.events.EventBowZoom;
 import divinerpg.events.EventClientLogin;
 import divinerpg.events.EventTooltip;
-import divinerpg.objects.blocks.tile.entity.*;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
-import divinerpg.objects.blocks.tile.render.*;
 import divinerpg.objects.entities.assets.render.PlayerHatRender;
 import divinerpg.particle.*;
 import divinerpg.registry.ModEntities;
-import divinerpg.registry.ModItems;
 import divinerpg.registry.ModSounds;
 import divinerpg.utils.log.InitLog;
 import divinerpg.utils.log.IntenseDebug;
@@ -30,7 +25,6 @@ import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -78,24 +72,6 @@ public class ClientProxy extends CommonProxy {
         OBJLoader.INSTANCE.addDomain(Reference.MODID);
         MinecraftForge.EVENT_BUS.register(new EventBowZoom());
         PreInitLog.init();
-    }
-
-    @Override
-    public void RegisterTileEntityRender() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDramixAltar.class, new RenderDramixAltar());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityParasectaAltar.class, new RenderParasectaAltar());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFrostedChest.class, new RenderFrostedChest());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAyeracoBeam.class, new RenderAyeracoBeam());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAyeracoSpawn.class, new RenderAyeracoSpawn());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDemonFurnace.class, new RenderDemonFurnace());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityArcaniumExtractor.class, new RenderArcaniumExtractor());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPresentBox.class, new RenderPresentBox());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityBoneChest.class, new RenderBoneChest());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAltarOfCorruption.class, new RenderAltarOfCorruption());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStatue.class, new RenderStatue());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEdenChest.class, new RenderEdenChest());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNightmareBed.class, new RenderNightmareBed());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPillar.class, new RenderPillar());
     }
 
     @Override

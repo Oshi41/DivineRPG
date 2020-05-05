@@ -115,7 +115,7 @@ public class Pillar extends BlockMod implements ITileEntityProvider {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
+        return super.getBoundingBox(state, source, pos);
     }
 
     @Override
