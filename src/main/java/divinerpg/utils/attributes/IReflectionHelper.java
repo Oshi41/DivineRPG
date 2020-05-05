@@ -131,4 +131,31 @@ public interface IReflectionHelper {
 
         return false;
     }
+
+    /**
+     * Getting private field value
+     *
+     * @param classToFind - class where to find
+     * @param instance    - object instance
+     * @param name        - name of field
+     * @param fieldClass  - type of field
+     * @param <T>
+     * @return
+     */
+    @Nullable
+    default <T> T getPrivateField(@Nonnull Class<?> classToFind, @Nullable Object instance, @Nonnull String name, @Nonnull Class<T> fieldClass) {
+        Field field = findField(classToFind, name);
+        if (field != null) {
+            try {
+                Object result = field.get(instance);
+                if (fieldClass.isInstance(result)) {
+                    return (T) result;
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 }

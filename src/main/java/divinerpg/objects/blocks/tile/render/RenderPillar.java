@@ -29,9 +29,9 @@ public class RenderPillar extends TileEntitySpecialRenderer<TileEntityPillar> {
 
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(x + 0.5D, y + box.maxY, z + 0.5D);
+            GlStateManager.translate(x + 0.5D, y + box.maxY + 0.2, z + 0.5D);
             GlStateManager.translate(0.0F, MathHelper.sin(time / 10.0F) * 0.1F + 0.1F, 0.0F);
-            GlStateManager.scale(0.75D, 0.75D, 0.75D);
+            GlStateManager.scale(1.25, 1.25, 1.25);
             float angle = time / 20.0F * 57.295776F;
             GlStateManager.rotate(angle, 0.0F, 1.0F, 0.0F);
             Minecraft.getMinecraft().getRenderItem().renderItem(stack, ItemCameraTransforms.TransformType.GROUND);

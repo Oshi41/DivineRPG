@@ -8,6 +8,7 @@ import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.registry.ModArmor;
 import divinerpg.utils.LocalizeUtils;
 import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;

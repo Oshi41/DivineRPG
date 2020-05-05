@@ -1053,6 +1053,9 @@ public class ModBlocks {
     @ObjectHolder("termasect_spawner")
     public static final Block termasectSpawner = null;
 
+    @ObjectHolder("structure_block")
+    public static final StructureBlock structure_block = null;
+
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         DivineRPG.logger.info("Registering DivineRPG blocks");
@@ -1687,6 +1690,7 @@ public class ModBlocks {
                 new BlockPos(0, 11, 0)));
 
         register(registry, new Pillar("pillar"));
+        register(registry, new StructureBlock());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)

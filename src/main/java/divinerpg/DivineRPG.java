@@ -13,6 +13,7 @@ import divinerpg.proxy.CommonProxy;
 import divinerpg.registry.*;
 import divinerpg.utils.Utils;
 import divinerpg.utils.attributes.AttributeFixer;
+import divinerpg.utils.multiblock.MultiblockDescription;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -48,6 +49,7 @@ public class DivineRPG {
     public DivineRPG() {
         MinecraftForge.EVENT_BUS.register(this);
         logger = LogManager.getLogger();
+        AttributeFixer.init();
     }
 
     /** Init Methods */
@@ -61,7 +63,6 @@ public class DivineRPG {
         MinecraftForge.EVENT_BUS.register(new ArcanaTickHandler());
         MinecraftForge.EVENT_BUS.register(new EventEntityDrop());
         ModMessages.initMessages();
-        AttributeFixer.init();
     }
 
     @Mod.EventHandler
@@ -83,6 +84,7 @@ public class DivineRPG {
 
         MinecraftForge.EVENT_BUS.register(new DiggingTaskFactory());
         DimensionHelper.initPortalDescriptions();
+        MultiblockDescription.getAll();
     }
 
     /** For Registering Commands */

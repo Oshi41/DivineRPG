@@ -28,6 +28,7 @@ public class ReflectionHelper implements IReflectionHelper {
             String[] fieldNames = ObfuscationReflectionHelper.remapFieldNames(holderClass.getName(), name);
 
             try {
+
                 // trying to find field
                 Field field = net.minecraftforge.fml.relauncher.ReflectionHelper.findField(holderClass, fieldNames);
                 if (field != null) {
