@@ -1,5 +1,8 @@
 package divinerpg.registry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import divinerpg.DivineRPG;
 import divinerpg.dimensions.TwilightTree;
 import divinerpg.dimensions.eden.EdenTree;
@@ -17,6 +20,7 @@ import divinerpg.objects.blocks.vanilla.*;
 import divinerpg.objects.blocks.vethea.*;
 import divinerpg.objects.entities.entity.twilight.EntitySunstorm;
 import divinerpg.objects.entities.entity.twilight.EntityTermasect;
+import divinerpg.objects.entities.entity.twilight.cories.EntityExperiencedCori;
 import divinerpg.world.DivineTree;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
@@ -175,6 +179,8 @@ public class ModBlocks {
     public static final Block wildwoodBricks = null;
     @ObjectHolder("apalachia_bricks")
     public static final Block apalachiaBricks = null;
+    @ObjectHolder("skythern_bricks")
+    public static final Block skythernBricks = null;
 
     // Minibricks
     @ObjectHolder("minibricks")
@@ -353,6 +359,8 @@ public class ModBlocks {
     public static final Block termasect_statue = null;
     @ObjectHolder("sunstorm_statue")
     public static final Block sunstorm_statue = null;
+    @ObjectHolder("experienced_cori_statue")
+    public static final Block experienced_cori_statue = null;
 
     // Liquid
     @ObjectHolder("tar")
@@ -1052,6 +1060,8 @@ public class ModBlocks {
     public static final Block sunstormSpawner = null;
     @ObjectHolder("termasect_spawner")
     public static final Block termasectSpawner = null;
+    @ObjectHolder("experienced_cori_spawner")
+    public static final Block experiencedCoriSpawner = null;
 
     @ObjectHolder("structure_block")
     public static final StructureBlock structure_block = null;
@@ -1137,6 +1147,7 @@ public class ModBlocks {
         register(registry, new BlockMod(EnumBlockType.ROCK, "eden_bricks", 3.0F, IRON).setResistance(30.0F));
         register(registry, new BlockMod(EnumBlockType.ROCK, "wildwood_bricks", 3.0F, IRON).setResistance(30.0F));
         register(registry, new BlockMod(EnumBlockType.ROCK, "apalachia_bricks", 3.0F, IRON).setResistance(30.0F));
+        register(registry, new BlockMod(EnumBlockType.ROCK, "skythern_bricks", 3.0F, IRON).setResistance(30.0F));
 
         // Minibricks
         register(registry, new BlockMod(EnumBlockType.ROCK, "minibricks", 3.0F, IRON).setResistance(30.0F));
@@ -1240,6 +1251,7 @@ public class ModBlocks {
 
         register(registry, new BlockStatue("termasect_statue", StatueType.TERMASECT_STATUE));
         register(registry, new BlockStatue("sunstorm_statue", StatueType.SUNSTORM_STATUE));
+        register(registry, new BlockStatue("experienced_cori_statue", StatueType.EXPERIENCED_CORI_STATUE));
 
         // Ayeraco technical blocks
         registerItemlessBlock(registry, new BlockAyeracoBeam("ayeraco_beam_blue", "blue"));
@@ -1685,9 +1697,8 @@ public class ModBlocks {
         // newSpawners
         //
         register(registry, new BlockSingleUseSpawner("sunstorm_spawner", EntitySunstorm.class, 20 * 5, 5));
-        register(registry, new BlockSingleUseSpawner("termasect_spawner", EntityTermasect.class, 20 * 5, 5,
-                // should spawn above
-                new BlockPos(0, 11, 0)));
+        register(registry, new BlockSingleUseSpawner("termasect_spawner", EntityTermasect.class, 20 * 5, 5, new BlockPos(0, 11, 0)));
+        register(registry, new BlockSingleUseSpawner("experienced_cori_spawner", EntityExperiencedCori.class, 20 * 5, 5, new BlockPos(0, 11, 0)));
 
         register(registry, new Pillar("pillar"));
         register(registry, new StructureBlock());
