@@ -36,22 +36,22 @@ public class MultiblockDescription {
         register(KING_COMPRESSOR,
                 new Matcher()
                         .aisle(
-                                "aaa",
-                                "aaa",
-                                "aaa")
+                                "sssss",
+                                "sbbbs",
+                                "sblbs",
+                                "sbbbs",
+                                "psasp")
                         .aisle(
-                                "ooo",
-                                "oko",
-                                "ooo")
-                        .aisle(
-                                "pop",
-                                "pAp",
-                                "pop")
-                        .where('a', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
-                        .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
-                        .where('k', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
+                                "aaaaa",
+                                "apApa",
+                                "aAcAa",
+                                "apApa",
+                                "aaaaa")
+                        .where('A', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
+                        .where('a', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
+                        .where('c', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
                         .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.PILLAR))
-                        .where('A', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
+                        .where('s', Blocks.QUARTZ_STAIRS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.QUARTZ_STAIRS))
                         .build());
     }
 

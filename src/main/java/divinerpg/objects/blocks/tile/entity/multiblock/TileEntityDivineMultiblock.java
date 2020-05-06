@@ -14,9 +14,14 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
     private IMultiStructure structure;
     private String name;
     private Integer guiId;
-    private BlockPos topLeft;
-    private EnumFacing finger;
-    private EnumFacing thumb;
+
+    /**
+     * Top left conrenr of structure
+     */
+    protected BlockPos topLeft;
+    protected BlockPos bottomRight;
+    protected EnumFacing finger;
+    protected EnumFacing thumb;
 
     private boolean isWorking = false;
 
@@ -32,18 +37,16 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         this.name = name;
         this.guiId = guiId;
 
-        finger = EnumFacing.NORTH;
-        thumb = EnumFacing.NORTH;
-        topLeft = BlockPos.ORIGIN.down();
+        onDestroy();
     }
 
     @Override
     public void onDestroy() {
-        if (!isConstructed())
-            return;
-
         isWorking = true;
-        structure.constructStructure(world, topLeft, finger, thumb, true);
+
+        if (isConstructed()) {
+            structure.constructStructure(world, topLeft, finger, thumb, true);
+        }
 
         finger = EnumFacing.NORTH;
         thumb = EnumFacing.NORTH;
@@ -68,6 +71,9 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
             topLeft = match.getFrontTopLeft();
             finger = match.getForwards();
             thumb = match.getUp();
+            bottomRight = topLeft
+                    .offset(match.getForwards(), match.getWidth())
+                    .offset(match.getUp(), match.getHeight());
             return true;
         } finally {
             isWorking = false;
@@ -76,7 +82,10 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
 
     @Override
     public boolean isConstructed() {
-        return !world.isOutsideBuildHeight(topLeft);
+        if (topLeft == null || world.isOutsideBuildHeight(topLeft))
+            return false;
+
+        return bottomRight != null && !world.isOutsideBuildHeight(bottomRight);
     }
 
     @Override
@@ -110,6 +119,7 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         topLeft = BlockPos.fromLong(compound.getLong("topLeft"));
+        bottomRight = BlockPos.fromLong(compound.getLong("bottomRight"));
         finger = EnumFacing.byName(compound.getString("finger"));
         thumb = EnumFacing.byName(compound.getString("thumb"));
     }
@@ -119,6 +129,7 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         NBTTagCompound result = super.writeToNBT(compound);
 
         result.setLong("topLeft", topLeft.toLong());
+        result.setLong("bottomRight", bottomRight.toLong());
         result.setString("finger", finger.getName());
         result.setString("thumb", thumb.getName());
 

@@ -4,12 +4,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-public class DivineStackHandler extends ItemStackHandler {
+public class DivineStackHandler extends ItemStackHandler implements IStackListener {
 
-    private final Consumer<Integer> onContentChangedCallBack;
+    private final List<Consumer<Integer>> callbacks = new ArrayList<>();
     private final BiPredicate<Integer, ItemStack> isSlotValid;
     private final int maxStackSize;
 
@@ -24,7 +26,7 @@ public class DivineStackHandler extends ItemStackHandler {
                               BiPredicate<Integer, ItemStack> isSlotValid,
                               int maxStackSize) {
         super(count);
-        this.onContentChangedCallBack = onContentChanged;
+        callbacks.add(onContentChanged);
         this.isSlotValid = isSlotValid;
         this.maxStackSize = maxStackSize;
     }
@@ -41,6 +43,11 @@ public class DivineStackHandler extends ItemStackHandler {
 
     @Override
     protected void onContentsChanged(int slot) {
-        onContentChangedCallBack.accept(slot);
+        callbacks.forEach(x -> x.accept(slot));
+    }
+
+    @Override
+    public void addListener(Consumer<Integer> onSlotChanged) {
+        callbacks.add(onSlotChanged);
     }
 }

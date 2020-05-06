@@ -8,9 +8,11 @@ import divinerpg.config.Config;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
-import divinerpg.objects.blocks.tile.entity.pillar.DivineStackHandler;
+import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
 import divinerpg.registry.ModItems;
 import divinerpg.utils.multiblock.MultiblockDescription;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -21,18 +23,20 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TileEntityKingCompressor extends TileEntityDivineMultiblock implements IFuelProvider, ITickable, IInteractionObject {
-
     //region Fields
     /**
      * List of possible fuels
@@ -72,7 +76,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     /**
      * Main container
      */
-    private ItemStackHandler container;
+    private IItemHandlerModifiable container;
     /**
      * Limit of absorbed sets amount
      */
@@ -93,7 +97,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         }};
         outputSlot = 7;
 
-        container = new DivineStackHandler(8, this::recheckRecipe, this::isItemValidForSlot);
+        container = new EmptyHandler();
 
         setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.kingCreationPercentage / 100.0));
     }
@@ -101,18 +105,19 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     // region IFuelProvider
     @Override
     public boolean needFuel() {
-        return true;
+        return false;
     }
 
     @Override
     public int consumeFuel() {
-        for (Integer id : fuelSlots) {
-            ItemStack stack = getStackInSlot(id);
-            if (fuelMap.containsKey(stack.getItem())) {
-                int result = fuelMap.get(stack.getItem());
+        for (int i = 0; i < getInventoryRef().getSlots(); i++) {
+            ItemStack stack = getStackInSlot(i);
 
-                decrStackSize(id, 1);
-                return result;
+            Integer burntime = fuelMap.get(stack.getItem());
+            if (burntime != null) {
+
+                decrStackSize(i, 1);
+                return burntime;
             }
         }
 
@@ -166,7 +171,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public int getCookTimeLength() {
-        return 500;
+        return 1000;
     }
 
     @Override
@@ -214,7 +219,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        container.deserializeNBT(compound.getCompoundTag("container"));
+        // container.deserializeNBT(compound.getCompoundTag("container"));
 
         setBurningTicks(compound.getInteger("burn"));
         setCookTime(compound.getInteger("cook"));
@@ -234,7 +239,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound result = super.writeToNBT(compound);
 
-        result.setTag("container", container.serializeNBT());
+        // result.setTag("container", container.serializeNBT());
         result.setInteger("burn", getBurningTicks());
         result.setInteger("cook", getCurrentCookTime());
 
@@ -247,6 +252,41 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     }
 
     // endregion
+
+    @Override
+    public boolean checkAndBuild() {
+        if (super.checkAndBuild()) {
+
+            List<TileEntityPillar> pillars = new ArrayList<>();
+
+            BlockPos.getAllInBox(topLeft, bottomRight).forEach(x -> {
+                TileEntity entity = world.getTileEntity(x);
+                if (entity instanceof TileEntityPillar) {
+                    pillars.add(((TileEntityPillar) entity));
+                }
+            });
+
+            container = new CombinedInvWrapper(pillars
+                    .stream()
+                    .map(TileEntityPillar::getInventory)
+                    .toArray(IItemHandlerModifiable[]::new)
+            );
+
+            pillars.stream().filter(x -> x.getInventory() instanceof IStackListener)
+                    .forEach(x -> ((IStackListener) x.getInventory()).addListener(this::recheckRecipe));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        container = new EmptyHandler();
+    }
 
     @Override
     public void update() {
@@ -271,9 +311,14 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     }
 
     private Set<ResourceLocation> getSetsToApply() {
-        Map<EntityEquipmentSlot, ItemStack> input = Arrays.stream(EntityEquipmentSlot.values()).collect(Collectors.toMap(x -> x, x -> getStackInSlot(x.getSlotIndex())));
+        Map<EntityEquipmentSlot, ItemStack> input = new HashMap<>();
 
-        if (input.values().stream().allMatch(ItemStack::isEmpty))
+        for (int i = 0; i < getInventoryRef().getSlots(); i++) {
+            ItemStack slot = getStackInSlot(i);
+            input.put(EntityLiving.getSlotForItemStack(slot), slot);
+        }
+
+        if (input.isEmpty() || input.values().stream().allMatch(ItemStack::isEmpty))
             return Sets.newHashSet();
 
         ArmorEquippedEvent event = new ArmorEquippedEvent(input);

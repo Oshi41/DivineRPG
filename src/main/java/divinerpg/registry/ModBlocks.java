@@ -56,6 +56,8 @@ public class ModBlocks {
     public static final Block bloodgemOre = null;
     @ObjectHolder("netherite_ore")
     public static final Block netheriteOre = null;
+    @ObjectHolder("king_ore")
+    public static final Block king_ore = null;
 
     // Compressed ore blocks
     @ObjectHolder("arlemite_block")
@@ -1079,6 +1081,7 @@ public class ModBlocks {
         register(registry, new BlockModOre("rupee_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockModOre("bloodgem_ore", 3.0F, 2000F, DIAMOND, () -> ModItems.bloodgem));
         register(registry, new BlockNetheriteOre("netherite_ore", 3.0F, 2000F, DIAMOND));
+        register(registry, new BlockModOre("king_ore", 5.0F, 2000F, DIAMOND + 1, () -> null));
 
         // Compressed ore blocks
         register(registry, new BlockBeaconBase(EnumBlockType.ROCK, "arlemite_block", 5.0F, DIAMOND));
@@ -1690,7 +1693,7 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockModSlab("eucalyptus_double_slab", BlockModPlank.EnumType.EUCALYPTUS, true));
 
         registerItemlessBlock(registry, new KingCompressor("king_compressor"));
-        register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5));
+        register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5).setLightLevel(14));
 
         //
         // newSpawners
