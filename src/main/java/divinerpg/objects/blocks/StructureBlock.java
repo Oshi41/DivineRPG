@@ -3,13 +3,14 @@ package divinerpg.objects.blocks;
 import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
-import divinerpg.utils.PositionHelper;
+import divinerpg.utils.multiblock.MultiblockDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -23,6 +24,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -120,18 +123,35 @@ public class StructureBlock extends BlockMod {
     @Nullable
     private IMultiblockTile searchTile(World world, BlockPos pos, @Nullable Consumer<IMultiblockTile> callback) {
 
-        BlockPos tilePos = PositionHelper.searchInRadius(world, pos, 4, p -> world.getTileEntity(p) instanceof IMultiblockTile);
+        BlockPattern.PatternHelper match = MultiblockDescription
+                .getAll()
+                .stream()
+                .map(x -> x.isMatch(world, pos))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
 
-        TileEntity tile = world.getTileEntity(tilePos);
+        if (match != null) {
+            BlockPos topLeft = match.getFrontTopLeft();
+            BlockPos bottomRight = topLeft.offset(match.getUp(), match.getHeight())
+                    .offset(match.getForwards(), match.getWidth());
 
-        if (tile instanceof IMultiblockTile) {
-            if (callback != null) {
-                callback.accept((IMultiblockTile) tile);
+            Iterator<BlockPos> iterator = BlockPos.getAllInBox(topLeft, bottomRight).iterator();
+
+            while (iterator.hasNext()) {
+                TileEntity entity = world.getTileEntity(iterator.next());
+
+                if (entity instanceof IMultiblockTile) {
+                    IMultiblockTile multiEntity = (IMultiblockTile) entity;
+
+                    if (callback == null) {
+                        callback.accept(multiEntity);
+                    }
+
+                    return multiEntity;
+                }
             }
-
-            return ((IMultiblockTile) tile);
         }
-
 
         return null;
     }

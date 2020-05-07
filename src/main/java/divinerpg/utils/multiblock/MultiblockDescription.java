@@ -52,6 +52,8 @@ public class MultiblockDescription {
                         .where('c', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
                         .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.PILLAR))
                         .where('s', Blocks.QUARTZ_STAIRS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.QUARTZ_STAIRS))
+                        .where('b', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
+                        .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.structure_block.getDefaultState())
                         .build());
     }
 

@@ -1,4 +1,4 @@
-package divinerpg.utils.attributes;
+package divinerpg.utils.reflection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

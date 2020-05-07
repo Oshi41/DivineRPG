@@ -1,4 +1,4 @@
-package divinerpg.utils.attributes;
+package divinerpg.utils.reflection;
 
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 

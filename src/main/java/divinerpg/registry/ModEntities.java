@@ -105,6 +105,7 @@ public class ModEntities {
                 buildEntityEntry(EntityTheEye.class, "the_eye", OVERWORLD),
                 buildEntityEntry(EntityTheGrue.class, "the_grue", OVERWORLD),
                 buildEntityEntry(EntityWhale.class, "whale", OVERWORLD),
+                buildEntityEntry(AncientKingEntity.class, "ancient_king", OVERWORLD),
 
                 // Nether
                 buildEntityEntry(EntityHellPig.class, "hell_pig", NETHER),
@@ -423,6 +424,7 @@ public class ModEntities {
         registerRender(EntityWhale.class, RenderWhale::new);
         registerRender(EntityWhiteGrizzle.class, RenderWhiteGrizzle::new);
         registerRender(EntityWildfire.class, RenderWildfire::new);
+        registerRender(AncientKingEntity.class, RenderAncientKing::new);
 
         // Iceika
         registerRender(EntityAlicanto.class, RenderAlicanto::new);

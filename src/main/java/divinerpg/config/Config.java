@@ -424,6 +424,8 @@ public class Config {
             put("zone_health", 120.0F);
             put("zoragon_attack", 0.0F);
             put("zoragon_health", 70.0F);
+            put("ancient_king_health", 3200.0F);
+            put("ancient_king_attack", 2.0F);
         }};
 
         while (!attrubutesMap.isEmpty()) {
