@@ -3,13 +3,13 @@
  */
 package divinerpg;
 
+import divinerpg.events.enchants.WorldBreakEnchantHandler;
 import divinerpg.events.server.SwapFactory;
 import org.apache.logging.log4j.LogManager;
 
 import divinerpg.api.Reference;
 import divinerpg.api.armor.registry.IArmorDescription;
 import divinerpg.events.*;
-import divinerpg.events.enchants.DiggingTaskFactory;
 import divinerpg.proxy.CommonProxy;
 import divinerpg.registry.*;
 import divinerpg.utils.Utils;
@@ -19,8 +19,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.*;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -44,7 +49,6 @@ public class DivineRPG {
     public DivineRPG() {
         MinecraftForge.EVENT_BUS.register(this);
         logger = LogManager.getLogger();
-        AttributeFixer.init();
     }
 
     /**
@@ -58,7 +62,9 @@ public class DivineRPG {
         proxy.registerTileEntities();
         MinecraftForge.EVENT_BUS.register(new ArcanaTickHandler());
         MinecraftForge.EVENT_BUS.register(new EventEntityDrop());
+        MinecraftForge.EVENT_BUS.register(new WorldBreakEnchantHandler());
         ModMessages.initMessages();
+        AttributeFixer.patchMaximumHealth();
     }
 
     @Mod.EventHandler
@@ -77,11 +83,9 @@ public class DivineRPG {
         }
         ModSpawns.initSpawns();
         Utils.loadHatInformation();
-
         DimensionHelper.initPortalDescriptions();
         MultiblockDescription.getAll();
 
-        MinecraftForge.EVENT_BUS.register(new DiggingTaskFactory());
         MinecraftForge.EVENT_BUS.register(SwapFactory.instance);
     }
 
