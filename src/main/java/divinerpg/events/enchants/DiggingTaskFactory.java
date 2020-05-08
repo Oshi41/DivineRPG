@@ -45,6 +45,11 @@ public class DiggingTaskFactory extends TaskFactory<BlockEvent.HarvestDropsEvent
         return event.getHarvester().getServer();
     }
 
+    @Override
+    protected int getDelay() {
+        return 1;
+    }
+
     @SubscribeEvent
     public void onListen(BlockEvent.HarvestDropsEvent event) {
         super.listen(event);

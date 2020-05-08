@@ -3,6 +3,7 @@
  */
 package divinerpg;
 
+import divinerpg.events.server.SwapFactory;
 import org.apache.logging.log4j.LogManager;
 
 import divinerpg.api.Reference;
@@ -46,7 +47,9 @@ public class DivineRPG {
         AttributeFixer.init();
     }
 
-    /** Init Methods */
+    /**
+     * Init Methods
+     */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
@@ -75,12 +78,16 @@ public class DivineRPG {
         ModSpawns.initSpawns();
         Utils.loadHatInformation();
 
-        MinecraftForge.EVENT_BUS.register(new DiggingTaskFactory());
         DimensionHelper.initPortalDescriptions();
         MultiblockDescription.getAll();
+
+        MinecraftForge.EVENT_BUS.register(new DiggingTaskFactory());
+        MinecraftForge.EVENT_BUS.register(SwapFactory.instance);
     }
 
-    /** For Registering Commands */
+    /**
+     * For Registering Commands
+     */
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
 
@@ -92,11 +99,6 @@ public class DivineRPG {
     @SubscribeEvent
     public void createRegistries(RegistryEvent.NewRegistry event) {
         logger.info("Creating registries");
-
-//        new RegistryBuilder<IPoweredArmor>()
-//                .setName(new ResourceLocation(Reference.MODID, "powers"))
-//                .setType(IPoweredArmor.class)
-//                .create();
 
         new RegistryBuilder<IArmorDescription>()
                 .setName(new ResourceLocation(Reference.MODID, "armor_descriptions"))

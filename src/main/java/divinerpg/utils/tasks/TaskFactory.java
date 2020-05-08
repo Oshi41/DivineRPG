@@ -1,8 +1,9 @@
 package divinerpg.utils.tasks;
 
 import net.minecraft.util.IThreadListener;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -10,12 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public abstract class TaskFactory<T extends Event> {
-    private final Map<UUID, ScheduledTask<T>> playerTasks = new ConcurrentHashMap<>();
+    protected final Map<UUID, ScheduledTask<T>> playerTasks = new ConcurrentHashMap<>();
     private Function<T, UUID> findActorFunc;
 
     protected TaskFactory(Function<T, UUID> findActorFunc) {
         this.findActorFunc = findActorFunc;
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     /**
@@ -43,6 +43,13 @@ public abstract class TaskFactory<T extends Event> {
      * @return
      */
     protected abstract IThreadListener getListener(T event);
+
+    /**
+     * Get task delay
+     *
+     * @return
+     */
+    protected abstract int getDelay();
 
     /**
      * Should called on every implementation.
@@ -75,12 +82,22 @@ public abstract class TaskFactory<T extends Event> {
 
                 if (newTask != null) {
                     newTask.merge(event);
-                    ScheduledTask<T> scheduledTask = new ScheduledTask<>(getListener(event), newTask, x -> playerTasks.remove(x.getActor()));
-                    playerTasks.put(id, scheduledTask);
 
-                    scheduledTask.executeOnNextTick();
+                    playerTasks.put(id, new ScheduledTask<>(getListener(event),
+                            newTask,
+                            x -> playerTasks.remove(x.getActor()),
+                            getDelay()));
                 }
             }
         }
     }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent e) {
+        if (e.phase != TickEvent.Phase.END)
+            return;
+
+        playerTasks.values().forEach(x -> x.onServerTick(e));
+    }
+
 }

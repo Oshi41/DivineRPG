@@ -1,13 +1,12 @@
 package divinerpg.utils;
 
+import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -126,5 +125,39 @@ public class PositionHelper {
 
         }
         return center;
+    }
+
+    /**
+     * Returns area of structure
+     *
+     * @param match
+     * @return
+     */
+    public static AxisAlignedBB getArea(BlockPattern.PatternHelper match) {
+        return new AxisAlignedBB(match.getFrontTopLeft(), match.getFrontTopLeft()
+                .offset(match.getForwards(), match.getWidth())
+                .offset(match.getUp(), match.getHeight()));
+    }
+
+    /**
+     * copy of BlockPattern.translateOffset
+     *
+     * @param pos
+     * @param finger
+     * @param thumb
+     * @param palmOffset
+     * @param thumbOffset
+     * @param fingerOffset
+     * @return
+     */
+    public static BlockPos translateOffset(BlockPos pos, EnumFacing finger, EnumFacing thumb, int palmOffset, int thumbOffset, int fingerOffset) {
+        if (finger != thumb && finger != thumb.getOpposite()) {
+            Vec3i vec3i = new Vec3i(finger.getFrontOffsetX(), finger.getFrontOffsetY(), finger.getFrontOffsetZ());
+            Vec3i vec3i1 = new Vec3i(thumb.getFrontOffsetX(), thumb.getFrontOffsetY(), thumb.getFrontOffsetZ());
+            Vec3i vec3i2 = vec3i.crossProduct(vec3i1);
+            return pos.add(vec3i1.getX() * -thumbOffset + vec3i2.getX() * palmOffset + vec3i.getX() * fingerOffset, vec3i1.getY() * -thumbOffset + vec3i2.getY() * palmOffset + vec3i.getY() * fingerOffset, vec3i1.getZ() * -thumbOffset + vec3i2.getZ() * palmOffset + vec3i.getZ() * fingerOffset);
+        } else {
+            throw new IllegalArgumentException("Invalid forwards & up combination");
+        }
     }
 }

@@ -13,11 +13,13 @@ public class ScheduledTask<T extends Event> {
     private IThreadListener listener;
     private Consumer<ITask<T>> onFinish;
     private boolean isExecuting;
+    private int delay;
 
-    public ScheduledTask(IThreadListener listener, ITask<T> task, Consumer<ITask<T>> onFinish) {
+    public ScheduledTask(IThreadListener listener, ITask<T> task, Consumer<ITask<T>> onFinish, int delay) {
         this.listener = listener;
         this.task = task;
         this.onFinish = onFinish;
+        this.delay = delay;
     }
 
     public ITask<T> getTask() {
@@ -35,30 +37,23 @@ public class ScheduledTask<T extends Event> {
         return !isExecuting && getTask().shouldMerge(event);
     }
 
-    /**
-     * Subscribes on next server tick and execute task on very next tick
-     */
-    public void executeOnNextTick() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent e) {
-        if (e.phase == TickEvent.Phase.END) {
-            MinecraftForge.EVENT_BUS.unregister(this);
+        delay--;
+        if (delay >= 0)
+            return;
 
-            // already schedule executing and can't stop this
-            isExecuting = true;
+        // already schedule executing and can't stop this
+        isExecuting = true;
 
-            listener.addScheduledTask(() -> {
-                try {
-                    task.execute();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    onFinish.accept(task);
-                }
-            });
-        }
+        listener.addScheduledTask(() -> {
+            try {
+                task.execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                onFinish.accept(task);
+            }
+        });
     }
 }

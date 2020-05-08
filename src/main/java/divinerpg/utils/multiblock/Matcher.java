@@ -4,7 +4,9 @@ import com.google.common.base.Predicate;
 import divinerpg.api.DivineAPI;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiStructure;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
+import divinerpg.utils.PositionHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
@@ -15,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import org.omg.PortableServer.POAHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -57,10 +60,15 @@ public class Matcher implements IMultiStructure {
      * @return
      */
     public Matcher where(char symbol, IBlockState block, IBlockState replaceBlock) {
-        Predicate<BlockWorldState> predicate = BlockWorldState.hasState(BlockStateMatcher.forBlock(block.getBlock()));
+        Predicate<BlockWorldState> predicate = BlockWorldState.hasState(block.getMaterial() == Material.AIR
+                ? BlockStateMatcher.forBlock(block.getBlock())
+                : BlockStateMatcher.ANY);
 
         factory.where(symbol, predicate);
-        createdStructurefactory.where(symbol, BlockWorldState.hasState(BlockStateMatcher.forBlock(replaceBlock.getBlock())));
+
+        createdStructurefactory.where(symbol, BlockWorldState.hasState(replaceBlock.getMaterial() == Material.AIR
+                ? BlockStateMatcher.forBlock(replaceBlock.getBlock())
+                : BlockStateMatcher.ANY));
 
         symbolMap.put(predicate, block);
         replaceMap.put(block, replaceBlock);
@@ -122,7 +130,7 @@ public class Matcher implements IMultiStructure {
             for (int j = 0; j < pattern.getThumbLength(); ++j) {
                 for (int k = 0; k < pattern.getFingerLength(); ++k) {
 
-                    BlockPos pos = translateOffset(topLeft, finger, thumb, i, j, k);
+                    BlockPos pos = PositionHelper.translateOffset(topLeft, finger, thumb, i, j, k);
 
                     IBlockState structureState = structure[k][j][i];
                     IBlockState buildedStructureState = replaceMap.get(structureState);
@@ -144,28 +152,6 @@ public class Matcher implements IMultiStructure {
         }
 
         tiles.forEach(IMultiblockTile::recheckStructure);
-    }
-
-    /**
-     * copy of BlockPattern.translateOffset
-     *
-     * @param pos
-     * @param finger
-     * @param thumb
-     * @param palmOffset
-     * @param thumbOffset
-     * @param fingerOffset
-     * @return
-     */
-    protected BlockPos translateOffset(BlockPos pos, EnumFacing finger, EnumFacing thumb, int palmOffset, int thumbOffset, int fingerOffset) {
-        if (finger != thumb && finger != thumb.getOpposite()) {
-            Vec3i vec3i = new Vec3i(finger.getFrontOffsetX(), finger.getFrontOffsetY(), finger.getFrontOffsetZ());
-            Vec3i vec3i1 = new Vec3i(thumb.getFrontOffsetX(), thumb.getFrontOffsetY(), thumb.getFrontOffsetZ());
-            Vec3i vec3i2 = vec3i.crossProduct(vec3i1);
-            return pos.add(vec3i1.getX() * -thumbOffset + vec3i2.getX() * palmOffset + vec3i.getX() * fingerOffset, vec3i1.getY() * -thumbOffset + vec3i2.getY() * palmOffset + vec3i.getY() * fingerOffset, vec3i1.getZ() * -thumbOffset + vec3i2.getZ() * palmOffset + vec3i.getZ() * fingerOffset);
-        } else {
-            throw new IllegalArgumentException("Invalid forwards & up combination");
-        }
     }
 
     /**
@@ -192,9 +178,7 @@ public class Matcher implements IMultiStructure {
     }
 
     private void setBlock(World world, BlockPos pos, IBlockState state) {
-        IBlockState old = world.getBlockState(pos);
-        world.setBlockState(pos, state);
-        world.notifyBlockUpdate(pos, old, state, 3);
+        world.setBlockState(pos, state, 2);
     }
 
     /**
@@ -242,7 +226,7 @@ public class Matcher implements IMultiStructure {
 
         // structure contains current block
         if (current == takenFromWorld) {
-            BlockPos possiblePos = translateOffset(pos, first, second, -i, -j, -k);
+            BlockPos possiblePos = PositionHelper.translateOffset(pos, first, second, -i, -j, -k);
 
             // possible corner is same as planned
             if (world.getBlockState(possiblePos).getBlock() == corner) {
