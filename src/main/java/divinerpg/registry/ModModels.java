@@ -55,6 +55,7 @@ public class ModModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEdenChest.class, new RenderEdenChest());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNightmareBed.class, new RenderNightmareBed());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPillar.class, new RenderPillar());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKingCompressor.class, new RenderKingCompressor());
 
         registerRenders(new RenderItemStatue(),
                 ModBlocks.ancientEntityStatue,

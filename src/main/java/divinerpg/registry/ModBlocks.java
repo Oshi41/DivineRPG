@@ -1692,7 +1692,7 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockModSlab("frozen_double_slab", BlockModPlank.EnumType.FROZEN, true));
         registerItemlessBlock(registry, new BlockModSlab("eucalyptus_double_slab", BlockModPlank.EnumType.EUCALYPTUS, true));
 
-        registerItemlessBlock(registry, new KingCompressor("king_compressor"));
+        register(registry, new KingCompressor("king_compressor"));
         register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5).setLightLevel(14));
 
         //

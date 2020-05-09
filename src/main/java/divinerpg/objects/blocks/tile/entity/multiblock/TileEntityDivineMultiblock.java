@@ -4,24 +4,19 @@ import divinerpg.DivineRPG;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
-import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
-import org.apache.commons.lang3.text.StrMatcher;
+
+import javax.annotation.Nullable;
 
 public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity implements IMultiblockTile, IInteractionObject {
     private final StructurePattern structure;
     private String name;
     private Integer guiId;
 
-    /**
-     * Current Structure match
-     */
-    protected StructureMatch match;
+    private StructureMatch match;
 
     private boolean isWorking = false;
 
@@ -40,12 +35,21 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         onDestroy();
     }
 
+    /**
+     * Current Structure match
+     */
+    @Nullable
+    @Override
+    public StructureMatch getMatch() {
+        return match;
+    }
+
     @Override
     public void onDestroy() {
         isWorking = true;
 
         if (isConstructed()) {
-            match.destroy(world);
+            getMatch().destroy(world);
             match = null;
         }
 
@@ -62,7 +66,7 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
             if (isConstructed()) {
 
                 if (!world.isRemote)
-                    match.buildStructure(world);
+                    getMatch().buildStructure(world);
 
                 return isConstructed();
             }
@@ -75,17 +79,12 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
     }
 
     @Override
-    public boolean isConstructed() {
-        return match != null;
-    }
-
-    @Override
     public void recheckStructure() {
         if (isWorking)
             return;
 
         if (isConstructed()) {
-            StructureMatch newMatch = structure.recheck(world, match);
+            StructureMatch newMatch = structure.recheck(world, getMatch());
 
             if (newMatch == null) {
                 onDestroy();

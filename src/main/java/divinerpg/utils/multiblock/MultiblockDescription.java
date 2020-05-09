@@ -26,15 +26,6 @@ public class MultiblockDescription {
                 new StructureBuilder()
                         .aisle(
                                 "AAA",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo"
-                        )
-                        .aisle(
-                                "AAA",
                                 "oMo",
                                 "ooo",
                                 "ooo",
@@ -46,8 +37,17 @@ public class MultiblockDescription {
                                 "AAA",
                                 "ooo",
                                 "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo"
+                        )
+                        .aisle(
+                                "AAA",
+                                "ooo",
                                 "olo",
                                 "KbK",
+                                "aaa",
                                 "aaa",
                                 "pap"
                         )
@@ -75,8 +75,8 @@ public class MultiblockDescription {
                         .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ICON_BARS))
                         .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
                         .where('M', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
-                        .where('K', ModBlocks.king_compressor_part.getDefaultState(), Blocks.OBSIDIAN.getDefaultState())
-                        .where('l', Blocks.LAVA.getDefaultState(), Blocks.WATER.getDefaultState())
+                        .where('K', ModBlocks.king_compressor_part.getDefaultState(),  ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.COMPRESSOR_PART))
+                        .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.structure_block.getDefaultState())
                         .build());
     }
 

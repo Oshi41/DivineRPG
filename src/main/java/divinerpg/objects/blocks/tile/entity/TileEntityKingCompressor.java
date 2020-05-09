@@ -24,10 +24,8 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -258,7 +256,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     public boolean checkAndBuild() {
         if (super.checkAndBuild()) {
 
-            List<TileEntityPillar> pillars = PositionHelper.findTiles(world, match.area, TileEntityPillar.class);
+            List<TileEntityPillar> pillars = PositionHelper.findTiles(world, getMatch().area, TileEntityPillar.class);
 
             container = new CombinedInvWrapper(pillars
                     .stream()

@@ -14,7 +14,8 @@ public enum EnumPlaceholder implements IStringSerializable {
     ICON_BARS(Blocks.IRON_BARS.getRegistryName()),
     ANVIL(Blocks.ANVIL.getRegistryName()),
     QUARTZ_STAIRS(Blocks.QUARTZ_STAIRS.getRegistryName()),
-    PILLAR("pillar");
+    PILLAR("pillar"),
+    COMPRESSOR_PART("king_compressor_part");
 
 
     private final ResourceLocation blockId;

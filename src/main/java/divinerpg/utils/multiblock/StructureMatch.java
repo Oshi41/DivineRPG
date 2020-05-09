@@ -2,13 +2,19 @@ package divinerpg.utils.multiblock;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
+import com.sun.org.apache.bcel.internal.generic.IMUL;
+import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,6 +24,8 @@ public class StructureMatch {
      */
     public final AxisAlignedBB area;
     private boolean constructed;
+    public final EnumFacing up;
+    public final EnumFacing forwards;
 
     private final Map<BlockPos, IBlockState> structure;
     private final Map<BlockPos, Predicate<BlockWorldState>> structurePredicates;
@@ -29,13 +37,17 @@ public class StructureMatch {
                           Map<BlockPos, Predicate<BlockWorldState>> structurePredicates,
                           Map<BlockPos, IBlockState> builtStructure,
                           Map<BlockPos, Predicate<BlockWorldState>> builtStructurePredicates,
-                          boolean constructed) {
+                          boolean constructed,
+                          EnumFacing finger,
+                          EnumFacing thumb) {
         this.area = area;
         this.structure = structure;
         this.structurePredicates = structurePredicates;
         this.buildedStructure = builtStructure;
         this.builtStructurePredicates = builtStructurePredicates;
         this.constructed = constructed;
+        this.up = thumb;
+        this.forwards = finger;
     }
 
     /**
@@ -91,13 +103,22 @@ public class StructureMatch {
     private void buildStructure(World world, Map<BlockPos, Predicate<BlockWorldState>> predicates, Map<BlockPos, IBlockState> structure, boolean ignoreAir) {
         LoadingCache<BlockPos, BlockWorldState> cache = BlockPattern.createLoadingCache(world, true);
 
+        List<IMultiblockTile> tiles = new ArrayList<>();
+
         predicates.forEach((pos, condition) -> {
             if (!condition.test(cache.getUnchecked(pos))) {
 
                 if (ignoreAir || !world.isAirBlock(pos))
                     world.setBlockState(pos, structure.get(pos), 2);
             }
+
+            TileEntity tileEntity = world.getTileEntity(pos);
+            if (tileEntity instanceof IMultiblockTile){
+                tiles.add((IMultiblockTile) tileEntity);
+            }
         });
+
+        tiles.forEach(IMultiblockTile::recheckStructure);
     }
 
     @Override
