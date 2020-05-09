@@ -83,17 +83,25 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         if (isWorking)
             return;
 
-        if (isConstructed()) {
-            StructureMatch newMatch = structure.recheck(world, getMatch());
+        // was not constructed
+        if (match == null) {
+            match = structure.checkStructure(world, pos);
 
-            if (newMatch == null) {
-                onDestroy();
-            } else {
-                match = newMatch;
+            if (match != null) {
+                if (!world.isRemote) {
+                    match.buildStructure(world);
+                }
             }
-
         } else {
-            checkAndBuild();
+            StructureMatch multi = structure.checkMultiblock(world, pos);
+            if (multi == null) {
+
+                if (!world.isRemote) {
+                    match.destroy(world);
+                }
+
+                match = null;
+            }
         }
     }
 

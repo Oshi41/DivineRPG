@@ -1,5 +1,7 @@
 package divinerpg.utils;
 
+import com.google.common.collect.Streams;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +16,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 public class PositionHelper {
     public static RayTraceResult rayTrace(EntityPlayer player, double blockReachDistance, int partialTicks) {
@@ -211,5 +215,18 @@ public class PositionHelper {
         }
 
         return result;
+    }
+
+    /**
+     * Scan area for blocks
+     *
+     * @param area
+     * @return
+     */
+    public static Iterator<BlockPos> forEveryBlock(AxisAlignedBB area, Predicate<BlockPos> predicate) {
+        return StreamSupport.stream(BlockPos.getAllInBox(new BlockPos(area.minX, area.minY, area.minZ), new BlockPos(area.maxX, area.maxY, area.maxZ))
+                .spliterator(), false)
+                .filter(predicate)
+                .iterator();
     }
 }

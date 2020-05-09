@@ -1,10 +1,13 @@
 package divinerpg.events.server;
 
+import divinerpg.objects.blocks.StructureBlock;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
+import divinerpg.registry.ModBlocks;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.ITask;
+import javafx.geometry.Pos;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -79,10 +82,12 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
 
         for (AxisAlignedBB area : recheckForTile) {
             IMultiblockTile tile = PositionHelper.findTile(world, area, IMultiblockTile.class);
-            if (tile == null)
-                continue;
-
-            tile.recheckStructure();
+            if (tile != null) {
+                tile.recheckStructure();
+            } else {
+                PositionHelper.forEveryBlock(area, pos -> world.getBlockState(pos).getBlock() == ModBlocks.structure_block)
+                        .forEachRemaining(x -> world.destroyBlock(x, true));
+            }
         }
     }
 
