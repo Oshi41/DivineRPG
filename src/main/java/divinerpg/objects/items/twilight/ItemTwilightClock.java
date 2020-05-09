@@ -87,8 +87,8 @@ public class ItemTwilightClock extends ItemMod {
 
         // todo Remove
         if (!worldIn.isRemote) {
-            if (MultiblockDescription.getAll().stream().anyMatch(x -> x.createStructure(worldIn, pos))) {
-                player.sendMessage(new TextComponentString("Is build"));
+            if (MultiblockDescription.instance.getAll().stream().anyMatch(x -> x.checkStructure(worldIn, pos) != null)) {
+                player.sendMessage(new TextComponentString("Correct structure"));
             }
         }
 

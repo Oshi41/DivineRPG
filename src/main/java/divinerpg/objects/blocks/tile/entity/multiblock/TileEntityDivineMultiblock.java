@@ -2,6 +2,8 @@ package divinerpg.objects.blocks.tile.entity.multiblock;
 
 import divinerpg.DivineRPG;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
+import divinerpg.utils.multiblock.StructureMatch;
+import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,19 +11,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
+import org.apache.commons.lang3.text.StrMatcher;
 
 public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity implements IMultiblockTile, IInteractionObject {
-    private IMultiStructure structure;
+    private final StructurePattern structure;
     private String name;
     private Integer guiId;
 
     /**
-     * Top left conrenr of structure
+     * Current Structure match
      */
-    protected BlockPos topLeft;
-    protected BlockPos bottomRight;
-    protected EnumFacing finger;
-    protected EnumFacing thumb;
+    protected StructureMatch match;
 
     private boolean isWorking = false;
 
@@ -32,7 +32,7 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
      * @param name      - name of tile
      * @param guiId     - possible GUI ID. Pass null o disable interaction
      */
-    public TileEntityDivineMultiblock(IMultiStructure structure, String name, Integer guiId) {
+    public TileEntityDivineMultiblock(StructurePattern structure, String name, Integer guiId) {
         this.structure = structure;
         this.name = name;
         this.guiId = guiId;
@@ -45,12 +45,9 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         isWorking = true;
 
         if (isConstructed()) {
-            structure.constructStructure(world, topLeft, finger, thumb, true);
+            match.destroy(world);
+            match = null;
         }
-
-        finger = EnumFacing.NORTH;
-        thumb = EnumFacing.NORTH;
-        topLeft = BlockPos.ORIGIN.down();
 
         isWorking = false;
     }
@@ -60,32 +57,26 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         isWorking = true;
 
         try {
-            BlockPattern.PatternHelper match = structure.isMatch(world, getPos());
-            if (match == null)
-                return false;
+            match = structure.checkStructure(world, getPos());
 
-            if (!world.isRemote) {
-                structure.constructStructure(world, match);
+            if (isConstructed()) {
+
+                if (!world.isRemote)
+                    match.buildStructure(world);
+
+                return isConstructed();
             }
 
-            topLeft = match.getFrontTopLeft();
-            finger = match.getForwards();
-            thumb = match.getUp();
-            bottomRight = topLeft
-                    .offset(match.getForwards(), match.getWidth())
-                    .offset(match.getUp(), match.getHeight());
-            return true;
         } finally {
             isWorking = false;
         }
+
+        return false;
     }
 
     @Override
     public boolean isConstructed() {
-        if (topLeft == null || world.isOutsideBuildHeight(topLeft))
-            return false;
-
-        return bottomRight != null && !world.isOutsideBuildHeight(bottomRight);
+        return match != null;
     }
 
     @Override
@@ -94,8 +85,14 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
             return;
 
         if (isConstructed()) {
-            if (structure.isMatch(world, getPos()) == null)
+            StructureMatch newMatch = structure.recheck(world, match);
+
+            if (newMatch == null) {
                 onDestroy();
+            } else {
+                match = newMatch;
+            }
+
         } else {
             checkAndBuild();
         }
@@ -111,29 +108,6 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         if (!world.isRemote && guiId != null) {
             player.openGui(DivineRPG.instance, guiId, world, pos.getX(), pos.getY(), pos.getZ());
         }
-    }
-
-    // region NBT
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        topLeft = BlockPos.fromLong(compound.getLong("topLeft"));
-        bottomRight = BlockPos.fromLong(compound.getLong("bottomRight"));
-        finger = EnumFacing.byName(compound.getString("finger"));
-        thumb = EnumFacing.byName(compound.getString("thumb"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        NBTTagCompound result = super.writeToNBT(compound);
-
-        result.setLong("topLeft", topLeft.toLong());
-        result.setLong("bottomRight", bottomRight.toLong());
-        result.setString("finger", finger.getName());
-        result.setString("thumb", thumb.getName());
-
-        return result;
     }
 
 

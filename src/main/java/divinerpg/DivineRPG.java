@@ -84,7 +84,6 @@ public class DivineRPG {
         ModSpawns.initSpawns();
         Utils.loadHatInformation();
         DimensionHelper.initPortalDescriptions();
-        MultiblockDescription.getAll();
 
         MinecraftForge.EVENT_BUS.register(SwapFactory.instance);
     }

@@ -3,79 +3,102 @@ package divinerpg.utils.multiblock;
 import divinerpg.DivineRPG;
 import divinerpg.api.Reference;
 import divinerpg.enums.EnumPlaceholder;
-import divinerpg.objects.blocks.tile.entity.multiblock.IMultiStructure;
 import divinerpg.registry.ModBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class MultiblockDescription {
-    /**
-     * Map of all contaning structure infos
-     */
-    private static final Map<ResourceLocation, IMultiStructure> multiStructures;
+    public final static MultiblockDescription instance = new MultiblockDescription();
 
     /**
-     * Wekk known id of king compressor
+     * List of all structures
      */
-    public static final ResourceLocation KING_COMPRESSOR;
+    private final Map<ResourceLocation, StructurePattern> possibleStructures = new HashMap<>();
 
-    static {
-        multiStructures = new HashMap<>();
-        //
-        // Example
-        //
+    private MultiblockDescription() {
 
-        KING_COMPRESSOR = new ResourceLocation(Reference.MODID, "king_compressor");
-
-        register(KING_COMPRESSOR,
-                new Matcher()
+        register(new ResourceLocation(Reference.MODID, "king_compressor"),
+                new StructureBuilder()
                         .aisle(
-                                "sssss",
-                                "sbbbs",
-                                "sblbs",
-                                "sbbbs",
-                                "psasp")
+                                "AAA",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo"
+                        )
                         .aisle(
-                                "aaaaa",
-                                "apApa",
-                                "aAcAa",
-                                "apApa",
-                                "aaaaa")
-                        .where('A', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
+                                "AAA",
+                                "oMo",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "ooo"
+                        )
+                        .aisle(
+                                "AAA",
+                                "ooo",
+                                "ooo",
+                                "olo",
+                                "KbK",
+                                "aaa",
+                                "pap"
+                        )
+                        .aisle(
+                                "AAA",
+                                "ooo",
+                                "ooo",
+                                "ooo",
+                                "aaa",
+                                "aaa",
+                                "aaa"
+                        )
+                        .aisle(
+                                "aaa",
+                                "aaa",
+                                "pap",
+                                "pap",
+                                "aaa",
+                                "aaa",
+                                "aaa"
+                        )
                         .where('a', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
-                        .where('c', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
-                        .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.PILLAR))
-                        .where('s', Blocks.QUARTZ_STAIRS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.QUARTZ_STAIRS))
-                        .where('b', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
-                        .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.structure_block.getDefaultState())
+                        .where('A', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
+                        .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.pillar.getDefaultState())
+                        .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ICON_BARS))
+                        .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
+                        .where('M', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
+                        .where('K', ModBlocks.king_compressor_part.getDefaultState(), Blocks.OBSIDIAN.getDefaultState())
+                        .where('l', Blocks.LAVA.getDefaultState(), Blocks.WATER.getDefaultState())
                         .build());
     }
 
-    public static void register(ResourceLocation id, IMultiStructure structure) {
-        if (multiStructures.containsKey(id)) {
-            DivineRPG.logger.warn(String.format("That key %s will be overwritten"));
+    public void register(ResourceLocation id, StructurePattern pattern) {
+        if (possibleStructures.containsKey(id)) {
+            DivineRPG.logger.warn(String.format("Overwriting already registered structure (%s)", id.toString()));
         }
 
-        multiStructures.put(id, structure);
-    }
-
-    @Nullable
-    public static IMultiStructure findById(ResourceLocation id) {
-        return multiStructures.get(id);
+        possibleStructures.put(id, pattern);
     }
 
     /**
-     * Unmodifyable collection of all multiblock structures
+     * Searches structure by name
      *
+     * @param id
      * @return
      */
-    public static Collection<IMultiStructure> getAll() {
-        return Collections.unmodifiableCollection(multiStructures.values());
+    public StructurePattern findById(ResourceLocation id) {
+        return possibleStructures.get(id);
+    }
+
+    public Set<StructurePattern> getAll() {
+        return new HashSet<>(possibleStructures.values());
     }
 }

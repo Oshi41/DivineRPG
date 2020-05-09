@@ -34,11 +34,19 @@ public class ScheduledTask<T extends Event> {
      * @return
      */
     public boolean shouldMerge(T event) {
-        return !isExecuting && getTask().shouldMerge(event);
+        return notStarted() && getTask().shouldMerge(event);
     }
 
-    @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent e) {
+    /**
+     * Was
+     *
+     * @return
+     */
+    public boolean notStarted() {
+        return !isExecuting;
+    }
+
+    public void onServerTick() {
         delay--;
         if (delay >= 0)
             return;

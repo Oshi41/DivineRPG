@@ -218,6 +218,8 @@ public class ToolMaterialMod {
     public static final ArmorMaterial DEMONIZED_ARMOR = EnumHelper.addArmorMaterial("drpg_demonized_armor", Reference.MODID + ":demonized", 40, new int[] {4, 7, 8, 4},  10, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 4F);
     public static final ArmorMaterial TORMENTED_ARMOR = EnumHelper.addArmorMaterial("drpg_tormented_armor", Reference.MODID + ":tormented", 45, new int[] {4, 8, 9, 5},  10, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 4F);
 
+    public static final ArmorMaterial KING_ARMOR = EnumHelper.addArmorMaterial("drpg_king_armor", Reference.MODID + ":king", 0, new int[] {2, 5, 6, 3}, 10, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0F);
+
     private static ItemStack makeRepairStack(String itemName) {
         return new ItemStack(ModItems.getItemFromMap(itemName));
     }

@@ -1,85 +1,62 @@
 package divinerpg.events.server;
 
-import divinerpg.objects.blocks.tile.entity.multiblock.IMultiStructure;
-import divinerpg.utils.multiblock.Matcher;
+import divinerpg.utils.Lazy;
+import divinerpg.utils.multiblock.MultiblockDescription;
+import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.ITask;
 import divinerpg.utils.tasks.ScheduledTask;
 import divinerpg.utils.tasks.TaskFactory;
+import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     public final static SwapFactory instance = new SwapFactory();
-    private final Map<IMultiStructure, Block> possiblePoses = new ConcurrentHashMap<>();
+
+    /**
+     * Lazy request
+     */
+    private Lazy<Set<StructurePattern>> ref = new Lazy<>(MultiblockDescription.instance::getAll);
+
+    private Map<World, Set<BlockPos>> requested = new ConcurrentHashMap<>();
+    private Map<UUID, SwapTask> requestedTasks = new ConcurrentHashMap<>();
 
     protected SwapFactory() {
-        super(x -> x.getLightning().getUniqueID());
-
-        possiblePoses.put(
-                new Matcher()
-                        .aisle("xxx")
-                        .where('x', Blocks.ANVIL.getDefaultState(), Blocks.OBSIDIAN.getDefaultState())
-                        .build(),
-                Blocks.ANVIL);
-
-        possiblePoses.put(
-                new Matcher()
-                        .aisle(
-                                "non",
-                                "ooo",
-                                "non"
-                        )
-                        .aisle(
-                                "non",
-                                "olo",
-                                "nbn"
-                        )
-                        .aisle(
-                                "non",
-                                "oao",
-                                "non"
-                        )
-                        .where('n', Blocks.NETHER_BRICK.getDefaultState(), Blocks.QUARTZ_BLOCK.getDefaultState())
-                        .where('o', Blocks.OBSIDIAN.getDefaultState(), Blocks.GRASS.getDefaultState())
-                        .where('l', Blocks.LAVA.getDefaultState(), Blocks.WATER.getDefaultState())
-                        .where('a', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
-                        .where('b', Blocks.IRON_BARS.getDefaultState(), Blocks.OAK_FENCE.getDefaultState())
-                        .build(),
-                Blocks.ANVIL);
+        super(x -> new UUID(x.getLightning().getEntityWorld().provider.getDimension(), 0));
     }
 
     @Override
     protected ITask<EntityStruckByLightningEvent> createTask(UUID id, EntityStruckByLightningEvent event) {
-        return new SwapTask(event.getLightning().getEntityWorld(), id, possiblePoses);
+        return new SwapTask(event.getLightning().getEntityWorld(), id, ref.getValue());
     }
 
     @Override
     protected boolean shouldProceed(EntityStruckByLightningEvent event) {
-        ScheduledTask<EntityStruckByLightningEvent> task = playerTasks
-                .values()
-                .stream()
-                .filter(x -> x.shouldMerge(event))
-                .findFirst()
-                .orElse(null);
+        return true;
+    }
 
-        if (task != null) {
-            task.getTask().merge(event);
-            return false;
-        }
+    @Override
+    protected void checkPendings() {
 
-        if (isNearMultistructure(event.getLightning().getEntityWorld(), event.getLightning().getPosition()))
-            return true;
+        requestedTasks.forEach((uuid, swapTask) -> {
+            requested.forEach((world, blockPoses) -> {
+                blockPoses.forEach(pos -> swapTask.tryMerge(world, pos));
+            });
+        });
 
-        return false;
+        requestedTasks.forEach((uuid, swapTask) -> scheduleTask(FMLCommonHandler.instance().getMinecraftServerInstance(), swapTask));
+        requested.clear();
+        requestedTasks.clear();
     }
 
     @Override
@@ -93,29 +70,24 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     }
 
     @SubscribeEvent
-    public void listen(EntityStruckByLightningEvent e) {
+    public void onlisten(EntityStruckByLightningEvent e) {
         super.listen(e);
     }
 
     /**
-     * Searches avtivating block near
+     * Request all checks
      *
      * @param world
      * @param pos
-     * @return
      */
-    private boolean isNearMultistructure(World world, BlockPos pos) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    Block block = world.getBlockState(pos.add(i, j, k)).getBlock();
+    public void requestCheck(World world, BlockPos pos) {
+        if (world.isRemote || world.getMinecraftServer() == null)
+            return;
 
-                    if (possiblePoses.entrySet().stream().anyMatch(x -> x.getValue() == block))
-                        return true;
-                }
-            }
-        }
+        Set<BlockPos> poses = requested.computeIfAbsent(world, w -> new ConcurrentSet<>());
+        poses.add(pos);
 
-        return false;
+        SwapTask task = new SwapTask(world, ref.getValue());
+        requestedTasks.put(task.getActor(), task);
     }
 }

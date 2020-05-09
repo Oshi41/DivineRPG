@@ -4,12 +4,16 @@ import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class PositionHelper {
@@ -159,5 +163,53 @@ public class PositionHelper {
         } else {
             throw new IllegalArgumentException("Invalid forwards & up combination");
         }
+    }
+
+    /**
+     * Search tile in radius
+     *
+     * @param world - world
+     * @param area  - search area
+     * @param clazz - class of entity
+     * @param <T>
+     * @return
+     */
+    @Nullable
+    public static <T> T findTile(World world, AxisAlignedBB area, Class<T> clazz) {
+        Iterator<BlockPos> iterator = BlockPos.getAllInBox(new BlockPos(area.minX, area.minY, area.minZ), new BlockPos(area.maxX, area.maxY, area.maxZ)).iterator();
+
+        while (iterator.hasNext()) {
+            TileEntity entity = world.getTileEntity(iterator.next());
+
+            if (clazz.isInstance(entity)) {
+                return (T) entity;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Searches for tiles in radisu
+     *
+     * @param world
+     * @param area
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> findTiles(World world, AxisAlignedBB area, Class<T> clazz) {
+        Iterator<BlockPos> iterator = BlockPos.getAllInBox(new BlockPos(area.minX, area.minY, area.minZ), new BlockPos(area.maxX, area.maxY, area.maxZ)).iterator();
+        List<T> result = new ArrayList<>();
+
+        while (iterator.hasNext()) {
+            TileEntity entity = world.getTileEntity(iterator.next());
+
+            if (clazz.isInstance(entity)) {
+                result.add((T) entity);
+            }
+        }
+
+        return result;
     }
 }

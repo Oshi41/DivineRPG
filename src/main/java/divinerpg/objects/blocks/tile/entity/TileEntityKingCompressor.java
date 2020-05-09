@@ -11,6 +11,7 @@ import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultibloc
 import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
 import divinerpg.registry.ModItems;
+import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -88,7 +89,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     //endregion
 
     public TileEntityKingCompressor() {
-        super(MultiblockDescription.findById(MultiblockDescription.KING_COMPRESSOR),
+        super(MultiblockDescription.instance.findById(new ResourceLocation(Reference.MODID, "king_compressor")),
                 id.toString(), null);
         burnTime = 0;
         cookTime = 0;
@@ -257,14 +258,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     public boolean checkAndBuild() {
         if (super.checkAndBuild()) {
 
-            List<TileEntityPillar> pillars = new ArrayList<>();
-
-            BlockPos.getAllInBox(topLeft, bottomRight).forEach(x -> {
-                TileEntity entity = world.getTileEntity(x);
-                if (entity instanceof TileEntityPillar) {
-                    pillars.add(((TileEntityPillar) entity));
-                }
-            });
+            List<TileEntityPillar> pillars = PositionHelper.findTiles(world, match.area, TileEntityPillar.class);
 
             container = new CombinedInvWrapper(pillars
                     .stream()

@@ -1,13 +1,10 @@
 package divinerpg.events.server;
 
-import divinerpg.objects.blocks.tile.entity.multiblock.IMultiStructure;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
-import divinerpg.utils.IStructure;
 import divinerpg.utils.PositionHelper;
+import divinerpg.utils.multiblock.StructureMatch;
+import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.ITask;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.pattern.BlockPattern;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -15,18 +12,22 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SwapTask implements ITask<EntityStruckByLightningEvent> {
     private final UUID id;
     private final World world;
-    private Map<IMultiStructure, Block> structureBlockMap;
-    private final Map<AxisAlignedBB, IMultiStructure> possiblePoses = new ConcurrentHashMap<>();
+    private Set<StructurePattern> structures;
+    private final Map<StructureMatch, StructurePattern> findedStructures = new HashMap<>();
 
-    public SwapTask(World world, UUID id, Map<IMultiStructure, Block> structureBlockMap) {
+    public SwapTask(World world, Set<StructurePattern> structures) {
+        this(world, new UUID(world.provider.getDimension(), 0), structures);
+    }
+
+    public SwapTask(World world, UUID id, Set<StructurePattern> structures) {
         this.id = id;
         this.world = world;
-        this.structureBlockMap = structureBlockMap;
+        this.structures = structures;
     }
 
     @Override
@@ -36,16 +37,16 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
 
     @Override
     public void merge(EntityStruckByLightningEvent event) {
-        merge(event.getLightning().getPosition());
+        tryMerge(event.getLightning().getEntityWorld(), event.getLightning().getPosition());
     }
 
     @Override
     public boolean shouldMerge(EntityStruckByLightningEvent event) {
         Vec3d pos = new Vec3d(event.getLightning().getPosition());
 
-        if (!possiblePoses.isEmpty()
+        if (!findedStructures.isEmpty()
                 && world.provider.getDimension() == event.getLightning().getEntityWorld().provider.getDimension()
-                && possiblePoses.keySet().stream().anyMatch(x -> x.contains(pos)))
+                && findedStructures.keySet().stream().anyMatch(x -> x.area.contains(pos)))
             return true;
 
         return false;
@@ -53,76 +54,92 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
 
     @Override
     public void execute() {
-        Iterator<Map.Entry<AxisAlignedBB, IMultiStructure>> iterator = possiblePoses.entrySet().iterator();
+        Set<AxisAlignedBB> recheckForTile = new HashSet<>();
 
-        while (iterator.hasNext()) {
-            Map.Entry<AxisAlignedBB, IMultiStructure> entry = iterator.next();
+        for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
+            StructurePattern pattern = entry.getValue();
 
-            IMultiStructure structure = entry.getValue();
-            AxisAlignedBB area = entry.getKey();
+            StructureMatch match = entry.getKey();
+            boolean wasConstructed = match.isConstructed();
+            AxisAlignedBB area = match.area;
 
-            // scanning world for structure (top left corner)
-            BlockPos pos = new BlockPos(area.maxX, area.maxY, area.maxZ);
-            BlockPattern.PatternHelper match = structure.isMatch(world, pos);
+            match = pattern.recheck(world, match);
+
             if (match == null) {
-
-                // scanning world for structure (botton right corner)
-                pos = new BlockPos(area.minX, area.minY, area.minZ);
-                match = structure.isMatch(world, pos);
+                if (wasConstructed) {
+                    recheckForTile.add(area);
+                }
+            } else {
+                match.changeState(world);
             }
+        }
 
+        findedStructures.clear();
+
+
+        for (AxisAlignedBB area : recheckForTile) {
+            IMultiblockTile tile = PositionHelper.findTile(world, area, IMultiblockTile.class);
+            if (tile == null)
+                continue;
+
+            tile.recheckStructure();
+        }
+    }
+
+    /**
+     * Try to merge current pos in world
+     *
+     * @param pos
+     * @return
+     */
+    public boolean tryMerge(World world, BlockPos pos) {
+        if (world.provider.getDimension() != this.world.provider.getDimension())
+            return false;
+
+        // Checking if that position is taken
+        for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
+            StructureMatch match = entry.getKey();
+
+            if (match.area.contains(new Vec3d(pos))) {
+                return false;
+            }
+        }
+
+        Map<StructurePattern, StructureMatch> structures = new HashMap<>();
+
+        // recheck pos containing multiblock
+        for (StructurePattern structure : this.structures) {
+            StructureMatch match = structure.checkStructure(world, pos);
             if (match == null)
                 continue;
 
-            area = PositionHelper.getArea(match);
-            Iterator<BlockPos> posesIterator = BlockPos.getAllInBox(new BlockPos(area.maxX, area.maxY, area.maxZ), new BlockPos(area.minX, area.minY, area.minZ)).iterator();
+            structures.put(structure, match);
+        }
 
-            IMultiblockTile tile = null;
+        if (structures.isEmpty())
+            return false;
 
-            // searching for tile that is already present
-            while (posesIterator.hasNext()) {
-                TileEntity tileEntity = world.getTileEntity(posesIterator.next());
-                if (tileEntity instanceof IMultiblockTile) {
-                    tile = ((IMultiblockTile) tileEntity);
+        AtomicBoolean result = new AtomicBoolean(false);
+
+        structures.forEach((structurePattern, match) -> {
+            boolean canAdd = true;
+
+            for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
+                StructureMatch match1 = entry.getKey();
+
+                if (match.area.equals(match1.area) || match.area.intersects(match1.area)) {
+                    canAdd = false;
                     break;
                 }
             }
 
-            // recheck structure or create new
-            if (tile == null) {
-                structure.constructStructure(world, match);
-            } else {
-                tile.recheckStructure();
+            if (canAdd) {
+                findedStructures.put(match, structurePattern);
+                result.set(true);
             }
-        }
 
-        possiblePoses.clear();
-    }
+        });
 
-    private void merge(BlockPos pos) {
-        BlockPattern.PatternHelper match = null;
-        IMultiStructure structure = null;
-
-        Iterator<Map.Entry<IMultiStructure, Block>> iterator = structureBlockMap.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry<IMultiStructure, Block> entry = iterator.next();
-
-            match = entry.getKey().isMatch(world, pos);
-            if (match != null) {
-                structure = entry.getKey();
-                break;
-            }
-        }
-
-        if (match == null || structure == null)
-            return;
-
-        AxisAlignedBB area = PositionHelper.getArea(match);
-
-        if (!possiblePoses.isEmpty() && possiblePoses.keySet().stream().anyMatch(x -> x.intersects(area)))
-            return;
-
-        possiblePoses.put(area, structure);
+        return result.get();
     }
 }

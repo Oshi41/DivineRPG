@@ -2,8 +2,12 @@ package divinerpg.objects.blocks;
 
 import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
+import divinerpg.events.server.SwapFactory;
+import divinerpg.events.server.SwapTask;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
+import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
+import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.IProperty;
@@ -47,7 +51,26 @@ public class StructureBlock extends BlockMod {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing clickFacing, float hitX, float hitY, float hitZ) {
-        return searchTile(worldIn, pos, t -> t.click(playerIn)) != null;
+
+        StructureMatch match = MultiblockDescription
+                .instance
+                .getAll()
+                .stream()
+                .map(x -> x.checkMultiblock(worldIn, pos))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
+        if (match != null) {
+            IMultiblockTile tile = PositionHelper.findTile(worldIn, match.area, IMultiblockTile.class);
+            if (tile != null) {
+                tile.click(playerIn);
+                return true;
+            }
+        }
+
+        worldIn.destroyBlock(pos, true);
+        return false;
     }
 
     @Override
@@ -78,12 +101,12 @@ public class StructureBlock extends BlockMod {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        searchTile(worldIn, pos, IMultiblockTile::recheckStructure);
+        SwapFactory.instance.requestCheck(worldIn, pos);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        searchTile(worldIn, pos, IMultiblockTile::recheckStructure);
+        SwapFactory.instance.requestCheck(worldIn, pos);
     }
 
     @Override
@@ -118,41 +141,5 @@ public class StructureBlock extends BlockMod {
                 .findFirst().orElse(EnumPlaceholder.AIR);
 
         return withPlaceHolder(placeholder);
-    }
-
-    @Nullable
-    private IMultiblockTile searchTile(World world, BlockPos pos, @Nullable Consumer<IMultiblockTile> callback) {
-
-        BlockPattern.PatternHelper match = MultiblockDescription
-                .getAll()
-                .stream()
-                .map(x -> x.isMatch(world, pos))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-
-        if (match != null) {
-            BlockPos topLeft = match.getFrontTopLeft();
-            BlockPos bottomRight = topLeft.offset(match.getUp(), match.getHeight())
-                    .offset(match.getForwards(), match.getWidth());
-
-            Iterator<BlockPos> iterator = BlockPos.getAllInBox(topLeft, bottomRight).iterator();
-
-            while (iterator.hasNext()) {
-                TileEntity entity = world.getTileEntity(iterator.next());
-
-                if (entity instanceof IMultiblockTile) {
-                    IMultiblockTile multiEntity = (IMultiblockTile) entity;
-
-                    if (callback == null) {
-                        callback.accept(multiEntity);
-                    }
-
-                    return multiEntity;
-                }
-            }
-        }
-
-        return null;
     }
 }
