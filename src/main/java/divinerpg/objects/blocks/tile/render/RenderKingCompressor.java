@@ -7,7 +7,6 @@ import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -66,7 +65,7 @@ public class RenderKingCompressor extends TileEntitySpecialRenderer<TileEntityKi
 
     private EnumFacing getFacing(IMultiblockTile tile) {
         if (tile != null) {
-            StructureMatch match = tile.getMatch();
+            StructureMatch match = tile.getMultiblockMatch();
             if (match != null) {
                 if (match.forwards.getAxis() != EnumFacing.Axis.Y)
                     return match.forwards;

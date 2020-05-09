@@ -1,28 +1,25 @@
 package divinerpg.utils.tasks;
 
 import net.minecraft.util.IThreadListener;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.function.Consumer;
 
 public class ScheduledTask<T extends Event> {
-    private final ITask<T> task;
+    private final IEventTask<T> task;
     private IThreadListener listener;
-    private Consumer<ITask<T>> onFinish;
+    private Consumer<IEventTask<T>> onFinish;
     private boolean isExecuting;
     private int delay;
 
-    public ScheduledTask(IThreadListener listener, ITask<T> task, Consumer<ITask<T>> onFinish, int delay) {
+    public ScheduledTask(IThreadListener listener, IEventTask<T> task, Consumer<IEventTask<T>> onFinish, int delay) {
         this.listener = listener;
         this.task = task;
         this.onFinish = onFinish;
         this.delay = delay;
     }
 
-    public ITask<T> getTask() {
+    public IEventTask<T> getTask() {
         return task;
     }
 

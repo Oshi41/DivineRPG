@@ -1,7 +1,10 @@
 package divinerpg.utils;
 
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Streams;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockWorldState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,9 +16,8 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import javax.crypto.SealedObject;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
@@ -229,4 +231,27 @@ public class PositionHelper {
                 .filter(predicate)
                 .iterator();
     }
+
+    public static Set<BlockPos> search(BlockPos pos, Block block, Set<BlockPos> result, LoadingCache<BlockPos, BlockWorldState> cache) {
+
+        IBlockState state = cache.getUnchecked(pos).getBlockState();
+
+        if (state.getBlock() == block) {
+            result.add(pos);
+        }
+
+        for (EnumFacing facing : EnumFacing.values()) {
+            BlockPos offset = pos.offset(facing);
+            if (!result.contains(offset)) {
+                state = cache.getUnchecked(offset).getBlockState();
+                if (state.getBlock() == block) {
+                    search(offset, block, result, cache);
+                }
+            }
+        }
+
+        return result;
+    }
+
+
 }

@@ -5,118 +5,92 @@ import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity implements IMultiblockTile, IInteractionObject {
-    private final StructurePattern structure;
-    private String name;
-    private Integer guiId;
 
-    private StructureMatch match;
+    private final StructurePattern pattern;
+    private final String name;
+    private final Integer guiId;
 
-    private boolean isWorking = false;
+    private StructureMatch multiblockMatch;
+    private boolean constructed;
 
-    /**
-     * Multiblock tile entity
-     *
-     * @param structure - structure description
-     * @param name      - name of tile
-     * @param guiId     - possible GUI ID. Pass null o disable interaction
-     */
-    public TileEntityDivineMultiblock(StructurePattern structure, String name, Integer guiId) {
-        this.structure = structure;
+    private boolean working;
+
+    public TileEntityDivineMultiblock(StructurePattern pattern, String name, Integer guiId) {
+        this.pattern = pattern;
         this.name = name;
         this.guiId = guiId;
-
-        onDestroy();
     }
 
-    /**
-     * Current Structure match
-     */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        recheckStructure();
+    }
+
+    @Override
+    public StructurePattern getPattern() {
+        return pattern;
+    }
+
     @Nullable
     @Override
-    public StructureMatch getMatch() {
-        return match;
+    public StructureMatch getMultiblockMatch() {
+        return multiblockMatch;
     }
 
     @Override
-    public void onDestroy() {
-        isWorking = true;
-
-        if (isConstructed()) {
-            getMatch().destroy(world);
-            match = null;
-        }
-
-        isWorking = false;
+    public void onDestroy(@Nonnull StructureMatch match) {
+        match.destroy(world);
     }
 
     @Override
-    public boolean checkAndBuild() {
-        isWorking = true;
-
-        try {
-            match = structure.checkStructure(world, getPos());
-
-            if (isConstructed()) {
-
-                if (!world.isRemote)
-                    getMatch().buildStructure(world);
-
-                return isConstructed();
-            }
-
-        } finally {
-            isWorking = false;
-        }
-
-        return false;
+    public void onBuilt(@Nonnull StructureMatch match) {
+        match.buildStructure(world);
     }
 
     @Override
     public void recheckStructure() {
-        if (isWorking)
+        if (world.isRemote || working)
             return;
 
-        // was not constructed
-        if (match == null) {
-            match = structure.checkStructure(world, pos);
+        working = true;
 
-            if (match != null) {
-                if (!world.isRemote) {
-                    match.buildStructure(world);
-                }
-            }
+        StructureMatch multiMatch = getPattern().checkMultiblock(world, getPos());
+        if (multiMatch != null) {
+            onBuilt(multiMatch);
         } else {
-            StructureMatch multi = structure.checkMultiblock(world, pos);
-            if (multi == null) {
-
-                if (!world.isRemote) {
-                    match.destroy(world);
-                }
-
-                match = null;
+            if (getMultiblockMatch() != null) {
+                onDestroy(getMultiblockMatch());
             }
         }
+
+        multiblockMatch = multiMatch;
+        constructed = getMultiblockMatch() != null;
+        working = false;
     }
 
     @Override
     public void click(EntityPlayer player) {
-        if (!isConstructed())
+        if (guiId == null || player.getEntityWorld().isRemote)
             return;
 
         BlockPos pos = getPos();
-
-        if (!world.isRemote && guiId != null) {
-            player.openGui(DivineRPG.instance, guiId, world, pos.getX(), pos.getY(), pos.getZ());
-        }
+        player.openGui(DivineRPG.instance, guiId, player.world, pos.getX(), pos.getY(), pos.getZ());
     }
 
+    @Override
+    public boolean isConstructed() {
+        return constructed;
+    }
 
     @Override
     public String getGuiID() {
@@ -133,5 +107,16 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         return false;
     }
 
-    //endregion
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        constructed = compound.getBoolean("constructed");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound nbt = super.writeToNBT(compound);
+        nbt.setBoolean("constructed", constructed);
+        return nbt;
+    }
 }

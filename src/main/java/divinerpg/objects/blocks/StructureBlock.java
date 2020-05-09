@@ -3,7 +3,6 @@ package divinerpg.objects.blocks;
 import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
 import divinerpg.events.server.SwapFactory;
-import divinerpg.events.server.SwapTask;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
@@ -14,24 +13,20 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Random;
-import java.util.function.Consumer;
 
 public class StructureBlock extends BlockMod {
     private static final IProperty<EnumPlaceholder> PlaceholderProperty;
@@ -101,12 +96,18 @@ public class StructureBlock extends BlockMod {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        SwapFactory.instance.requestCheck(worldIn, pos);
+
+        SwapFactory.instance.requestCheck(worldIn, pos, null);
+
+        IMultiblockTile tile = PositionHelper.findTile(worldIn, new AxisAlignedBB(pos.add(-5, -5, -5), pos.add(5, 5, 5)), IMultiblockTile.class);
+        if (tile != null) {
+            tile.recheckStructure();
+        }
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        SwapFactory.instance.requestCheck(worldIn, pos);
+        SwapFactory.instance.requestCheck(worldIn, pos, null);
     }
 
     @Override

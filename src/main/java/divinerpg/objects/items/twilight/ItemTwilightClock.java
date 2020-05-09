@@ -5,6 +5,8 @@ import divinerpg.objects.items.base.ItemMod;
 import divinerpg.registry.DivineRPGTabs;
 import divinerpg.registry.ModBlocks;
 import divinerpg.utils.multiblock.MultiblockDescription;
+import divinerpg.utils.multiblock.StructureMatch;
+import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.portals.description.IPortalDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.pattern.BlockPattern;
@@ -87,8 +89,19 @@ public class ItemTwilightClock extends ItemMod {
 
         // todo Remove
         if (!worldIn.isRemote) {
-            if (MultiblockDescription.instance.getAll().stream().anyMatch(x -> x.checkStructure(worldIn, pos) != null)) {
-                player.sendMessage(new TextComponentString("Correct structure"));
+            for (StructurePattern pattern : MultiblockDescription.instance.getAll()) {
+                StructureMatch match = pattern.checkMultiblock(worldIn, pos);
+                if (match != null) {
+                    player.sendMessage(new TextComponentString("Correct multi structure"));
+                } else {
+                    match = pattern.checkStructure(worldIn, pos);
+
+                    if (match != null) {
+                        player.sendMessage(new TextComponentString("Correct multi structure"));
+
+                        match.buildStructure(worldIn);
+                    }
+                }
             }
         }
 

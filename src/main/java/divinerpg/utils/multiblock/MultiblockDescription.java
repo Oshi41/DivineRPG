@@ -22,62 +22,89 @@ public class MultiblockDescription {
 
     private MultiblockDescription() {
 
+        // todo debug
         register(new ResourceLocation(Reference.MODID, "king_compressor"),
                 new StructureBuilder()
                         .aisle(
-                                "AAA",
+                                "nnn",
                                 "oMo",
                                 "ooo",
-                                "ooo",
+                                "ooo"
+                        )
+                        .aisle(
+                                "nnn",
+                                "nnn",
+                                "nnn",
+                                "nnn"
+                        )
+                        .aisle(
+                                "nnn",
                                 "ooo",
                                 "ooo",
                                 "ooo"
                         )
-                        .aisle(
-                                "AAA",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "ooo"
-                        )
-                        .aisle(
-                                "AAA",
-                                "ooo",
-                                "olo",
-                                "KbK",
-                                "aaa",
-                                "aaa",
-                                "pap"
-                        )
-                        .aisle(
-                                "AAA",
-                                "ooo",
-                                "ooo",
-                                "ooo",
-                                "aaa",
-                                "aaa",
-                                "aaa"
-                        )
-                        .aisle(
-                                "aaa",
-                                "aaa",
-                                "pap",
-                                "pap",
-                                "aaa",
-                                "aaa",
-                                "aaa"
-                        )
-                        .where('a', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
-                        .where('A', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
-                        .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.pillar.getDefaultState())
-                        .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ICON_BARS))
                         .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
                         .where('M', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
-                        .where('K', ModBlocks.king_compressor_part.getDefaultState(),  ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.COMPRESSOR_PART))
-                        .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.structure_block.getDefaultState())
-                        .build());
+                        .where('n', Blocks.NETHER_BRICK.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.NETHER_BRICK))
+                        .build()
+        );
+
+//        register(new ResourceLocation(Reference.MODID, "king_compressor"),
+//                new StructureBuilder()
+//                        .aisle(
+//                                "AAA",
+//                                "oMo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo"
+//                        )
+//                        .aisle(
+//                                "AAA",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo"
+//                        )
+//                        .aisle(
+//                                "AAA",
+//                                "ooo",
+//                                "olo",
+//                                "KbK",
+//                                "aaa",
+//                                "aaa",
+//                                "pap"
+//                        )
+//                        .aisle(
+//                                "AAA",
+//                                "ooo",
+//                                "ooo",
+//                                "ooo",
+//                                "aaa",
+//                                "aaa",
+//                                "aaa"
+//                        )
+//                        .aisle(
+//                                "aaa",
+//                                "pap",
+//                                "pap",
+//                                "aaa",
+//                                "aaa",
+//                                "aaa",
+//                                "aaa"
+//                        )
+//                        .where('a', Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState())
+//                        .where('A', Blocks.ANVIL.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ANVIL))
+//                        .where('p', ModBlocks.pillar.getDefaultState(), ModBlocks.pillar.getDefaultState())
+//                        .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.ICON_BARS))
+//                        .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
+//                        .where('M', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
+//                        .where('K', ModBlocks.king_compressor_part.getDefaultState(),  ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.COMPRESSOR_PART))
+//                        .where('l', Blocks.LAVA.getDefaultState(), ModBlocks.structure_block.getDefaultState())
+//                        .build());
     }
 
     public void register(ResourceLocation id, StructurePattern pattern) {

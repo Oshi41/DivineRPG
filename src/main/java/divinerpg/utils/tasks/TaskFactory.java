@@ -1,10 +1,6 @@
 package divinerpg.utils.tasks;
 
-import com.ibm.icu.impl.Trie2;
-import divinerpg.events.server.SwapTask;
-import javafx.concurrent.Task;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,7 +29,7 @@ public abstract class TaskFactory<T extends Event> {
      * @param event
      * @return
      */
-    protected abstract ITask<T> createTask(UUID id, T event);
+    protected abstract IEventTask<T> createTask(UUID id, T event);
 
     /**
      * Should we proceed current event?
@@ -93,7 +89,7 @@ public abstract class TaskFactory<T extends Event> {
             }
         } else {
             if (shouldProceed(event)) {
-                ITask<T> newTask = createTask(id, event);
+                IEventTask<T> newTask = createTask(id, event);
 
                 if (newTask != null) {
                     newTask.merge(event);
@@ -110,7 +106,7 @@ public abstract class TaskFactory<T extends Event> {
      * @param listener
      * @param task
      */
-    protected void scheduleTask(IThreadListener listener, ITask<T> task) {
+    protected void scheduleTask(IThreadListener listener, IEventTask<T> task) {
         if (listener == null)
             return;
 
@@ -140,7 +136,7 @@ public abstract class TaskFactory<T extends Event> {
      * @param <T1>
      * @return
      */
-    protected <T1 extends ITask<T>> List<T1> getPendingTasks(Class<T1> clazz) {
+    protected <T1 extends IEventTask<T>> List<T1> getPendingTasks(Class<T1> clazz) {
         return playerTasks.values().stream().filter(x -> x.notStarted() && clazz.isInstance(x.getTask()))
                 .map(x -> ((T1) x.getTask())).collect(Collectors.toList());
     }

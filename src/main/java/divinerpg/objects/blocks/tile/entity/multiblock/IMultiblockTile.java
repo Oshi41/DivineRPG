@@ -1,35 +1,35 @@
 package divinerpg.objects.blocks.tile.entity.multiblock;
 
 import divinerpg.utils.multiblock.StructureMatch;
+import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.entity.player.EntityPlayer;
-import org.apache.commons.lang3.text.StrMatcher;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface IMultiblockTile {
+
+    /**
+     * Current tile structure
+     *
+     * @return
+     */
+    StructurePattern getPattern();
+
     @Nullable
-    StructureMatch getMatch();
+    StructureMatch getMultiblockMatch();
 
     /**
      * Called when part of structure is breaking
      */
-    void onDestroy();
+    void onDestroy(@Nonnull StructureMatch match);
 
     /**
-     * Check and build structure
+     * Called after multiblock tile
      *
      * @return was built
      */
-    boolean checkAndBuild();
-
-    /**
-     * Is multi structure constructed
-     *
-     * @return
-     */
-    default boolean isConstructed() {
-        return getMatch() != null;
-    }
+    void onBuilt(@Nonnull StructureMatch match);
 
     /**
      * Rechecking structure when blocks were changed
@@ -42,4 +42,11 @@ public interface IMultiblockTile {
      * @param player
      */
     void click(EntityPlayer player);
+
+    /**
+     * Is multi structure constructed
+     *
+     * @return
+     */
+    boolean isConstructed();
 }

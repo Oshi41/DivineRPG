@@ -1,13 +1,8 @@
 package divinerpg.events.server;
 
-import divinerpg.objects.blocks.StructureBlock;
-import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
-import divinerpg.registry.ModBlocks;
-import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
-import divinerpg.utils.tasks.ITask;
-import javafx.geometry.Pos;
+import divinerpg.utils.tasks.IEventTask;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -17,22 +12,26 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SwapTask implements ITask<EntityStruckByLightningEvent> {
+/**
+ * Using to swap ready structure to multiblock
+ */
+public class BuildStructureEventTask implements IEventTask<EntityStruckByLightningEvent> {
     private final UUID id;
     private final World world;
-    private Set<StructurePattern> structures;
+    private final Set<StructurePattern> structures;
     private final Map<StructureMatch, StructurePattern> findedStructures = new HashMap<>();
 
-    public SwapTask(World world, Set<StructurePattern> structures) {
-        this(world, new UUID(world.provider.getDimension(), 0), structures);
-    }
-
-    public SwapTask(World world, UUID id, Set<StructurePattern> structures) {
+    public BuildStructureEventTask(World world, UUID id, Set<StructurePattern> structures) {
         this.id = id;
         this.world = world;
         this.structures = structures;
     }
 
+    /**
+     * Uniques ID for one world
+     *
+     * @return
+     */
     @Override
     public UUID getActor() {
         return id;
@@ -57,8 +56,10 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
 
     @Override
     public void execute() {
-        Set<AxisAlignedBB> recheckForTile = new HashSet<>();
+        // list  for possible boken structures
+        Set<AxisAlignedBB> searchArea = new HashSet<>();
 
+        // iterate by all structures we eant to build
         for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
             StructurePattern pattern = entry.getValue();
 
@@ -66,29 +67,24 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
             boolean wasConstructed = match.isConstructed();
             AxisAlignedBB area = match.area;
 
+            // rechecking if we can build structure still
             match = pattern.recheck(world, match);
 
             if (match == null) {
                 if (wasConstructed) {
-                    recheckForTile.add(area);
+                    // looks like structure is broken, need to recheck
+                    searchArea.add(area);
                 }
             } else {
+                // building structure - changing it's state to 'constructed'
                 match.changeState(world);
             }
         }
 
         findedStructures.clear();
 
-
-        for (AxisAlignedBB area : recheckForTile) {
-            IMultiblockTile tile = PositionHelper.findTile(world, area, IMultiblockTile.class);
-            if (tile != null) {
-                tile.recheckStructure();
-            } else {
-                PositionHelper.forEveryBlock(area, pos -> world.getBlockState(pos).getBlock() == ModBlocks.structure_block)
-                        .forEachRemaining(x -> world.destroyBlock(x, true));
-            }
-        }
+        // for any broken areas we need to schedule destruct task
+        searchArea.forEach(x -> SwapFactory.instance.requestCheck(world, null, x));
     }
 
     /**
@@ -101,10 +97,11 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
         if (world.provider.getDimension() != this.world.provider.getDimension())
             return false;
 
-        // Checking if that position is taken
+        // If any of scheduled structures contains that position
         for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
             StructureMatch match = entry.getKey();
 
+            // some structure will build on that pos, we already merged this
             if (match.area.contains(new Vec3d(pos))) {
                 return false;
             }
@@ -112,26 +109,28 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
 
         Map<StructurePattern, StructureMatch> structures = new HashMap<>();
 
-        // recheck pos containing multiblock
+        // loop through all possible structures
         for (StructurePattern structure : this.structures) {
             StructureMatch match = structure.checkStructure(world, pos);
             if (match == null)
                 continue;
 
+            // can build structure
             structures.put(structure, match);
         }
 
         if (structures.isEmpty())
             return false;
 
-        AtomicBoolean result = new AtomicBoolean(false);
-
-        structures.forEach((structurePattern, match) -> {
+        for (Map.Entry<StructurePattern, StructureMatch> entry : structures.entrySet()) {
             boolean canAdd = true;
+            StructureMatch match = entry.getValue();
 
-            for (Map.Entry<StructureMatch, StructurePattern> entry : findedStructures.entrySet()) {
-                StructureMatch match1 = entry.getKey();
+            // iterating throuh all scheduled structure replacing
+            for (Map.Entry<StructureMatch, StructurePattern> entry1 : findedStructures.entrySet()) {
+                StructureMatch match1 = entry1.getKey();
 
+                // if possible structure overlaps with already scheduled, returning
                 if (match.area.equals(match1.area) || match.area.intersects(match1.area)) {
                     canAdd = false;
                     break;
@@ -139,12 +138,13 @@ public class SwapTask implements ITask<EntityStruckByLightningEvent> {
             }
 
             if (canAdd) {
-                findedStructures.put(match, structurePattern);
-                result.set(true);
+                findedStructures.put(match, entry.getKey());
+                return true;
             }
+        }
 
-        });
-
-        return result.get();
+        return false;
     }
+
+
 }

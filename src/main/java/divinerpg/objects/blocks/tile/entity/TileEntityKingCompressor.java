@@ -13,6 +13,7 @@ import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
 import divinerpg.registry.ModItems;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
+import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -32,6 +33,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -253,29 +255,24 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     // endregion
 
     @Override
-    public boolean checkAndBuild() {
-        if (super.checkAndBuild()) {
+    public void onBuilt(@Nonnull StructureMatch match){
+        super.onBuilt(match);
 
-            List<TileEntityPillar> pillars = PositionHelper.findTiles(world, getMatch().area, TileEntityPillar.class);
+        List<TileEntityPillar> pillars = PositionHelper.findTiles(world, match.area, TileEntityPillar.class);
 
-            container = new CombinedInvWrapper(pillars
-                    .stream()
-                    .map(TileEntityPillar::getInventory)
-                    .toArray(IItemHandlerModifiable[]::new)
-            );
+        container = new CombinedInvWrapper(pillars
+                .stream()
+                .map(TileEntityPillar::getInventory)
+                .toArray(IItemHandlerModifiable[]::new)
+        );
 
-            pillars.stream().filter(x -> x.getInventory() instanceof IStackListener)
-                    .forEach(x -> ((IStackListener) x.getInventory()).addListener(this::recheckRecipe));
-
-            return true;
-        }
-
-        return false;
+        pillars.stream().filter(x -> x.getInventory() instanceof IStackListener)
+                .forEach(x -> ((IStackListener) x.getInventory()).addListener(this::recheckRecipe));
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroy(@Nonnull StructureMatch match) {
+        super.onDestroy(match);
 
         container = new EmptyHandler();
     }

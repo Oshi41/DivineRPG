@@ -40,7 +40,10 @@ public class MultiBlockMod extends BlockMod implements ITileEntityProvider {
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntity entity = worldIn.getTileEntity(pos);
         if (entity instanceof IMultiblockTile) {
-            ((IMultiblockTile) entity).onDestroy();
+            IMultiblockTile multi = (IMultiblockTile) entity;
+            if (multi.getMultiblockMatch() != null) {
+                multi.onDestroy(multi.getMultiblockMatch());
+            }
         }
 
         super.breakBlock(worldIn, pos, state);
