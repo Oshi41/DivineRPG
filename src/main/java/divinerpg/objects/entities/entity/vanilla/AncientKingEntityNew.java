@@ -1,8 +1,6 @@
 package divinerpg.objects.entities.entity.vanilla;
 
-import divinerpg.config.Config;
 import divinerpg.objects.entities.entity.EntityDivineRPGMob;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
@@ -25,21 +23,18 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import thaumcraft.common.config.ModConfig;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class AncientKingEntityNew extends EntityDivineRPGMob {
-    private static final DataParameter<Byte> VAR20 = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BYTE);
+    private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> NICE = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
-    private static final DataParameter<Integer> END = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.VARINT);
+    private static final DataParameter<Boolean> END_ATTACK = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
 
     private BlockPos currentFlightTarget = null;
     private EntityLivingBase rt = null;
@@ -90,7 +85,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
      */
     @Override
     public boolean isInRangeToRenderDist(double distance) {
-        return super.isInRangeToRenderDist(distance / 12);
+        return true;
     }
 
     @Override
@@ -107,9 +102,11 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
     @Override
     protected void entityInit() {
         super.entityInit();
-        this.getDataManager().set(VAR20, (byte) 0);
-        this.getDataManager().set(NICE, true);
-        this.getDataManager().set(END, this.getIsEnd());
+        EntityDataManager manager = this.getDataManager();
+
+        manager.register(ANGRY, false);
+        manager.register(NICE, true);
+        manager.register(END_ATTACK, false);
     }
 
     @Override
@@ -117,12 +114,12 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         return false;
     }
 
-    public final int getAttacking() {
-        return this.getDataManager().get(VAR20);
+    public final boolean isAngry() {
+        return this.getDataManager().get(ANGRY);
     }
 
-    public final void setAttacking(int par1) {
-        this.getDataManager().set(VAR20, (byte) par1);
+    public final void setIsAngry(boolean isAngry) {
+        this.getDataManager().set(ANGRY, isAngry);
     }
 
     @Override
@@ -194,7 +191,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
 
         if (this.world.isRemote) {
             float f = 7.0F;
-            if (getIsEnd() != 0 && this.world.rand.nextInt(3) == 1) {
+            if (getIsRapidAttacking() && this.world.rand.nextInt(3) == 1) {
                 for (int i = 0; i < 10; ++i) {
                     // todo particle
                     //this.world.spawnParticle("fireworksSpark", this.posX - (double) f * Math.sin(Math.toRadians(this.rotationYaw)), this.posY + 14.0D, this.posZ + (double) f * Math.cos(Math.toRadians(this.rotationYaw)), (this.world.rand.nextGaussian() - this.world.rand.nextGaussian()) / 4.0D + this.motionX * 6.0D, (this.world.rand.nextGaussian() - this.world.rand.nextGaussian()) / 4.0D, (this.world.rand.nextGaussian() - this.world.rand.nextGaussian()) / 4.0D + this.motionZ * 6.0D);
@@ -311,11 +308,9 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         EntityPlayer p;
         if (!this.isDead) {
             super.updateAITasks();
-            this.getDataManager().set(END, this.getIsEnd());
-            this.getDataManager().set(NICE, true);
             double dx;
             double dz;
-            if (this.getIsEnd() == 1) {
+            if (!this.getIsRapidAttacking()) {
                 ++this.endCounter;
                 this.noClip = true;
                 this.motionX = 0.0D;
@@ -366,11 +361,11 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                         this.msgToPlayers("1.");
                     } else if (this.endCounter == 500) {
                         this.msgToPlayers("The King: Prepare to die!");
-                        this.setIsEnd(2);
+                        this.setIsRapidAttacking(true);
                     }
                 }
             } else {
-                if (this.getIsEnd() == 2) {
+                if (this.getIsRapidAttacking()) {
                     this.hurt_timer = 10;
                     this.player_hit_count = 0;
                     this.stream_count = 10;
@@ -466,7 +461,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                         }
 
                         if (e != null) {
-                            this.setAttacking(1);
+                            this.setIsAngry(true);
                             if (this.backoff_timer == 0) {
                                 dist = (int) (e.posY + (e.height / 2.0F) + 1.0D);
                                 if (dist > 230) {
@@ -546,7 +541,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                 which = this.world.rand.nextInt(3);
                                 if (which == 0) {
                                     if (this.stream_count > 0) {
-                                        this.setAttacking(1);
+                                        this.setIsAngry(true);
                                         rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
                                         rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
                                         rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
@@ -561,7 +556,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                     }
                                 } else if (which == 1) {
                                     if (this.stream_count_l > 0) {
-                                        this.setAttacking(1);
+                                        this.setIsAngry(true);
                                         rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
                                         rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
                                         rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
@@ -575,7 +570,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                         }
                                     }
                                 } else if (this.stream_count_i > 0) {
-                                    this.setAttacking(1);
+                                    this.setIsAngry(true);
                                     rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
                                     rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
                                     rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
@@ -590,7 +585,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                 }
                             }
                         } else {
-                            this.setAttacking(0);
+                            this.setIsAngry(false);
                             this.stream_count = 10;
                             this.stream_count_l = 5;
                             this.stream_count_i = 8;
@@ -640,7 +635,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                     this.currentFlightTarget = new BlockPos(this.homex + xdir, (int) (this.posY + (double) dist), this.homez + zdir);
                 }
 
-                if (this.getAttacking() != 0 && this.getIsEnd() == 2) {
+                if (this.isAngry() && this.getIsRapidAttacking()) {
                     dx = 10.0D;
                     dz = 14.0D;
 //                    Entity ppwr = spawnCreature(this.world, "PurplePower", this.posX - dx * Math.sin(Math.toRadians(this.rotationYaw)), this.posY + dz, this.posZ + dx * Math.cos(Math.toRadians(this.rotationYaw)));
@@ -864,7 +859,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         return true;
     }
 
-    public int getDefaultArmorValue(){
+    public int getDefaultArmorValue() {
         return 21;
     }
 
@@ -975,7 +970,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                 } else*/
                 {
                     EntityPlayer p;
-                    if (this.getIsEnd() == 2) {
+                    if (this.getIsRapidAttacking()) {
                         if (par1EntityLiving instanceof EntityPlayer) {
                             p = (EntityPlayer) par1EntityLiving;
                             if (p.isCreative()) {
@@ -1027,7 +1022,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
             Entity var3;
             EntityLivingBase var4;
             EntityLivingBase ret;
-            if (this.getIsEnd() == 2) {
+            if (this.getIsRapidAttacking()) {
                 var5 = this.world.getEntitiesWithinAABB(EntityPlayer.class, getEntityBoundingBox().expand(80.0D, 64.0D, 80.0D));
 //                Collections.sort(var5, this.TargetSorter);
                 var2 = var5.iterator();
@@ -1069,7 +1064,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
     }
 
     public void setFree() {
-        this.setIsEnd(1);
+        this.setIsRapidAttacking(false);
     }
 
     public void writeEntityToNBT(NBTTagCompound nbt) {
@@ -1078,7 +1073,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         nbt.setInteger("KingHomeZ", this.homez);
         nbt.setInteger("GuardMode", this.guard_mode);
         nbt.setInteger("PlayerHits", this.player_hit_count);
-        nbt.setInteger("IsEnd", this.getIsEnd());
+        nbt.setBoolean("IsEnd", this.getIsRapidAttacking());
         nbt.setInteger("EndCounter", this.endCounter);
     }
 
@@ -1088,7 +1083,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         this.homez = par1NBTTagCompound.getInteger("KingHomeZ");
         this.guard_mode = par1NBTTagCompound.getInteger("GuardMode");
         this.player_hit_count = par1NBTTagCompound.getInteger("PlayerHits");
-        this.setIsEnd(par1NBTTagCompound.getInteger("IsEnd"));
+        this.setIsRapidAttacking(par1NBTTagCompound.getBoolean("IsEnd"));
         this.endCounter = par1NBTTagCompound.getInteger("EndCounter");
     }
 
@@ -1133,11 +1128,11 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
         return null;
     }
 
-    public int getIsEnd() {
-        return getDataManager().get(END);
+    public boolean getIsRapidAttacking() {
+        return getDataManager().get(END_ATTACK);
     }
 
-    public void setIsEnd(int isEnd) {
-        getDataManager().set(END, isEnd);
+    public void setIsRapidAttacking(boolean isEnd) {
+        getDataManager().set(END_ATTACK, isEnd);
     }
 }

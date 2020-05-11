@@ -5,12 +5,14 @@ import divinerpg.objects.entities.entity.vanilla.AncientKingEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 
-public class RenderAncientKing extends RenderLiving<AncientKingEntity> {
+public class RenderAncientKing extends RenderLiving<EntityLiving> {
     private final ResourceLocation texture = new ResourceLocation("textures/entity/enderdragon/dragon.png");
     private final ResourceLocation explodeTexture = new ResourceLocation("textures/entity/enderdragon/dragon_exploding.png");
 
@@ -19,7 +21,7 @@ public class RenderAncientKing extends RenderLiving<AncientKingEntity> {
     }
 
     @Override
-    protected void applyRotations(AncientKingEntity entityLiving, float p_77043_2_, float rotationYaw, float partialTicks) {
+    protected void applyRotations(EntityLiving entityLiving, float p_77043_2_, float rotationYaw, float partialTicks) {
 //        float f = (float) entityLiving.getMovementOffsets(7, partialTicks)[0];
 //        float f1 = (float) (entityLiving.getMovementOffsets(5, partialTicks)[1] - entityLiving.getMovementOffsets(10, partialTicks)[1]);
 //        GlStateManager.rotate(-f, 0.0F, 1.0F, 0.0F);
@@ -41,7 +43,7 @@ public class RenderAncientKing extends RenderLiving<AncientKingEntity> {
     /**
      * Renders the model in RenderLiving
      */
-    protected void renderModel(AncientKingEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
+    protected void renderModel(EntityLiving entitylivingbaseIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor) {
         if (entitylivingbaseIn.isDead) {
             float f = 200.0F;
             GlStateManager.depthFunc(515);
@@ -72,7 +74,7 @@ public class RenderAncientKing extends RenderLiving<AncientKingEntity> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(AncientKingEntity entity) {
+    protected ResourceLocation getEntityTexture(EntityLiving entity) {
         return texture;
     }
 }

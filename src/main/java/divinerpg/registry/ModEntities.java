@@ -425,6 +425,7 @@ public class ModEntities {
         registerRender(EntityWhiteGrizzle.class, RenderWhiteGrizzle::new);
         registerRender(EntityWildfire.class, RenderWildfire::new);
         registerRender(AncientKingEntity.class, RenderAncientKing::new);
+        registerRender(AncientKingEntityNew.class, RenderAncientKing::new);
 
         // Iceika
         registerRender(EntityAlicanto.class, RenderAlicanto::new);
