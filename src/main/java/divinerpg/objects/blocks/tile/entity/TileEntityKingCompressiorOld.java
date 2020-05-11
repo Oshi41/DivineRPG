@@ -6,16 +6,15 @@ import divinerpg.api.Reference;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.api.armor.IItemContainer;
 import divinerpg.config.Config;
-import divinerpg.objects.blocks.tile.container.KingCompressorContainerOld;
+import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
-import divinerpg.registry.ModArmor;
 import divinerpg.registry.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,38 +22,19 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity implements ITickable, IInteractionObject, IFuelProvider {
+public class TileEntityKingCompressior extends ModUpdatableTileEntity implements ITickable, IInteractionObject, IFuelProvider {
     private final ResourceLocation id = new ResourceLocation(Reference.MODID, "king_compressor");
-
-    /**
-     * List of own items
-     */
-    private final ItemStackHandler ownContainer;
-
-    /**
-     * Fuel slots
-     */
-    private final ItemStackHandler fuelContainer;
-
-    /**
-     * Common container
-     */
-    private IItemHandlerModifiable container;
-
+    private final NonNullList<ItemStack> container;
     /**
      * Amount of registered power sets need to create king set
      */
@@ -69,62 +49,23 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
     private int burningTime = 0;
     private int cookTime = 0;
 
-    public TileEntityKingCompressiorOld() {
+    public TileEntityKingCompressior() {
         kingCreationLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.kingCreationPercentage / 100.0));
         maxAbsorbedCount = Config.maxAbsorbedCount <= 0
                 ? DivineAPI.getArmorDescriptionRegistry().getKeys().size()
                 : Config.maxAbsorbedCount;
 
-        ownContainer = new ItemStackHandler(EntityEquipmentSlot.values().length);
-        fuelContainer = new ItemStackHandler();
-
-        updateContainer();
+        container = NonNullList.withSize(EntityEquipmentSlot.values().length * 2 + 1, ItemStack.EMPTY);
     }
 
     @Override
     public void update() {
-        if (world.getTotalWorldTime() % 20 == 0 || container == null) {
-            updateContainer();
-        }
-
         updateBurningTick();
-    }
-
-    public void updateContainer() {
-        int maxSize = EntityEquipmentSlot.values().length;
-
-        ArrayList<IItemHandlerModifiable> pillars = new ArrayList<>(maxSize);
-
-        if (world != null) {
-            BlockPos.getAllInBox(getPos().add(-4, 0, -4), getPos().add(4, 2, 4))
-                    .forEach(x -> {
-                        TileEntity entity = world.getTileEntity(x);
-                        if (entity instanceof TileEntityPillar && pillars.size() < maxSize) {
-                            pillars.add(((TileEntityPillar) entity).getInventory());
-                        }
-                    });
-        }
-
-        while (pillars.size() < maxSize) {
-            pillars.add(new EmptyHandler() {
-                @Override
-                public int getSlots() {
-                    return 1;
-                }
-            });
-        }
-
-        pillars.add(0, ownContainer);
-        pillars.add(fuelContainer);
-
-        container = new CombinedInvWrapper(pillars.toArray(new IItemHandlerModifiable[0]));
-
-        markDirty();
     }
 
     @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-        return new KingCompressorContainerOld(playerInventory, this);
+        return new KingCompressorContainer(playerInventory, this);
     }
 
     @Override
@@ -189,10 +130,11 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
 
             case KingSetCreation:
                 absorbedSets.clear();
-                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ModArmor.king_helmet));
-                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ModArmor.king_chestplate));
-                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ModArmor.king_leggings));
-                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ModArmor.king_boots));
+
+//                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ModArmor.king_helmet));
+//                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ModArmor.king_chestplate));
+//                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ModArmor.king_leggings));
+//                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ModArmor.king_boots));
                 break;
 
             case Infusion:
@@ -298,7 +240,7 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
     }
 
     @Override
-    public IItemHandlerModifiable getInventoryRef() {
+    public NonNullList<ItemStack> getInventoryRef() {
         return container;
     }
 
@@ -321,10 +263,10 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
             return stack.getItem() instanceof IItemContainer;
         }
 
-//        // input
-//        if (values.length <= index && index < values.length * 2) {
-//            return getPossibleOperation() != OperationTypes.KingSetCreation;
-//        }
+        // input
+        if (values.length <= index && index < values.length * 2) {
+            return getPossibleOperation() != OperationTypes.KingSetCreation;
+        }
 
         return index > values.length + 1;
     }
@@ -358,8 +300,7 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound result = super.writeToNBT(compound);
 
-        result.setTag("ownContainer", ownContainer.serializeNBT());
-        result.setTag("fuelContainer", fuelContainer.serializeNBT());
+        result.setTag("content", ItemStackHelper.saveAllItems(new NBTTagCompound(), getInventoryRef()));
         result.setInteger("burn", getBurningTicks());
         result.setInteger("cook", getCurrentCookTime());
 
@@ -375,9 +316,7 @@ public class TileEntityKingCompressiorOld extends ModUpdatableTileEntity impleme
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        ownContainer.deserializeNBT(compound.getCompoundTag("ownContainer"));
-        fuelContainer.deserializeNBT(compound.getCompoundTag("fuelContainer"));
-
+        ItemStackHelper.loadAllItems(compound.getCompoundTag("content"), getInventoryRef());
         setBurningTicks(compound.getInteger("burn"));
         setCookTime(compound.getInteger("cook"));
 
