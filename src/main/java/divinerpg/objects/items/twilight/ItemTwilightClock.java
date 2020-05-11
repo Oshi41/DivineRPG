@@ -97,9 +97,12 @@ public class ItemTwilightClock extends ItemMod {
                     match = pattern.checkStructure(worldIn, pos);
 
                     if (match != null) {
-                        player.sendMessage(new TextComponentString("Correct multi structure"));
+                        player.sendMessage(new TextComponentString("Correct structure"));
 
-                        match.buildStructure(worldIn);
+                        if (!player.isSneaking()) {
+                            player.sendMessage(new TextComponentString("Building"));
+                            match.buildStructure(worldIn);
+                        }
                     }
                 }
             }

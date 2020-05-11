@@ -147,30 +147,6 @@ public class StructurePattern {
     }
 
     /**
-     * Calculates whether the given world position matches the pattern. Warning, fairly heavy function. @return a
-     * BlockPattern.PatternHelper if found, null otherwise.
-     */
-    @Nullable
-    private StructureMatch match(BlockPos pos, Predicate<BlockWorldState>[][][] predicates, LoadingCache<BlockPos, BlockWorldState> cache) {
-        int i = Math.max(Math.max(this.palmLength, this.thumbLength), this.fingerLength) - 1;
-
-        for (BlockPos blockpos : BlockPos.getAllInBox(pos, pos.add(i, i, i))) {
-            for (EnumFacing enumfacing : EnumFacing.values()) {
-                for (EnumFacing enumfacing1 : EnumFacing.values()) {
-                    if (enumfacing1 != enumfacing && enumfacing1 != enumfacing.getOpposite()) {
-                        StructureMatch match = checkPatternAt(blockpos, enumfacing, enumfacing1, predicates, cache);
-                        if (match != null) {
-                            return match;
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Trying to check wherever pos is the corner of structure
      *
      * @return

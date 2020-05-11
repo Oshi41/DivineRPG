@@ -64,7 +64,7 @@ public class StructureBlock extends BlockMod {
             }
         }
 
-        worldIn.destroyBlock(pos, true);
+        SwapFactory.instance.requestCheck(worldIn, pos, null);
         return false;
     }
 

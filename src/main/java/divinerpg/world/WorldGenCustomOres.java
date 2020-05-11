@@ -135,12 +135,21 @@ public class WorldGenCustomOres implements IWorldGenerator {
     // DIMENSION ORE SPAWNING
     /////////////////////////////////
     private void genOverworld(World world, Random random, int chunkX, int chunkZ) {
+        // Generates king ore like:
+        // 512:512, 1024:1024 ...
+        if (chunkX % 32 == 0 && chunkZ % 32 == 0 && Math.abs(chunkX) == Math.abs(chunkZ)) {
+            // todo
+//            spawnOre(world, random, ModBlocks.king_ore.getDefaultState(), stonePredicate, chunkX, chunkZ,
+//                    Config.king);
+        }
+
         spawnOre(world, random, ModBlocks.realmiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.realmite);
         spawnOre(world, random, ModBlocks.rupeeOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.rupee);
         spawnOre(world, random, ModBlocks.arlemiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.arlemite);
+
 
         if (Config.generateTar) {
             // bottom layer, more frequently

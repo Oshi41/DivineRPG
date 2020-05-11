@@ -14,12 +14,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class KingCompressor extends MultiBlockMod {
+    protected final AxisAlignedBB AABB = new AxisAlignedBB(-1, -1, -1, 6, 6, 6);
+
     public KingCompressor(String name) {
         super(TileEntityKingCompressor.class, EnumBlockType.ROCK, name, 5);
     }
@@ -57,6 +60,11 @@ public class KingCompressor extends MultiBlockMod {
     @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return AABB;
     }
 
     @Override

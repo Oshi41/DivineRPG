@@ -16,6 +16,7 @@ import net.minecraftforge.server.command.TextComponentHelper;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -48,11 +49,9 @@ public class ItemBossSpawner extends ItemMod {
                 return EnumActionResult.FAIL;
             }
 
-            List<Entity> toSpawn = Arrays.stream(spawnderEntities).map(x -> {
-                Entity e = x.apply(world);
-                e.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
-                return e;
-            }).collect(Collectors.toList());
+            List<Entity> toSpawn = Arrays.stream(spawnderEntities)
+                    .map(x -> createEntity(x, player, world, pos))
+                    .collect(Collectors.toList());
 
             if (toSpawn.stream().allMatch(x -> world.getCollisionBoxes(x, x.getEntityBoundingBox()).isEmpty())) {
                 toSpawn.forEach(world::spawnEntity);
@@ -65,5 +64,11 @@ public class ItemBossSpawner extends ItemMod {
         }
 
         return EnumActionResult.FAIL;
+    }
+
+    protected Entity createEntity(Function<World, Entity> func, EntityPlayer player, World world, BlockPos pos) {
+        Entity e = func.apply(world);
+        e.setPosition(pos.getX(), pos.getY() + 1, pos.getZ());
+        return e;
     }
 }

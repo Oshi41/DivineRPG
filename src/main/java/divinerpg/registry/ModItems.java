@@ -676,6 +676,7 @@ public class ModItems {
         register(registry, new ItemHordeHorn("horde_horn"));
         register(registry, new ItemBossSpawner("infernal_flame", "message.king_of_scorchers", x -> Objects.equals(x, DimensionType.NETHER), EntityKingOfScorchers::new));
         register(registry, new ItemBossSpawner("mysterious_clock", "message.ancient_entity", x -> Objects.equals(x, DimensionType.OVERWORLD), EntityAncientEntity::new));
+        register(registry, new ItemForgottenCage());
         register(registry, new ItemMod("watching_eye"));
 
         // Ayeraco fragments

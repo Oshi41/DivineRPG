@@ -58,8 +58,7 @@ public class DestroyStructureEventTask implements ITask {
 
         Set<BlockPos> recheckingPoses = recheckPoses
                 .stream()
-                .flatMap(x -> PositionHelper.search(x, ModBlocks.structure_block, new HashSet<>(), cache).stream())
-                .filter(x -> true || recheckAreas.stream().noneMatch(area -> area.contains(new Vec3d(x))))
+                .filter(x -> recheckAreas.stream().noneMatch(area -> area.contains(new Vec3d(x))))
                 .collect(Collectors.toSet());
 
         recheckPoses.clear();
@@ -69,21 +68,26 @@ public class DestroyStructureEventTask implements ITask {
         while (!recheckingPoses.isEmpty()) {
             BlockPos recheckingPos = recheckingPoses.stream().findFirst().orElse(null);
 
-            List<BlockPos> nearPoses = recheckingPoses.stream().filter(x -> x.distanceSq(recheckingPos) < 3 * 3).collect(Collectors.toList());
-            recheckingPoses.removeAll(nearPoses);
+            // find all connected structure blocks
+            Set<BlockPos> structurePoses = PositionHelper.search(recheckingPos, ModBlocks.structure_block, new HashSet<>(), cache);
 
+            // search if that block is a pert of structure
             StructureMatch match = structures
                     .stream()
                     .map(x -> x.checkMultiblock(world, recheckingPos))
-                    .filter(x -> x != null)
+                    .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
 
+            // find structure here
             if (match != null) {
                 // structure confirmed do not need to check
                 recheckingPoses.removeIf(x -> match.area.contains(new Vec3d(x)));
             } else {
-                removingBlocks.addAll(nearPoses);
+                // removing all checked blocks
+                recheckingPoses.removeAll(structurePoses);
+                // and save it to next removal list
+                removingBlocks.addAll(structurePoses);
             }
 
             recheckingPoses.remove(recheckingPos);
@@ -102,7 +106,6 @@ public class DestroyStructureEventTask implements ITask {
             }
 
             removeAll(world, area, cache);
-
             recheckAreas.remove(area);
         }
 

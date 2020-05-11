@@ -232,6 +232,15 @@ public class PositionHelper {
                 .iterator();
     }
 
+    /**
+     * Deep seach for connected blocks
+     *
+     * @param pos    - current pos
+     * @param block  - block to search
+     * @param result - set resut
+     * @param cache  - possible loading cache (optimization)
+     * @return
+     */
     public static Set<BlockPos> search(BlockPos pos, Block block, Set<BlockPos> result, LoadingCache<BlockPos, BlockWorldState> cache) {
 
         IBlockState state = cache.getUnchecked(pos).getBlockState();
@@ -252,6 +261,4 @@ public class PositionHelper {
 
         return result;
     }
-
-
 }
