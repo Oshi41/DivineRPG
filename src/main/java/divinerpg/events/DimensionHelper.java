@@ -33,6 +33,7 @@ public class DimensionHelper {
         add(ModDimensions.skythernDimension, new NetherLikePortalDescription(ModBlocks.apalachiaBlock, ModBlocks.skythernPortal), portal);
         add(ModDimensions.mortumDimension, new NetherLikePortalDescription(ModBlocks.skythernBlock, ModBlocks.mortumPortal), portal);
         add(ModDimensions.iceikaDimension, new NetherLikePortalDescription(Blocks.SNOW, ModBlocks.iceikaPortal), portal);
+        add(ModDimensions.galaxyDimension, new NetherLikePortalDescription(ModBlocks.galaxy_block, ModBlocks.galaxy_portal), portal);
 
         VetheaPortal vetheaPortal = new VetheaPortal(128, 20 * 60);
         add(ModDimensions.vetheaDimension, new VetheaPortalDescription(), vetheaPortal);

@@ -40,6 +40,7 @@ import java.util.List;
 @Mod.EventBusSubscriber
 @ObjectHolder("divinerpg")
 public class ModBlocks {
+
     private static int WOOD_GOLD = 0, STONE = 1, IRON = 2, DIAMOND = 3, EDEN = 6, WILDWOOD = 7, APALACHIA = 8, SKYTHERN = 9, MORTUM = 10;
     private static List<Block> blockList = new ArrayList<Block>();
     private static List<Item> blockItemList = new ArrayList<>();
@@ -618,6 +619,8 @@ public class ModBlocks {
     public static final Block skythernBlock = null;
     @ObjectHolder("mortum_block")
     public static final Block mortumBlock = null;
+    @ObjectHolder("galaxy_block")
+    public static final Block galaxy_block = null;
 
     // Ground foliage
     @ObjectHolder("sunbloom")
@@ -679,6 +682,8 @@ public class ModBlocks {
     public static final BlockModPortal skythernPortal = null;
     @ObjectHolder("mortum_portal")
     public static final BlockModPortal mortumPortal = null;
+    @ObjectHolder("galaxy_portal")
+    public static final Block galaxy_portal = null;
 
     // Other
     @ObjectHolder("blue_fire")
@@ -1407,6 +1412,7 @@ public class ModBlocks {
         register(registry, new BlockBeaconBase("apalachia_block", 9.0F));
         register(registry, new BlockBeaconBase("skythern_block", 9.0F));
         register(registry, new BlockBeaconBase("mortum_block", 9.0F));
+        register(registry, new BlockBeaconBase("galaxy_block", 9.0F));
 
         // Ground foliage
         register(registry, new BlockTwilightFlower("sunbloom", () -> edenGrass, MapColor.YELLOW));
@@ -1671,6 +1677,7 @@ public class ModBlocks {
         register(registry, new BlockModPortal("skythern_portal", ModDimensions.skythernDimension, () -> blueFire, () -> apalachiaBlock, ParticleType.SKYTHERN_PORTAL));
         register(registry, new BlockModPortal("mortum_portal", ModDimensions.mortumDimension, () -> blueFire, () -> skythernBlock, ParticleType.MORTUM_PORTAL));
         register(registry, new BlockVetheaPortal("vethea_portal", ModDimensions.vetheaDimension, () -> blueFire, () -> mortumBlock, ParticleType.MORTUM_PORTAL));
+        register(registry, new BlockModPortal("galaxy_portal", ModDimensions.galaxyDimension, () -> blueFire, () -> galaxy_block, ParticleType.GALAXY));
 
         //Slab
         registerItemlessBlock(registry, new BlockModSlab("eden_slab", BlockModPlank.EnumType.EDEN, false));

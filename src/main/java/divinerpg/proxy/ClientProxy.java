@@ -127,6 +127,10 @@ public class ClientProxy extends CommonProxy {
             case ENDER_TRIPLET:
                 particle = new ParticleEnderTriplet(world, x, y, z, velX, velY, velZ);
                 break;
+
+                case GALAXY:
+                    // todo
+                    break;
             }
 
             if (particle != null) {

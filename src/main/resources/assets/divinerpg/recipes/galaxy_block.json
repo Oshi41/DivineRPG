@@ -1,0 +1,23 @@
+{
+  "result": {
+    "item": "divinerpg:galaxy_block",
+    "count": "3"
+  },
+  "pattern": [
+    "MMM",
+    "KBK",
+    "MMM"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": {
+      "item": "divinerpg:mortum_soul"
+    },
+    "K": {
+      "item": "divinerpg:king_ingot"
+    },
+    "M": {
+      "item": "divinerpg:mortum_block"
+    }
+  }
+}

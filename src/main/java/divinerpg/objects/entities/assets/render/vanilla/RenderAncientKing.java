@@ -1,12 +1,10 @@
 package divinerpg.objects.entities.assets.render.vanilla;
 
 import divinerpg.objects.entities.assets.model.vanilla.AncientKingEntityModel;
-import divinerpg.objects.entities.entity.vanilla.AncientKingEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 

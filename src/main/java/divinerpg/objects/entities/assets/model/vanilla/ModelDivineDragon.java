@@ -1,25 +1,24 @@
 package divinerpg.objects.entities.assets.model.vanilla;
 
-import divinerpg.objects.entities.entity.vanilla.dragon.IDragon;
+import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelDragon;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityDragon;
 
-import java.util.*;
+public class ModelDivineDragon extends ModelBase {
 
-public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extends ModelBase {
     /**
      * The head Model renderer of the dragon
      */
-    private final List<ModelRenderer> heads = new ArrayList<>();
-
+    private final ModelRenderer head;
     /**
-     * List of side spines model
+     * The spine Model renderer of the dragon
      */
-    private final List<ModelRenderer> spines = new ArrayList<>();
-
+    private final ModelRenderer spine;
     /**
      * The jaw Model renderer of the dragon
      */
@@ -62,7 +61,7 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
     private final ModelRenderer wingTip;
     private float partialTicks;
 
-    public AncientKingEntityModel() {
+    public ModelDivineDragon() {
         this.textureWidth = 256;
         this.textureHeight = 256;
         this.setTextureOffset("body.body", 0, 0);
@@ -85,22 +84,22 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
         this.setTextureOffset("neck.scale", 48, 0);
         this.setTextureOffset("head.nostril", 112, 0);
         float f = -16.0F;
+        this.head = new ModelRenderer(this, "head");
+        this.head.addBox("upperlip", -6.0F, -1.0F, -24.0F, 12, 5, 16);
+        this.head.addBox("upperhead", -8.0F, -8.0F, -10.0F, 16, 16, 16);
+        this.head.mirror = true;
+        this.head.addBox("scale", -5.0F, -12.0F, -4.0F, 2, 4, 6);
+        this.head.addBox("nostril", -5.0F, -3.0F, -22.0F, 2, 2, 4);
+        this.head.mirror = false;
+        this.head.addBox("scale", 3.0F, -12.0F, -4.0F, 2, 4, 6);
+        this.head.addBox("nostril", 3.0F, -3.0F, -22.0F, 2, 2, 4);
         this.jaw = new ModelRenderer(this, "jaw");
         this.jaw.setRotationPoint(0.0F, 4.0F, -8.0F);
         this.jaw.addBox("jaw", -6.0F, 0.0F, -16.0F, 12, 4, 16);
-
-        heads.add(initHead(this.jaw, 0));
-        heads.add(initHead(this.jaw, -2));
-        heads.add(initHead(this.jaw, 3));
-
-        for (int i = 0; i < 3; i++) {
-            ModelRenderer spine = new ModelRenderer(this, "neck");
-            spine.addBox("box", -5.0F, -5.0F, -5.0F, 10, 10, 10);
-            spine.addBox("scale", -1.0F, -9.0F, -3.0F, 2, 4, 6);
-
-            spines.add(spine);
-        }
-
+        this.head.addChild(this.jaw);
+        this.spine = new ModelRenderer(this, "neck");
+        this.spine.addBox("box", -5.0F, -5.0F, -5.0F, 10, 10, 10);
+        this.spine.addBox("scale", -1.0F, -9.0F, -3.0F, 2, 4, 6);
         this.body = new ModelRenderer(this, "body");
         this.body.setRotationPoint(0.0F, 4.0F, 8.0F);
         this.body.addBox("body", -12.0F, 0.0F, -16.0F, 24, 24, 64);
@@ -140,23 +139,6 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
         this.rearLegTip.addChild(this.rearFoot);
     }
 
-    private ModelRenderer initHead(ModelRenderer jaw, int offset) {
-        ModelRenderer head = new ModelRenderer(this, "head");
-        head.addBox("upperlip", -6.0F, -1.0F, -24.0F, 12, 5, 16);
-        head.addBox("upperhead", -8.0F, -8.0F, -10.0F, 16, 16, 16);
-        head.mirror = true;
-        head.addBox("scale", -5.0F, -12.0F, -4.0F, 2, 4, 6);
-        head.addBox("nostril", -5.0F, -3.0F, -22.0F, 2, 2, 4);
-        head.mirror = false;
-        head.addBox("scale", 3.0F, -12.0F, -4.0F, 2, 4, 6);
-        head.addBox("nostril", 3.0F, -3.0F, -22.0F, 2, 2, 4);
-        head.addChild(jaw);
-
-        head.offsetZ = offset;
-
-        return head;
-    }
-
     /**
      * Used for easily adding entity-dependent animations. The second and third float params here are the same second
      * and third as in the setRotationAngles method.
@@ -169,17 +151,9 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
      * Sets the models various rotation angles then renders the model.
      */
     public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        render((T) entityIn, scale);
-    }
-
-    /**
-     * Sets the models various rotation angles then renders the model.
-     */
-    public void render(T entitydragon, float scale) {
         GlStateManager.pushMatrix();
-        // todo
-        float f = entitydragon.getPrevAnimTime().get() + (entitydragon.getAnimTime().get() - entitydragon.getPrevAnimTime().get()) * this.partialTicks;
-        //float f = 0.5f;
+        DivineDragonBase entitydragon = (DivineDragonBase) entityIn;
+        float f = entitydragon.prevAnimTime + (entitydragon.animTime - entitydragon.prevAnimTime) * this.partialTicks;
         this.jaw.rotateAngleX = (float) (Math.sin(f * ((float) Math.PI * 2F)) + 1.0D) * 0.2F;
         float f1 = (float) (Math.sin(f * ((float) Math.PI * 2F) - 1.0F) + 1.0D);
         f1 = (f1 * f1 + f1 * 2.0F) * 0.05F;
@@ -195,40 +169,29 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
         f2 = 20.0F;
         float f3 = -12.0F;
 
-
-        for (int index = 0; index < spines.size(); index++) {
-            float angle = 90F / (spines.size() - 1) * index - 45;
-
-            ModelRenderer head = heads.get(index);
-            ModelRenderer spine = spines.get(index);
-
-            for (int i = 0; i < 5; ++i) {
-                double[] adouble1 = entitydragon.getMovementOffsets(5 - i, this.partialTicks);
-                float f9 = (float) Math.cos((float) i * 0.45F + f8) * 0.15F;
-                spine.rotateAngleY = (float) (this.updateRotations(adouble1[0] - adouble[0]) * 0.017453292F * 1.5F
-                        + Math.sin(angle));
-                spine.rotateAngleX = f9 + entitydragon.getHeadPartYOffset(i, adouble, adouble1) * 0.017453292F * 1.5F * 5.0F;
-                spine.rotateAngleZ = -this.updateRotations(adouble1[0] - (double) f7) * 0.017453292F * 1.5F;
-                spine.rotationPointY = f2;
-                spine.rotationPointZ = f3;
-                spine.rotationPointX = f4;
-                f2 = (float) ((double) f2 + Math.sin(spine.rotateAngleX) * 10.0D);
-                f3 = (float) ((double) f3 - Math.cos(spine.rotateAngleY) * Math.cos(spine.rotateAngleX) * 10.0D);
-                f4 = (float) ((double) f4 - Math.sin(spine.rotateAngleY) * Math.cos(spine.rotateAngleX) * 10.0D);
-                spine.render(scale);
-            }
-
-            head.rotationPointY = f2;
-            head.rotationPointZ = f3;
-            head.rotationPointX = f4;
-            double[] adouble2 = entitydragon.getMovementOffsets(0, this.partialTicks);
-            head.rotateAngleY = this.updateRotations(adouble2[0] - adouble[0]) * 0.017453292F;
-            head.rotateAngleX = this.updateRotations(entitydragon.getHeadPartYOffset(6, adouble, adouble2)) * 0.017453292F * 1.5F * 5.0F;
-            head.rotateAngleZ = -this.updateRotations(adouble2[0] - (double) f7) * 0.017453292F;
-            head.render(scale);
+        for (int i = 0; i < 5; ++i) {
+            double[] adouble1 = entitydragon.getMovementOffsets(5 - i, this.partialTicks);
+            float f9 = (float) Math.cos((float) i * 0.45F + f8) * 0.15F;
+            this.spine.rotateAngleY = this.updateRotations(adouble1[0] - adouble[0]) * 0.017453292F * 1.5F;
+            this.spine.rotateAngleX = f9 + entitydragon.getHeadPartYOffset(i, adouble, adouble1) * 0.017453292F * 1.5F * 5.0F;
+            this.spine.rotateAngleZ = -this.updateRotations(adouble1[0] - (double) f7) * 0.017453292F * 1.5F;
+            this.spine.rotationPointY = f2;
+            this.spine.rotationPointZ = f3;
+            this.spine.rotationPointX = f4;
+            f2 = (float) ((double) f2 + Math.sin(this.spine.rotateAngleX) * 10.0D);
+            f3 = (float) ((double) f3 - Math.cos(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            f4 = (float) ((double) f4 - Math.sin(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            this.spine.render(scale);
         }
 
-
+        this.head.rotationPointY = f2;
+        this.head.rotationPointZ = f3;
+        this.head.rotationPointX = f4;
+        double[] adouble2 = entitydragon.getMovementOffsets(0, this.partialTicks);
+        this.head.rotateAngleY = this.updateRotations(adouble2[0] - adouble[0]) * 0.017453292F;
+        this.head.rotateAngleX = this.updateRotations(entitydragon.getHeadPartYOffset(6, adouble, adouble2)) * 0.017453292F * 1.5F * 5.0F;
+        this.head.rotateAngleZ = -this.updateRotations(adouble2[0] - (double) f7) * 0.017453292F;
+        this.head.render(scale);
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-f6 * 1.5F, 0.0F, 0.0F, 1.0F);
@@ -269,24 +232,25 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
         f4 = 0.0F;
         adouble = entitydragon.getMovementOffsets(11, this.partialTicks);
 
-        ModelRenderer spine = spines.get(spines.size() / 2);
-
         for (int k = 0; k < 12; ++k) {
-            double[] adouble2 = entitydragon.getMovementOffsets(12 + k, this.partialTicks);
+            adouble2 = entitydragon.getMovementOffsets(12 + k, this.partialTicks);
             f10 = (float) ((double) f10 + Math.sin((float) k * 0.45F + f8) * 0.05000000074505806D);
-            spine.rotateAngleY = (this.updateRotations(adouble2[0] - adouble[0]) * 1.5F + 180.0F) * 0.017453292F;
-            spine.rotateAngleX = (float) (f10 + (adouble2[1] - adouble[1]) * 0.017453292F * 1.5F * 5.0F);
-            spine.rotateAngleZ = this.updateRotations(adouble2[0] - (double) f7) * 0.017453292F * 1.5F;
-            spine.rotationPointY = f2;
-            spine.rotationPointZ = f3;
-            spine.rotationPointX = f4;
-            f2 = (float) ((double) f2 + Math.sin((double) spine.rotateAngleX) * 10.0D);
-            f3 = (float) ((double) f3 - Math.cos((double) spine.rotateAngleY) * Math.cos((double) spine.rotateAngleX) * 10.0D);
-            f4 = (float) ((double) f4 - Math.sin((double) spine.rotateAngleY) * Math.cos((double) spine.rotateAngleX) * 10.0D);
-            spine.render(scale);
+            this.spine.rotateAngleY = (this.updateRotations(adouble2[0] - adouble[0]) * 1.5F + 180.0F) * 0.017453292F;
+            this.spine.rotateAngleX = f10 + (float) (adouble2[1] - adouble[1]) * 0.017453292F * 1.5F * 5.0F;
+            this.spine.rotateAngleZ = this.updateRotations(adouble2[0] - (double) f7) * 0.017453292F * 1.5F;
+            this.spine.rotationPointY = f2;
+            this.spine.rotationPointZ = f3;
+            this.spine.rotationPointX = f4;
+            f2 = (float) ((double) f2 + Math.sin(this.spine.rotateAngleX) * 10.0D);
+            f3 = (float) ((double) f3 - Math.cos(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            f4 = (float) ((double) f4 - Math.sin(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            this.spine.render(scale);
         }
 
         GlStateManager.popMatrix();
+
+        renderHead(entitydragon, scale, -45);
+        renderHead(entitydragon, scale, 45);
     }
 
     /**
@@ -305,4 +269,50 @@ public class AncientKingEntityModel<T extends EntityLivingBase & IDragon> extend
 
         return (float) p_78214_1_;
     }
+
+    private void renderHead(DivineDragonBase dragon, float scale, float angle) {
+        double[] adouble = dragon.getMovementOffsets(6, this.partialTicks);
+        float f = dragon.prevAnimTime + (dragon.animTime - dragon.prevAnimTime) * this.partialTicks;
+        float f1 = (float) (Math.sin(f * ((float) Math.PI * 2F) - 1.0F) + 1.0D);
+        f1 = (f1 * f1 + f1 * 2.0F) * 0.05F;
+        float f2 = -30.0F;
+        float f3 = -12.0F;
+        float f4 = 0.0F;
+        float f5 = 1.5F;
+        float f6 = this.updateRotations(dragon.getMovementOffsets(5, this.partialTicks)[0] - dragon.getMovementOffsets(10, this.partialTicks)[0]);
+        float f7 = this.updateRotations(dragon.getMovementOffsets(5, this.partialTicks)[0] + (double) (f6 / 2.0F));
+        float f8 = f * ((float) Math.PI * 2F);
+
+        this.spine.offsetZ = this.head.offsetZ = -3;
+        this.spine.offsetY = this.head.offsetY = 1;
+
+        for (int i = 0; i < 5; ++i) {
+            double[] adouble1 = dragon.getMovementOffsets(5 - i, this.partialTicks);
+            float f9 = (float) Math.cos((float) i * 0.45F + f8) * 0.15F;
+            this.spine.rotateAngleY = (float) (this.updateRotations(adouble1[0] - adouble[0]) * 0.017453292F * 1.5F
+                    + Math.sin(angle));
+            this.spine.rotateAngleX = f9 + dragon.getHeadPartYOffset(i, adouble, adouble1) * 0.017453292F * 1.5F * 5.0F;
+            this.spine.rotateAngleZ = -this.updateRotations(adouble1[0] - (double) f7) * 0.017453292F * 1.5F;
+            this.spine.rotationPointY = f2;
+            this.spine.rotationPointZ = f3;
+            this.spine.rotationPointX = f4;
+            f2 = (float) ((double) f2 + Math.sin(this.spine.rotateAngleX) * 10.0D);
+            f3 = (float) ((double) f3 - Math.cos(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            f4 = (float) ((double) f4 - Math.sin(this.spine.rotateAngleY) * Math.cos(this.spine.rotateAngleX) * 10.0D);
+            this.spine.render(scale);
+        }
+
+        this.head.rotationPointY = f2;
+        this.head.rotationPointZ = f3;
+        this.head.rotationPointX = f4;
+        double[] adouble2 = dragon.getMovementOffsets(0, this.partialTicks);
+        this.head.rotateAngleY = this.updateRotations(adouble2[0] - adouble[0]) * 0.017453292F;
+        this.head.rotateAngleX = this.updateRotations(dragon.getHeadPartYOffset(6, adouble, adouble2)) * 0.017453292F * 1.5F * 5.0F;
+        this.head.rotateAngleZ = -this.updateRotations(adouble2[0] - (double) f7) * 0.017453292F;
+        this.head.render(scale);
+
+        this.spine.offsetZ = this.head.offsetZ = 0;
+        this.spine.offsetY = this.head.offsetY = 0;
+    }
+
 }

@@ -5,6 +5,7 @@ import divinerpg.config.Config;
 import divinerpg.dimensions.apalachia.WorldProviderApalachia;
 import divinerpg.dimensions.arcana.WorldProviderArcana;
 import divinerpg.dimensions.eden.WorldProviderEden;
+import divinerpg.dimensions.galaxy.GalaxyWorldProvider;
 import divinerpg.dimensions.iceika.WorldProviderIceika;
 import divinerpg.dimensions.mortum.WorldProviderMortum;
 import divinerpg.dimensions.skythern.WorldProviderSkythern;
@@ -27,6 +28,7 @@ public class ModDimensions {
     public static DimensionType iceikaDimension;
     public static DimensionType arcanaDimension;
     public static DimensionType vetheaDimension;
+    public static DimensionType galaxyDimension;
 
     public static void init() {
         registerStructures();
@@ -59,6 +61,8 @@ public class ModDimensions {
                 WorldProviderArcana.class, false);
         vetheaDimension = DimensionType.register(Reference.MODID + ":vethea", "_vethea", Config.vetheaDimensionId, 
         		VetheaWorldProvider.class, false); //VetheaWorldProvider = new, WorldProviderVethea = old
+        galaxyDimension = DimensionType.register(Reference.MODID + ":galaxy", "_galaxy", Config.galaxyDimsnionID,
+                GalaxyWorldProvider.class, false);
     }
 
     private static void registerDimensions() {
@@ -70,5 +74,6 @@ public class ModDimensions {
         DimensionManager.registerDimension(Config.iceikaDimensionId, iceikaDimension);
         DimensionManager.registerDimension(Config.arcanaDimensionId, arcanaDimension);
         DimensionManager.registerDimension(Config.vetheaDimensionId, vetheaDimension);
+        DimensionManager.registerDimension(Config.galaxyDimsnionID, galaxyDimension);
     }
 }

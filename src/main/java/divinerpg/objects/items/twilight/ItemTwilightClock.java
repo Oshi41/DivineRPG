@@ -31,6 +31,7 @@ public class ItemTwilightClock extends ItemMod {
         add(ModBlocks.wildwoodBlock);
         add(ModBlocks.apalachiaBlock);
         add(ModBlocks.skythernBlock);
+        add(ModBlocks.galaxy_block);
     }};
 
     public ItemTwilightClock(String name) {

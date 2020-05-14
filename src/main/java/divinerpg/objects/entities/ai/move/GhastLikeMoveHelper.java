@@ -1,4 +1,4 @@
-package divinerpg.objects.entities.ai;
+package divinerpg.objects.entities.ai.move;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityMoveHelper;
@@ -29,14 +29,27 @@ public class GhastLikeMoveHelper extends EntityMoveHelper {
                 d3 = MathHelper.sqrt(d3);
 
                 if (this.isNotColliding(this.posX, this.posY, this.posZ, d3)) {
-                    this.parentEntity.motionX += d0 / d3 * 0.1D;
-                    this.parentEntity.motionY += d1 / d3 * 0.1D;
-                    this.parentEntity.motionZ += d2 / d3 * 0.1D;
+                    moveEntity(parentEntity, d0, d1, d2, d3);
                 } else {
                     this.action = EntityMoveHelper.Action.WAIT;
                 }
             }
         }
+    }
+
+    /**
+     * Performing entity movement
+     *
+     * @param e               - parent entity
+     * @param xMovement       - x speed
+     * @param yMovement       - y speed
+     * @param zMovement       - z speed
+     * @param distanceSquared - squared destination distance
+     */
+    protected void moveEntity(EntityLiving e, double xMovement, double yMovement, double zMovement, double distanceSquared) {
+        e.motionX += xMovement / distanceSquared * 0.1D;
+        e.motionY += yMovement / distanceSquared * 0.1D;
+        e.motionZ += zMovement / distanceSquared * 0.1D;
     }
 
     /**

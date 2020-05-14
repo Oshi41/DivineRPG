@@ -4,6 +4,8 @@ import divinerpg.api.Reference;
 import divinerpg.dimensions.apalachia.BiomeApalachia;
 import divinerpg.dimensions.arcana.BiomeArcana;
 import divinerpg.dimensions.eden.BiomeEden;
+import divinerpg.dimensions.galaxy.GalaxyBiome;
+import divinerpg.dimensions.galaxy.GalaxyWorldProvider;
 import divinerpg.dimensions.iceika.BiomeIceika;
 import divinerpg.dimensions.mortum.BiomeMortum;
 import divinerpg.dimensions.skythern.BiomeSkythern;
@@ -27,6 +29,7 @@ public class ModBiomes {
     public static final Biome Iceika = new BiomeIceika();
     public static final Biome Arcana = new BiomeArcana();
     public static final Biome Vethea = new BiomeVethea();
+    public static Biome Galaxy = new GalaxyBiome();
 
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
@@ -40,7 +43,8 @@ public class ModBiomes {
                 Mortum,
                 Iceika,
                 Arcana,
-                Vethea
+                Vethea,
+                Galaxy
         );
 
         addBiomeTypes();
@@ -55,5 +59,6 @@ public class ModBiomes {
         BiomeDictionary.addTypes(Iceika, Type.MAGICAL, Type.SNOWY);
         BiomeDictionary.addTypes(Arcana, Type.MAGICAL);
         BiomeDictionary.addTypes(Vethea, Type.MAGICAL, Type.SPOOKY);
+        BiomeDictionary.addTypes(Galaxy, Type.END, Type.MAGICAL);
     }
 }

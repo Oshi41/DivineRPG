@@ -5,7 +5,7 @@ import divinerpg.config.Config;
 import divinerpg.objects.entities.ai.AIDivineFireballAttack;
 import divinerpg.objects.entities.ai.AIDivineLookAround;
 import divinerpg.objects.entities.ai.AIDivineRandomFly;
-import divinerpg.objects.entities.ai.GhastLikeMoveHelper;
+import divinerpg.objects.entities.ai.move.GhastLikeMoveHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;

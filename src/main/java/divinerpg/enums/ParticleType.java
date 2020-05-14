@@ -17,5 +17,6 @@ public enum ParticleType {
     PURPLE_FLAME,
     FROST,
     SPARKLER,
-    ENDER_TRIPLET
+    ENDER_TRIPLET,
+    GALAXY
 }

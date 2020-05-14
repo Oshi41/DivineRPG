@@ -51,6 +51,7 @@ public class Config {
     public static int iceikaDimensionId = 425;
     public static int arcanaDimensionId = 426;
     public static int vetheaDimensionId = 427;
+    public static int galaxyDimsnionID = 428;
 
     public static int kingCreationPercentage = 50;
     public static int maxAbsorbedCount = 0;
@@ -66,6 +67,7 @@ public class Config {
         iceikaDimensionId = cfg.getInt("iceikaId", CATEGORY_DIMENSION, 425, 2, 4096, "Iceika dimension ID");
         arcanaDimensionId = cfg.getInt("arcanaId", CATEGORY_DIMENSION, 426, 2, 4096, "Arcana dimension ID");
         vetheaDimensionId = cfg.getInt("vetheaId", CATEGORY_DIMENSION, 427, 2, 4096, "Vethea dimension ID");
+        galaxyDimsnionID = cfg.getInt("galaxyID", CATEGORY_DIMENSION, 428, 2, 4096, "Galaxy dimension ID");
         isBeaconBase = cfg.getBoolean("beaconBase", CATEGORY_GENERAL, isBeaconBase,
                 "Set to false to make DivineRPG blocks non-beacon objects");
         UpdateChecker = cfg.getBoolean("UpdateChecker", CATEGORY_GENERAL, UpdateChecker,
@@ -308,5 +310,4 @@ public class Config {
 
         info.initEntity(e);
     }
-
 }

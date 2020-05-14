@@ -8,6 +8,7 @@ import divinerpg.objects.entities.assets.render.iceika.*;
 import divinerpg.objects.entities.assets.render.projectiles.*;
 import divinerpg.objects.entities.assets.render.twilight.*;
 import divinerpg.objects.entities.assets.render.vanilla.*;
+import divinerpg.objects.entities.assets.render.vanilla.dragon.RenderDragonEntity;
 import divinerpg.objects.entities.assets.render.vethea.*;
 import divinerpg.objects.entities.entity.EntityFrostCloud;
 import divinerpg.objects.entities.entity.arcana.*;
@@ -105,7 +106,6 @@ public class ModEntities {
                 buildEntityEntry(EntityTheEye.class, "the_eye", OVERWORLD),
                 buildEntityEntry(EntityTheGrue.class, "the_grue", OVERWORLD),
                 buildEntityEntry(EntityWhale.class, "whale", OVERWORLD),
-                buildEntityEntry(AncientKingEntity.class, "ancient_king", OVERWORLD),
 
                 // Nether
                 buildEntityEntry(EntityHellPig.class, "hell_pig", NETHER),
@@ -259,7 +259,8 @@ public class ModEntities {
                 buildEntityEntry(EntityTheWatcher.class, "the_watcher", BOSS),
                 buildEntityEntry(EntityTwilightDemon.class, "twilight_demon", BOSS),
                 buildEntityEntry(EntityVamacheron.class, "vamacheron", BOSS),
-                buildEntityEntry(EntityWreck.class, "wreck", BOSS)
+                buildEntityEntry(EntityWreck.class, "wreck", BOSS),
+                buildEntityEntry(AncientKingEntity.class, "ancient_king", BOSS)
         };
 
         return divineMobs;
@@ -374,6 +375,7 @@ public class ModEntities {
         registerRender(EntityFrostCloud.class, RenderFrostCloud::new);
 
         // Vanilla
+        registerRender(AncientKingEntity.class, RenderDragonEntity::new);
         registerRender(EntityAncientEntity.class, RenderAncientEntity::new);
         registerRender(EntityAridWarrior.class, RenderAridWarrior::new);
 
@@ -424,8 +426,6 @@ public class ModEntities {
         registerRender(EntityWhale.class, RenderWhale::new);
         registerRender(EntityWhiteGrizzle.class, RenderWhiteGrizzle::new);
         registerRender(EntityWildfire.class, RenderWildfire::new);
-        registerRender(AncientKingEntity.class, RenderAncientKing::new);
-        registerRender(AncientKingEntityNew.class, RenderAncientKing::new);
 
         // Iceika
         registerRender(EntityAlicanto.class, RenderAlicanto::new);
