@@ -8,7 +8,7 @@ import divinerpg.objects.entities.assets.render.iceika.*;
 import divinerpg.objects.entities.assets.render.projectiles.*;
 import divinerpg.objects.entities.assets.render.twilight.*;
 import divinerpg.objects.entities.assets.render.vanilla.*;
-import divinerpg.objects.entities.assets.render.vanilla.dragon.RenderDragonEntity;
+import divinerpg.objects.entities.assets.render.vanilla.RenderDragonEntity;
 import divinerpg.objects.entities.assets.render.vethea.*;
 import divinerpg.objects.entities.entity.EntityFrostCloud;
 import divinerpg.objects.entities.entity.arcana.*;

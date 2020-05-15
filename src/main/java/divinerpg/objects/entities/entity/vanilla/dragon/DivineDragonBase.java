@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.boss.dragon.phase.PhaseList;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +38,7 @@ import net.minecraft.world.gen.feature.WorldGenEndPodium;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
+import thaumcraft.common.entities.ai.pech.AINearestAttackableTargetPech;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -43,6 +46,7 @@ import java.util.stream.Collectors;
 
 public abstract class DivineDragonBase extends EntityMob implements IEntityMultiPart, IPhaseChange, IRangedAttackMob {
     public static final DataParameter<String> PHASE = EntityDataManager.createKey(DivineDragonBase.class, DataSerializers.STRING);
+    public static final DataParameter<BlockPos> GUARD_POSITION = EntityDataManager.createKey(DivineDragonBase.class, DataSerializers.BLOCK_POS);
 
     private BossInfoServer bossInfo = new BossInfoServer(this.getDisplayName(), this.getBarColor(), BossInfo.Overlay.PROGRESS);
 
@@ -130,7 +134,9 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
      *
      * @return
      */
-    public abstract BlockPos getDragonGuardCenter();
+    public BlockPos getDragonGuardCenter() {
+        return getDataManager().get(GUARD_POSITION);
+    }
 
     /**
      * Returns position of healing constuction
@@ -153,6 +159,15 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         super.entityInit();
 
         getDataManager().register(PHASE, PhaseRegistry.HOVER.toString());
+        getDataManager().register(GUARD_POSITION, BlockPos.ORIGIN);
+    }
+
+    @Override
+    protected void initEntityAI() {
+        super.initEntityAI();
+
+        targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntityMob.class, true));
     }
 
     /**
@@ -293,28 +308,30 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
      * specified position.
      */
     public int initPathPoints() {
+        double distance = getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+
         if (this.pathPoints[0] == null) {
             for (int i = 0; i < 24; ++i) {
                 int j = 5;
-                int l;
-                int i1;
+                int x;
+                int z;
 
                 if (i < 12) {
-                    l = (int) (60.0F * MathHelper.cos(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
-                    i1 = (int) (60.0F * MathHelper.sin(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
+                    x = (int) (distance * MathHelper.cos(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
+                    z = (int) (distance * MathHelper.sin(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
                 } else if (i < 20) {
                     int lvt_3_1_ = i - 12;
-                    l = (int) (40.0F * MathHelper.cos(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
-                    i1 = (int) (40.0F * MathHelper.sin(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
+                    x = (int) (distance * 0.66 * MathHelper.cos(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
+                    z = (int) (distance * 0.66 * MathHelper.sin(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
                     j += 10;
                 } else {
                     int k1 = i - 20;
-                    l = (int) (20.0F * MathHelper.cos(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
-                    i1 = (int) (20.0F * MathHelper.sin(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
+                    x = (int) (distance * 0.33 * MathHelper.cos(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
+                    z = (int) (distance * 0.33 * MathHelper.sin(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
                 }
 
-                int j1 = Math.max(this.world.getSeaLevel() + 10, this.world.getTopSolidOrLiquidBlock(new BlockPos(l, 0, i1)).getY() + j);
-                this.pathPoints[i] = new PathPoint(l, j1, i1);
+                int y = Math.max(this.world.getSeaLevel() + 10, this.world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z)).getY() + j);
+                this.pathPoints[i] = new PathPoint(x, y, z);
             }
 
             this.neighbors[0] = 6146;
@@ -871,7 +888,7 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
      * @return
      */
     private Collection<MultiPartEntityPart> getAllParts() {
-        List<MultiPartEntityPart> parts = Arrays.asList(this.dragonPartNeck, this.dragonPartBody, this.dragonPartTail1, this.dragonPartTail2, this.dragonPartTail3, this.dragonPartWing1, this.dragonPartWing2);
+        ArrayList<MultiPartEntityPart> parts = new ArrayList<>(Arrays.asList(this.dragonPartNeck, this.dragonPartBody, this.dragonPartTail1, this.dragonPartTail2, this.dragonPartTail3, this.dragonPartWing1, this.dragonPartWing2));
         parts.addAll(heads);
         return parts;
     }
@@ -949,7 +966,7 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         super.readFromNBT(compound);
 
         if (compound.hasKey("DragonPhase")) {
-            getPhaseManager().setPhase(PhaseRegistry.createNew(this, new ResourceLocation(compound.getString("DragonPhase"))));
+            getPhaseManager().setPhase(new ResourceLocation(compound.getString("DragonPhase")));
         }
     }
 

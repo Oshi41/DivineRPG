@@ -1,7 +1,6 @@
 package divinerpg.objects.entities.entity.vanilla.dragon.phase.base;
 
 import net.minecraft.entity.MultiPartEntityPart;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -25,8 +24,14 @@ public interface IPhase {
      */
     void doLocalUpdate();
 
-    @Deprecated
-    void onCrystalDestroyed(EntityEnderCrystal crystal, BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr);
+    /**
+     * Called when some healing structure was destroyed
+     *
+     * @param pos    - position of structure
+     * @param dmgSrc - damage
+     * @param plyr   - destroyer
+     */
+    void onHealingStructureDestroyed(BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr);
 
     /**
      * Called when this phase is set to active

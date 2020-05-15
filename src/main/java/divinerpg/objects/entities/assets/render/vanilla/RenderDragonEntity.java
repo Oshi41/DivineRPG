@@ -1,5 +1,8 @@
-package divinerpg.objects.entities.assets.render.vanilla.dragon;
+package divinerpg.objects.entities.assets.render.vanilla;
 
+import divinerpg.objects.entities.assets.model.vanilla.dragon.LayerDivineDragonDeath;
+import divinerpg.objects.entities.assets.model.vanilla.dragon.LayerDivineDragonEyes;
+import divinerpg.objects.entities.assets.model.vanilla.dragon.ModelDivineDragon;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import net.minecraft.client.model.ModelDragon;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -8,7 +11,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerEnderDragonDeath;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +29,7 @@ public class RenderDragonEntity extends RenderLiving<DivineDragonBase> {
     }
 
     public RenderDragonEntity(RenderManager renderManagerIn, ResourceLocation dragon, ResourceLocation explode, ResourceLocation beam) {
-        super(renderManagerIn, new ModelDragon(0.0F), 0.5F);
+        super(renderManagerIn, new ModelDivineDragon(), 0.5F);
         this.dragon = dragon;
         this.explode = explode;
         this.beam = beam;

@@ -1,4 +1,4 @@
-package divinerpg.objects.entities.assets.render.vanilla.dragon;
+package divinerpg.objects.entities.assets.model.vanilla.dragon;
 
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import net.minecraft.client.renderer.BufferBuilder;

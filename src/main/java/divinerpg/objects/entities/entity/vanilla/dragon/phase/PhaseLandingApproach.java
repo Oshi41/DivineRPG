@@ -3,6 +3,7 @@ package divinerpg.objects.entities.entity.vanilla.dragon.phase;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import divinerpg.objects.entities.entity.vanilla.dragon.PhaseRegistry;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.PhaseBase;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
@@ -57,11 +58,11 @@ public class PhaseLandingApproach extends PhaseBase {
         if (this.currentPath == null || this.currentPath.isFinished()) {
             int i = this.dragon.initPathPoints();
             BlockPos blockpos = this.dragon.getDragonGuardCenter();
-            EntityPlayer entityplayer = this.dragon.world.getNearestAttackablePlayer(blockpos, Math.sqrt(maxDistanceSq()), Math.sqrt(maxDistanceSq()));
+            EntityLivingBase target = this.dragon.getAttackTarget();
             int j;
 
-            if (entityplayer != null) {
-                Vec3d vec3d = (new Vec3d(entityplayer.posX, 0.0D, entityplayer.posZ)).normalize();
+            if (target != null) {
+                Vec3d vec3d = (new Vec3d(target.posX, 0.0D, target.posZ)).normalize();
                 j = this.dragon.getNearestPpIdx(-vec3d.x * 40.0D, 105.0D, -vec3d.z * 40.0D);
             } else {
                 j = this.dragon.getNearestPpIdx(40.0D, blockpos.getY(), 0.0D);

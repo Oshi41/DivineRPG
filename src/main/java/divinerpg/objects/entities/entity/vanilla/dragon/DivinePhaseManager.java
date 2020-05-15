@@ -16,6 +16,8 @@ public class DivinePhaseManager {
     public DivinePhaseManager(DivineDragonBase dragon, IPhaseChange change) {
         this.dragon = dragon;
         this.change = change;
+
+        setPhase(PhaseRegistry.HOVER);
     }
 
     /**
@@ -47,7 +49,13 @@ public class DivinePhaseManager {
             id = change.fixPhase(dragon, phase, id);
         }
 
+        if (phase != null) {
+            phase.removeAreaEffect();
+        }
+
         phase = getPhase(id);
+
+        phase.initPhase();
 
         if (phase != null && !this.dragon.world.isRemote) {
             this.dragon.getDataManager().set(DivineDragonBase.PHASE, id.toString());

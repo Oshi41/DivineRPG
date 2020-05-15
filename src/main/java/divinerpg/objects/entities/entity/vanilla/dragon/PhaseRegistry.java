@@ -29,7 +29,7 @@ public class PhaseRegistry {
         put(HOVER, PhaseHover::new);
         put(STRIFE_PLAYER, PhaseStrafePlayer::new);
         put(DYING, PhaseDying::new);
-        put(LANDING_APPROACH, PhaseLanding::new);
+        put(LANDING_APPROACH, PhaseLandingApproach::new);
         put(TAKEOFF, PhaseTakeoff::new);
         put(SITTING_FLAMING, PhaseSittingFlaming::new);
         put(LANDING, PhaseLanding::new);

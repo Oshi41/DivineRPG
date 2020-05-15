@@ -21,7 +21,7 @@ public class PhaseSittingScanning extends PhaseSittingBase {
      */
     public void doLocalUpdate() {
         ++this.scanningTime;
-        EntityLivingBase entitylivingbase = this.dragon.world.getNearestAttackablePlayer(this.dragon, 20.0D, 10.0D);
+        EntityLivingBase entitylivingbase = this.dragon.getAttackTarget();
 
         if (entitylivingbase != null) {
             if (this.scanningTime > 25) {

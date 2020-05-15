@@ -3,7 +3,6 @@ package divinerpg.objects.entities.entity.vanilla.dragon.phase.base;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -37,8 +36,7 @@ public abstract class PhaseBase implements IPhase {
     public void doLocalUpdate() {
     }
 
-    @Deprecated
-    public void onCrystalDestroyed(EntityEnderCrystal crystal, BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr) {
+    public void onHealingStructureDestroyed(BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr) {
     }
 
     /**

@@ -3,9 +3,13 @@ package divinerpg.objects.entities.entity.vanilla;
 import divinerpg.config.Config;
 import divinerpg.config.MobStatInfo;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
+import divinerpg.objects.entities.entity.vanilla.dragon.PhaseRegistry;
+import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.IPhase;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -13,26 +17,22 @@ import java.util.Random;
 
 public class AncientKingEntity extends DivineDragonBase {
     private final MobStatInfo info;
-    private BlockPos center;
 
     public AncientKingEntity(World worldIn) {
-        this(worldIn, BlockPos.ORIGIN);
-    }
-
-    public AncientKingEntity(World worldIn, BlockPos pos) {
         super(worldIn);
-        center = pos;
 
         for (int i = 0; i < 2; i++) {
             this.heads.add(new MultiPartEntityPart(this, "head_" + i, 6.0F, 6.0F));
         }
 
+        knockback = 5;
         info = Config.mobStats.get(EntityList.getKey(this));
     }
 
-    @Override
-    public BlockPos getDragonGuardCenter() {
-        return center;
+    public AncientKingEntity(World worldIn, BlockPos pos) {
+        this(worldIn);
+        setPosition(pos.getX(), pos.getY(), pos.getZ());
+        getDataManager().set(GUARD_POSITION, pos);
     }
 
     @Override
@@ -119,7 +119,30 @@ public class AncientKingEntity extends DivineDragonBase {
         return true;
     }
 
+    @Override
+    public ResourceLocation fixPhase(DivineDragonBase dragon, IPhase current, ResourceLocation toChange) {
+
+        if (toChange == PhaseRegistry.LANDING)
+            return PhaseRegistry.TAKEOFF;
+
+        return super.fixPhase(dragon, current, toChange);
+    }
+
     protected int getHealthPercentage() {
         return (int) (getHealth() / getMaxHealth() * 100);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+
+        getDataManager().set(GUARD_POSITION, BlockPos.fromLong(compound.getLong("center")));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound nbt = super.writeToNBT(compound);
+        nbt.setLong("center", getDragonGuardCenter().toLong());
+        return nbt;
     }
 }

@@ -4,7 +4,7 @@ import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import divinerpg.objects.entities.entity.vanilla.dragon.PhaseRegistry;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.IPhase;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.PhaseBase;
-import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.DamageSource;
@@ -59,7 +59,6 @@ public class PhaseHover extends PhaseBase {
 
     private void findNewTarget() {
         if (this.currentPath != null && this.currentPath.isFinished()) {
-            final BlockPos blockpos = dragon.getDragonGuardCenter();
             int i = 0;
 
             if (dragon.getRNG().nextInt(i + 3) == 0) {
@@ -67,15 +66,10 @@ public class PhaseHover extends PhaseBase {
                 return;
             }
 
-            double d0 = Math.sqrt(maxDistanceSq());
-            EntityPlayer entityplayer = dragon.world.getNearestAttackablePlayer(blockpos, d0, d0);
+            EntityLivingBase target = dragon.getAttackTarget();
 
-            if (entityplayer != null) {
-                d0 = entityplayer.getDistanceSqToCenter(blockpos) / 512.0D;
-            }
-
-            if (entityplayer != null && (dragon.getRNG().nextInt(MathHelper.abs((int) d0) + 2) == 0 || dragon.getRNG().nextInt(i + 2) == 0)) {
-                this.strafePlayer(entityplayer);
+            if (target != null) {
+                this.strafePlayer(target);
                 return;
             }
         }
@@ -109,7 +103,7 @@ public class PhaseHover extends PhaseBase {
         this.navigateToNextPathNode();
     }
 
-    protected void strafePlayer(EntityPlayer player) {
+    protected void strafePlayer(EntityLivingBase player) {
         this.dragon.getPhaseManager().setPhase(PhaseRegistry.STRIFE_PLAYER);
         IPhase currentPhase = this.dragon.getPhaseManager().getCurrentPhase();
 
@@ -138,7 +132,7 @@ public class PhaseHover extends PhaseBase {
         }
     }
 
-    public void onCrystalDestroyed(EntityEnderCrystal crystal, BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr) {
+    public void onHealingStructureDestroyed(BlockPos pos, DamageSource dmgSrc, @Nullable EntityPlayer plyr) {
         if (plyr != null && !plyr.capabilities.disableDamage) {
             this.strafePlayer(plyr);
         }

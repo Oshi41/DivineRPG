@@ -56,8 +56,7 @@ public class ItemBossSpawner extends ItemMod {
             if (toSpawn.stream().allMatch(x -> world.getCollisionBoxes(x, x.getEntityBoundingBox()).isEmpty())) {
                 toSpawn.forEach(world::spawnEntity);
 
-                if (!player.isCreative())
-                    player.getHeldItemMainhand().shrink(toSpawn.size());
+                player.getHeldItemMainhand().shrink(toSpawn.size());
 
                 return EnumActionResult.SUCCESS;
             }

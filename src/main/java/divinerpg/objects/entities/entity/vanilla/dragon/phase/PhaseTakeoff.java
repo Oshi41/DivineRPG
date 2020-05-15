@@ -69,6 +69,10 @@ public class PhaseTakeoff extends PhaseBase {
     }
 
     private void navigateToNextPathNode() {
+        if (currentPath == null){
+            findNewTarget();
+        }
+
         Vec3d vec3d = this.currentPath.getCurrentPos();
         this.currentPath.incrementPathIndex();
         double d0;
