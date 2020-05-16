@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIFindEntityNearest;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.boss.dragon.phase.PhaseList;
@@ -117,6 +119,8 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
 
     public int deathTicks;
 
+    private List<EntityAIBase> targetAI;
+
     protected DivineDragonBase(World worldIn) {
         super(worldIn);
         this.setSize(16.0F, 8.0F);
@@ -151,7 +155,7 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         Config.initEntityAttributes(this);
 
         getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(10);
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(128);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(80);
     }
 
     @Override
@@ -166,8 +170,9 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
     protected void initEntityAI() {
         super.initEntityAI();
 
-        targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
-        targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntityMob.class, true));
+        targetAI = new ArrayList<>();
+        targetAI.add(new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        targetAI.add(new EntityAINearestAttackableTarget<>(this, EntityMob.class, true));
     }
 
     /**
@@ -317,17 +322,17 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
                 int z;
 
                 if (i < 12) {
-                    x = (int) (distance * MathHelper.cos(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
-                    z = (int) (distance * MathHelper.sin(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
+                    x = (int) (posX + distance * MathHelper.cos(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
+                    z = (int) (posZ + distance * MathHelper.sin(2.0F * (-(float) Math.PI + 0.2617994F * (float) i)));
                 } else if (i < 20) {
                     int lvt_3_1_ = i - 12;
-                    x = (int) (distance * 0.66 * MathHelper.cos(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
-                    z = (int) (distance * 0.66 * MathHelper.sin(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
+                    x = (int) (posX + distance * 0.6 * MathHelper.cos(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
+                    z = (int) (posZ + distance * 0.6 * MathHelper.sin(2.0F * (-(float) Math.PI + 0.3926991F * (float) lvt_3_1_)));
                     j += 10;
                 } else {
                     int k1 = i - 20;
-                    x = (int) (distance * 0.33 * MathHelper.cos(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
-                    z = (int) (distance * 0.33 * MathHelper.sin(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
+                    x = (int) (posX + distance * 0.3 * MathHelper.cos(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
+                    z = (int) (posZ + distance * 0.3 * MathHelper.sin(2.0F * (-(float) Math.PI + ((float) Math.PI / 4F) * (float) k1)));
                 }
 
                 int y = Math.max(this.world.getSeaLevel() + 10, this.world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z)).getY() + j);
@@ -453,6 +458,10 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
      * use this to react to sunlight and start to burn.
      */
     public void onLivingUpdate() {
+        if (targetAI != null) {
+            targetAI.stream().filter(EntityAIBase::shouldExecute).findFirst().ifPresent(EntityAIBase::startExecuting);
+        }
+
         if (this.world.isRemote) {
             this.setHealth(this.getHealth());
 
@@ -916,26 +925,42 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         this.applyEnchantments(this, entityIn);
     }
 
+    @Override
+    public boolean attackEntityAsMob(Entity entityIn) {
+        if (super.attackEntityAsMob(entityIn)) {
+
+            if (entityIn instanceof EntityLivingBase)
+                performKnockBack(((EntityLivingBase) entityIn));
+
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Pushes all entities inside the list away from the enderdragon.
      */
     private void collideWithEntities(List<Entity> list) {
-        double d0 = (this.dragonPartBody.getEntityBoundingBox().minX + this.dragonPartBody.getEntityBoundingBox().maxX) / 2.0D;
-        double d1 = (this.dragonPartBody.getEntityBoundingBox().minZ + this.dragonPartBody.getEntityBoundingBox().maxZ) / 2.0D;
-
         for (Entity entity : list) {
             if (entity instanceof EntityLivingBase) {
-                double d2 = entity.posX - d0;
-                double d3 = entity.posZ - d1;
-                double d4 = d2 * d2 + d3 * d3;
-
-                ((EntityLivingBase) entity).knockBack(this, knockback, d2 / d4 * 4.0D, d3 / d4 * 4.0D);
+                performKnockBack(((EntityLivingBase) entity));
 
                 if (!getPhaseManager().getCurrentPhase().getIsStationary() && ((EntityLivingBase) entity).getRevengeTimer() < entity.ticksExisted - 2) {
                     attackFarEntityAsMob(((EntityLivingBase) entity));
                 }
             }
         }
+    }
+
+    private void performKnockBack(EntityLivingBase entity) {
+        double d0 = (this.dragonPartBody.getEntityBoundingBox().minX + this.dragonPartBody.getEntityBoundingBox().maxX) / 2.0D;
+        double d1 = (this.dragonPartBody.getEntityBoundingBox().minZ + this.dragonPartBody.getEntityBoundingBox().maxZ) / 2.0D;
+        double d2 = entity.posX - d0;
+        double d3 = entity.posZ - d1;
+        double d4 = d2 * d2 + d3 * d3;
+
+        entity.knockBack(this, knockback, d2 / d4 * 4.0D, d3 / d4 * 4.0D);
     }
 
     private float getHeadYOffset() {
