@@ -6,6 +6,7 @@ import divinerpg.config.Config;
 import divinerpg.objects.entities.assets.render.arcana.*;
 import divinerpg.objects.entities.assets.render.iceika.*;
 import divinerpg.objects.entities.assets.render.projectiles.*;
+import divinerpg.objects.entities.assets.render.projectiles.base.RenderBlockEntity;
 import divinerpg.objects.entities.assets.render.twilight.*;
 import divinerpg.objects.entities.assets.render.vanilla.*;
 import divinerpg.objects.entities.assets.render.vanilla.RenderDragonEntity;
@@ -16,6 +17,8 @@ import divinerpg.objects.entities.entity.arcana.death.EntityDeathHound;
 import divinerpg.objects.entities.entity.arcana.death.EntityDeathcryx;
 import divinerpg.objects.entities.entity.iceika.*;
 import divinerpg.objects.entities.entity.projectiles.*;
+import divinerpg.objects.entities.entity.projectiles.king.EntityKingAnvil;
+import divinerpg.objects.entities.entity.projectiles.king.EntityKingRage;
 import divinerpg.objects.entities.entity.twilight.*;
 import divinerpg.objects.entities.entity.twilight.cories.EntityAdvancedCori;
 import divinerpg.objects.entities.entity.twilight.cories.EntityExperiencedCori;
@@ -316,7 +319,10 @@ public class ModEntities {
                 buildProjectileEntry(EntityWreckBouncingProjectile.class, "wreck_bouncing_projectile"),
                 buildProjectileEntry(EntityWreckExplosiveShot.class, "wreck_explosive_shot"),
                 buildProjectileEntry(EntityWreckShot.class, "wreck_shot"),
-        buildProjectileEntry(EntityWildwoodLog.class, "wildwood_log")};
+                buildProjectileEntry(EntityWildwoodLog.class, "wildwood_log"),
+                buildProjectileEntry(EntityKingAnvil.class, "king_anvil"),
+                buildProjectileEntry(EntityKingRage.class, "king_rage"),
+        };
 
         if (Config.debug) {
             DivineRPG.logger.info(Reference.MODID + " entities have been loaded");
@@ -370,7 +376,9 @@ public class ModEntities {
         registerRender(EntityWreckExplosiveShot.class, manager -> new RenderWreckExplosiveShot(manager, 1f));
         registerRender(EntityWreckShot.class, manager -> new RenderWreckShot(manager, 1f));
         registerRender(EntityZoragonBomb.class, manager -> new RenderZoragonBomb(manager, 1f));
-        registerRender(EntityWildwoodLog.class, manager -> new RenderWildwoodLog(manager, 1f));
+        registerRender(EntityWildwoodLog.class, RenderBlockEntity::new);
+        registerRender(EntityKingAnvil.class, RenderBlockEntity::new);
+        registerRender(EntityKingRage.class, RenderKingRage::new);
 
         registerRender(EntityFrostCloud.class, RenderFrostCloud::new);
 

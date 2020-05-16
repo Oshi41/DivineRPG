@@ -9,10 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFindEntityNearest;
-import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.boss.dragon.phase.PhaseList;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,6 +24,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathHeap;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -36,11 +34,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.BossInfoServer;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenEndPodium;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
-import thaumcraft.common.entities.ai.pech.AINearestAttackableTargetPech;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -372,7 +368,7 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
      * Returns the index into pathPoints of the nearest PathPoint.
      */
     public int getNearestPpIdx(double x, double y, double z) {
-        float f = 10000.0F;
+        float f = (float) Math.pow(getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue(), 2);
         int i = 0;
         PathPoint pathpoint = new PathPoint(MathHelper.floor(x), MathHelper.floor(y), MathHelper.floor(z));
         int j = 12;
@@ -628,7 +624,42 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
                 heads.forEach(Entity::onUpdate);
                 this.dragonPartNeck.onUpdate();
                 float f20 = this.getHeadYOffset();
-                heads.forEach(x -> x.setLocationAndAngles(this.posX + (double) (f19 * 6.5F * f16), this.posY + (double) f20 + (double) (f2 * 6.5F), this.posZ - (double) (f4 * 6.5F * f16), 0.0F, 0.0F));
+
+                // todo move heads from on another
+
+                for (int i = 0, end = heads.size(); i < end; i++) {
+                    double xPos = this.posX + (double) (f19 * 6.5F * f16);
+                    double yPos = this.posY + (double) f20 + (double) (f2 * 6.5F);
+                    double zPos = this.posZ - (double) (f4 * 6.5F * f16);
+
+                    // initial head is main
+                    if (i > 0) {
+                        MultiPartEntityPart mainHead = heads.get(0);
+                        EnumFacing facing = mainHead.getHorizontalFacing().rotateYCCW();
+
+                        if (i % 2 == 0) {
+                            facing = facing.getOpposite();
+                        }
+
+                        double offset = (mainHead.width * 1.2 * Math.ceil(i / 2.0));
+
+                        xPos += facing.getFrontOffsetX() * offset;
+                        yPos += facing.getFrontOffsetY() * offset;
+                        zPos += facing.getFrontOffsetZ() * offset;
+                    }
+
+                    heads.get(i).setLocationAndAngles(xPos, yPos, zPos, 0, 0);
+                }
+//
+//                heads.forEach(x -> {
+//                    x.setLocationAndAngles(
+//                            this.posX + (double) (f19 * 6.5F * f16),
+//                            this.posY + (double) f20 + (double) (f2 * 6.5F),
+//                            this.posZ - (double) (f4 * 6.5F * f16),
+//                            0.0F,
+//                            0.0F);
+//                });
+
                 this.dragonPartNeck.setLocationAndAngles(this.posX + (double) (f19 * 5.5F * f16), this.posY + (double) f20 + (double) (f2 * 5.5F), this.posZ - (double) (f4 * 5.5F * f16), 0.0F, 0.0F);
 
                 for (int k = 0; k < 3; ++k) {
@@ -807,16 +838,18 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
     @Override
     public void attackEntityWithRangedAttack(EntityLivingBase target, float distanceFactor) {
         heads.forEach(x -> {
+            Random random = getRNG();
+
             double d14 = 1.0D;
             Vec3d vec3d2 = this.getLook(1.0F);
             double d6 = x.posX - vec3d2.x * 1.0D;
-            double d7 = x.posY + (double) (x.height / 2.0F) + 0.5D;
+            double d7 = x.posY + (double) (x.height / 2.0F) + 0.5D - random.nextDouble() + (random.nextDouble() * 2);
             double d8 = x.posZ - vec3d2.z * 1.0D;
             double d9 = target.posX - d6;
             double d10 = target.posY + (double) (target.height / 2.0F) - (d7 + (double) (x.height / 2.0F));
             double d11 = target.posZ - d8;
             this.world.playEvent(null, 1017, new BlockPos(this), 0);
-            this.world.spawnEntity(createFireball(d9, d10, d11, d6, d7, d8));
+            createAndSpawnFireball(target, d9, d10, d11, d6, d7, d8);
         });
     }
 
@@ -885,10 +918,10 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         return (float) MathHelper.wrapDegrees(p_70973_1_);
     }
 
-    protected Entity createFireball(double accelX, double accelY, double accelZ, double x, double y, double z) {
+    protected void createAndSpawnFireball(EntityLivingBase target, double accelX, double accelY, double accelZ, double x, double y, double z) {
         EntityDragonFireball entitydragonfireball = new EntityDragonFireball(this.world, this, accelX, accelY, accelZ);
         entitydragonfireball.setLocationAndAngles(x, y, z, 0.0F, 0.0F);
-        return entitydragonfireball;
+        world.spawnEntity(entitydragonfireball);
     }
 
     /**

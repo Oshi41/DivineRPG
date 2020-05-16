@@ -62,10 +62,10 @@ public class PhaseLandingApproach extends PhaseBase {
             int j;
 
             if (target != null) {
-                Vec3d vec3d = (new Vec3d(target.posX, 0.0D, target.posZ)).normalize();
-                j = this.dragon.getNearestPpIdx(-vec3d.x * 40.0D, 105.0D, -vec3d.z * 40.0D);
+                Vec3d vec3d = target.getPositionVector();
+                j = this.dragon.getNearestPpIdx(vec3d.x, vec3d.y, vec3d.z);
             } else {
-                j = this.dragon.getNearestPpIdx(40.0D, blockpos.getY(), 0.0D);
+                j = this.dragon.getNearestPpIdx(blockpos.getX(), blockpos.getY(), blockpos.getZ());
             }
 
             PathPoint pathpoint = new PathPoint(blockpos.getX(), blockpos.getY(), blockpos.getZ());

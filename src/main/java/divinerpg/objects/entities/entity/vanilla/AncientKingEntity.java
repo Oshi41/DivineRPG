@@ -2,24 +2,31 @@ package divinerpg.objects.entities.entity.vanilla;
 
 import divinerpg.config.Config;
 import divinerpg.config.MobStatInfo;
+import divinerpg.objects.entities.entity.projectiles.EntityFractiteShot;
+import divinerpg.objects.entities.entity.projectiles.king.EntityKingAnvil;
+import divinerpg.objects.entities.entity.projectiles.king.EntityKingRage;
+import divinerpg.objects.entities.entity.projectiles.king.EnumKingThrowable;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import divinerpg.objects.entities.entity.vanilla.dragon.PhaseRegistry;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.IPhase;
 import divinerpg.registry.ModArmor;
-import net.minecraft.block.Block;
+import divinerpg.utils.LocalizeUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class AncientKingEntity extends DivineDragonBase {
     private final MobStatInfo info;
@@ -54,31 +61,61 @@ public class AncientKingEntity extends DivineDragonBase {
 
         int v = getHealthPercentage();
 
-        double moveSpeed = info.values.get(SharedMonsterAttributes.MOVEMENT_SPEED);
-        double attack = info.values.get(SharedMonsterAttributes.ATTACK_DAMAGE);
-        float healAmount = 0;
+        if (ticksExisted % 20 == 0)
+            heal(perSecondAmount(v));
 
-        if (v < 70) {
-            moveSpeed *= 0.3;
-            attack *= 1.5;
-            healAmount = 0.1F;
-        }
-        if (v < 50) {
-            moveSpeed += 0.3;
-            attack *= 2;
-            healAmount = 0.3F;
-        }
-        if (v < 30) {
-            moveSpeed += 0.5;
-            attack *= 2;
-            healAmount = 0.5F;
-        }
-
-
-        heal(healAmount);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(moveSpeed);
-        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(attack);
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE)
+                .setBaseValue(getAttack(info.values.get(SharedMonsterAttributes.ATTACK_DAMAGE), v));
     }
+
+    // region tick updates
+
+    /**
+     * Gets amount of half heart healed by second.
+     *
+     * @param healthPercentage
+     * @return Amount of half hearts
+     */
+    private float perSecondAmount(int healthPercentage) {
+        if (healthPercentage < 20) {
+            return 2;
+        }
+
+        if (healthPercentage < 50) {
+            return 1.5F;
+        }
+
+        if (healthPercentage < 70) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Gets dragon attack by it's health percentage
+     *
+     * @param baseValue        - basic value from config
+     * @param healthPercentage - current health percentage
+     * @return
+     */
+    private double getAttack(double baseValue, int healthPercentage) {
+        if (healthPercentage < 20) {
+            return baseValue * 2;
+        }
+
+        if (healthPercentage < 50) {
+            return baseValue * 1.5;
+        }
+
+        if (healthPercentage < 70) {
+            return baseValue * 1.2;
+        }
+
+        return baseValue;
+    }
+
+    // endregion
 
     @Override
     public void onDeath(DamageSource cause) {
@@ -118,25 +155,36 @@ public class AncientKingEntity extends DivineDragonBase {
     }
 
     @Override
-    protected Entity createFireball(double accelX, double accelY, double accelZ, double x, double y, double z) {
-        int v = getHealthPercentage();
+    protected void createAndSpawnFireball(EntityLivingBase target, double accelX, double accelY, double accelZ, double x, double y, double z) {
 
-        if (v < 30) {
-            // todo
+        switch (getFireballType(getHealthPercentage())) {
+            case RAGE:
+                EntityKingRage rage = new EntityKingRage(world, this);
+                rage.shoot(target.posX, target.posY, target.posZ, 3, 0);
+                world.spawnEntity(rage);
+                return;
+
+            case ANVIL:
+                EntityKingAnvil anvil = new EntityKingAnvil(world, this, accelX, accelY, accelZ);
+                anvil.setLocationAndAngles(x, y, z, 0, 0);
+                world.spawnEntity(anvil);
+                return;
+
+            case WITHER:
+                EntityWitherSkull skull = new EntityWitherSkull(world, this, accelX, accelY, accelZ);
+                skull.setLocationAndAngles(x, y, z, 0, 0);
+                world.spawnEntity(skull);
+                return;
+
+            case FRACTILE:
+                EntityFractiteShot fractileShot = new EntityFractiteShot(world, this, accelX, accelY, accelZ);
+                fractileShot.setLocationAndAngles(x, y, z, 0, 0);
+                world.spawnEntity(fractileShot);
+                return;
+
+            default:
+                super.createAndSpawnFireball(target, accelX, accelY, accelZ, x, y, z);
         }
-
-        if (v < 50) {
-            // todo
-        }
-
-        if (v < 70) {
-            EntityWitherSkull skull = new EntityWitherSkull(world, this, accelX, accelY, accelZ);
-            skull.setLocationAndAngles(x, y, z, 0, 0);
-            world.spawnEntity(skull);
-        }
-
-
-        return super.createFireball(accelX, accelY, accelZ, x, y, z);
     }
 
     @Override
@@ -169,5 +217,42 @@ public class AncientKingEntity extends DivineDragonBase {
         NBTTagCompound nbt = super.writeToNBT(compound);
         nbt.setLong("center", getDragonGuardCenter().toLong());
         return nbt;
+    }
+
+    /**
+     * Randomly select type of fireball
+     *
+     * @param percentage
+     * @return
+     */
+    private EnumKingThrowable getFireballType(int percentage) {
+        // searching for possible fireball types
+        List<EnumKingThrowable> possibleTypes = Arrays.stream(EnumKingThrowable.values())
+                .filter(x -> x.maxHealthPercantage >= percentage).collect(Collectors.toList());
+
+        // gets all weights for all possible fireball types
+        Integer weights = possibleTypes.stream().map(x -> x.weight).reduce(Integer::sum).orElse(0) + 1;
+
+        // select randomly
+        int selected = getRNG().nextInt(weights);
+
+        // lowest iclusive edge
+        int current = 0;
+
+        // iterating through all types
+        for (int i = 0; i < possibleTypes.size(); i++) {
+            EnumKingThrowable type = possibleTypes.get(i);
+
+            // if in range
+            if (current <= selected && selected < current + type.weight) {
+                return type;
+            }
+
+            // increasing lowest edge
+            current += type.weight;
+        }
+
+        // default if fireball
+        return EnumKingThrowable.FIREBALL;
     }
 }

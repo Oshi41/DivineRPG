@@ -1,5 +1,6 @@
 package divinerpg.objects.entities.entity.projectiles;
 
+import divinerpg.objects.entities.assets.render.projectiles.base.IBlockRender;
 import divinerpg.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,7 +11,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class EntityWildwoodLog extends EntityThrowable {
+public class EntityWildwoodLog extends EntityThrowable implements IBlockRender {
 
 	public EntityWildwoodLog(World worldIn) {
 		super(worldIn);
@@ -32,7 +33,7 @@ public class EntityWildwoodLog extends EntityThrowable {
 	    }
 	}
 	
-	public static Block getBlock() {
+	public Block getBlock() {
 		return ModBlocks.wildwoodLog;
 	}
 }
