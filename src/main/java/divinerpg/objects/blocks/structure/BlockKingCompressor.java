@@ -1,7 +1,7 @@
-package divinerpg.objects.blocks.vanilla;
+package divinerpg.objects.blocks.structure;
 
 import divinerpg.enums.EnumBlockType;
-import divinerpg.objects.blocks.MultiBlockMod;
+import divinerpg.objects.blocks.structure.MultiBlockMod;
 import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.registry.ModBlocks;
 import net.minecraft.block.state.BlockFaceShape;
@@ -20,10 +20,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class KingCompressor extends MultiBlockMod {
-    protected final AxisAlignedBB AABB = new AxisAlignedBB(-1, -1, -1, 6, 6, 6);
+public class BlockKingCompressor extends MultiBlockMod {
 
-    public KingCompressor(String name) {
+    public BlockKingCompressor(String name) {
         super(TileEntityKingCompressor.class, EnumBlockType.ROCK, name, 5);
     }
 
@@ -38,37 +37,7 @@ public class KingCompressor extends MultiBlockMod {
     }
 
     @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.INVISIBLE;
-    }
-
-    @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-        return BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return AABB;
-    }
-
-    @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        return new ItemStack(ModBlocks.king_compressor_part);
+        return ItemStack.EMPTY;
     }
 }

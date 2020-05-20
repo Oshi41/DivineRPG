@@ -1,6 +1,7 @@
-package divinerpg.objects.blocks;
+package divinerpg.objects.blocks.structure;
 
 import divinerpg.enums.EnumBlockType;
+import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;

@@ -12,6 +12,9 @@ import divinerpg.enums.StatueType;
 import divinerpg.objects.blocks.*;
 import divinerpg.objects.blocks.arcana.*;
 import divinerpg.objects.blocks.iceika.*;
+import divinerpg.objects.blocks.structure.BlockKingCompressor;
+import divinerpg.objects.blocks.structure.Pedestal;
+import divinerpg.objects.blocks.structure.StructureBlock;
 import divinerpg.objects.blocks.twilight.*;
 import divinerpg.objects.blocks.vanilla.*;
 import divinerpg.objects.blocks.vethea.*;
@@ -1699,7 +1702,7 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockModSlab("frozen_double_slab", BlockModPlank.EnumType.FROZEN, true));
         registerItemlessBlock(registry, new BlockModSlab("eucalyptus_double_slab", BlockModPlank.EnumType.EUCALYPTUS, true));
 
-        register(registry, new KingCompressor("king_compressor"));
+        register(registry, new BlockKingCompressor("king_compressor"));
         register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5).setLightLevel(14));
 
         //
@@ -1709,7 +1712,7 @@ public class ModBlocks {
         register(registry, new BlockSingleUseSpawner("termasect_spawner", EntityTermasect.class, 20 * 5, 5, new BlockPos(0, 11, 0)));
         register(registry, new BlockSingleUseSpawner("experienced_cori_spawner", EntityExperiencedCori.class, 20 * 5, 5, new BlockPos(0, 11, 0)));
 
-        register(registry, new Pillar("pillar"));
+        register(registry, new Pedestal("pillar"));
         registerItemlessBlock(registry, new StructureBlock());
     }
 

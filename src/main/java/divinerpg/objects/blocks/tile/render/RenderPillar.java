@@ -1,6 +1,6 @@
 package divinerpg.objects.blocks.tile.render;
 
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderPillar extends TileEntitySpecialRenderer<TileEntityPillar> {
+public class RenderPillar extends TileEntitySpecialRenderer<TileEntityPedestal> {
 
-    public void render(TileEntityPillar te, double x, double y, double z, float partialTicks,
+    public void render(TileEntityPedestal te, double x, double y, double z, float partialTicks,
                        int destroyStage, float alpha) {
 
         ItemStack stack = te.getInventory().getStackInSlot(0);

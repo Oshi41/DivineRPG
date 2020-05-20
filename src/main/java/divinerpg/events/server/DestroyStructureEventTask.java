@@ -1,7 +1,8 @@
 package divinerpg.events.server;
 
 import com.google.common.cache.LoadingCache;
-import divinerpg.objects.blocks.MultiBlockMod;
+import com.google.common.collect.Sets;
+import divinerpg.objects.blocks.structure.MultiBlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import divinerpg.registry.ModBlocks;
 import divinerpg.utils.PositionHelper;
@@ -69,7 +70,7 @@ public class DestroyStructureEventTask implements ITask {
             BlockPos recheckingPos = recheckingPoses.stream().findFirst().orElse(null);
 
             // find all connected structure blocks
-            Set<BlockPos> structurePoses = PositionHelper.search(recheckingPos, ModBlocks.structure_block, new HashSet<>(), cache);
+            Set<BlockPos> structurePoses = PositionHelper.search(recheckingPos, ModBlocks.structure_block, Sets.newHashSet(), cache);
 
             // search if that block is a pert of structure
             StructureMatch match = structures

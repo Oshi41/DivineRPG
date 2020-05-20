@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockStateMatcher;
+import net.minecraft.init.Blocks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -71,11 +72,23 @@ public class StructureBuilder {
         }
     }
 
+    public StructureBuilder where(char symbol, IBlockState structure) {
+        return where(symbol, structure, structure);
+    }
+
     public StructureBuilder where(char symbol, IBlockState structure, IBlockState buildedStructure) {
         return where(symbol, getFromBlock(structure), structure, getFromBlock(buildedStructure), buildedStructure);
     }
 
     public StructureBuilder where(char symbol, Predicate<BlockWorldState> structurePredicat, IBlockState structure, Predicate<BlockWorldState> buildedStructurePredicat, IBlockState buildedStructure) {
+        if (structure == null) {
+            structure = Blocks.AIR.getDefaultState();
+        }
+
+        if (buildedStructure == null) {
+            buildedStructure = Blocks.AIR.getDefaultState();
+        }
+
         this.structureSymbolMap.put(symbol, structurePredicat);
         this.structureMap.put(symbol, structure);
         this.buildedStructureSymbolMap.put(symbol, buildedStructurePredicat);

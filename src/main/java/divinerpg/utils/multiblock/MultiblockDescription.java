@@ -26,26 +26,46 @@ public class MultiblockDescription {
         register(new ResourceLocation(Reference.MODID, "king_compressor"),
                 new StructureBuilder()
                         .aisle(
-                                "nnn",
-                                "oMo",
-                                "ooo",
-                                "ooo"
+                                "annnnna",
+                                "nnnnnnn",
+                                "nnnnnnn",
+                                "nnnnnnn",
+                                "nnnnnnn",
+                                "nnnnnnn",
+                                "annnnna"
                         )
                         .aisle(
-                                "nnn",
-                                "nnn",
-                                "nnn",
-                                "nnn"
+                                "anbbbna",
+                                "naaaaan",
+                                "naaaaan",
+                                "naaKaan",
+                                "naaaaan",
+                                "naaaaan",
+                                "anbbbna"
                         )
                         .aisle(
-                                "nnn",
-                                "ooo",
-                                "ooo",
-                                "ooo"
+                                "aanbnaa",
+                                "anaaana",
+                                "anaaana",
+                                "anaaana",
+                                "anaaana",
+                                "anaaana",
+                                "aanbnaa"
                         )
-                        .where('o', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.OBSIDIAN))
-                        .where('M', Blocks.OBSIDIAN.getDefaultState(), ModBlocks.king_compressor.getDefaultState())
+                        .aisle(
+                                "aaanaaa",
+                                "aanPnaa",
+                                "aanPnaa",
+                                "aanPnaa",
+                                "aanPnaa",
+                                "aanPnaa",
+                                "aaanaaa"
+                        )
+                        .where('a', null)
                         .where('n', Blocks.NETHER_BRICK.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.NETHER_BRICK))
+                        .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.IRON_BARS))
+                        .where('K', null, ModBlocks.king_compressor.getDefaultState())
+                        .where('P', ModBlocks.king_compressor_part.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.COMPRESSOR_PART))
                         .build()
         );
 

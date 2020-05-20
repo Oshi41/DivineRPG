@@ -1,8 +1,9 @@
-package divinerpg.objects.blocks;
+package divinerpg.objects.blocks.structure;
 
 import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
 import divinerpg.events.server.SwapFactory;
+import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
@@ -14,6 +15,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;
@@ -22,14 +24,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Random;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class StructureBlock extends BlockMod {
-    private static final IProperty<EnumPlaceholder> PlaceholderProperty;
+    public static final IProperty<EnumPlaceholder> PlaceholderProperty;
 
     static {
         PlaceholderProperty = PropertyEnum.create("placeholder_property", EnumPlaceholder.class);
@@ -38,6 +45,10 @@ public class StructureBlock extends BlockMod {
     public StructureBlock() {
         super(EnumBlockType.ROCK, "structure_block", 3, null);
         setDefaultState(withPlaceHolder(EnumPlaceholder.AIR));
+
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+            registerStateMapper();
+        }
     }
 
     public IBlockState withPlaceHolder(EnumPlaceholder placeHolder) {
@@ -45,42 +56,49 @@ public class StructureBlock extends BlockMod {
     }
 
     @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        Block block = getInnerBlock(state);
+        if (block != null)
+            return block.getDefaultState();
+
+        return super.getExtendedState(state, world, pos);
+    }
+
+    @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing clickFacing, float hitX, float hitY, float hitZ) {
 
-        StructureMatch match = MultiblockDescription
-                .instance
-                .getAll()
-                .stream()
-                .map(x -> x.checkMultiblock(worldIn, pos))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        List<IMultiblockTile> tiles = PositionHelper.findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null);
 
-        if (match != null) {
-            IMultiblockTile tile = PositionHelper.findTile(worldIn, match.area, IMultiblockTile.class);
-            if (tile != null) {
-                tile.click(playerIn);
-                return true;
-            }
+        if (tiles.isEmpty()) {
+            tiles.get(0).click(playerIn);
+            return true;
+        } else {
+            SwapFactory.instance.requestCheck(worldIn, pos, null);
+            return false;
         }
-
-        SwapFactory.instance.requestCheck(worldIn, pos, null);
-        return false;
-    }
-
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.INVISIBLE;
-    }
-
-    @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
     }
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
-        return false;
+        return getInnerBlock(state).isOpaqueCube(state);
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return getInnerBlock(state).isFullCube(state);
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        Block block = getInnerBlock(state);
+        return block.getBoundingBox(block.getDefaultState(), source, pos);
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        Block block = getInnerBlock(blockState);
+        return block.getCollisionBoundingBox(block.getDefaultState(), worldIn, pos);
     }
 
     @Override
@@ -89,20 +107,13 @@ public class StructureBlock extends BlockMod {
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
 
-        SwapFactory.instance.requestCheck(worldIn, pos, null);
+        PositionHelper.findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null)
+                .forEach(IMultiblockTile::recheckStructure);
 
-        IMultiblockTile tile = PositionHelper.findTile(worldIn, new AxisAlignedBB(pos.add(-5, -5, -5), pos.add(5, 5, 5)), IMultiblockTile.class);
-        if (tile != null) {
-            tile.recheckStructure();
-        }
+        SwapFactory.instance.requestCheck(worldIn, pos, null);
     }
 
     @Override
@@ -142,5 +153,23 @@ public class StructureBlock extends BlockMod {
                 .findFirst().orElse(EnumPlaceholder.AIR);
 
         return withPlaceHolder(placeholder);
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void registerStateMapper() {
+        ModelLoader.setCustomStateMapper(this, new StructureBlockMapper());
+    }
+
+    private Block getInnerBlock(IBlockState state) {
+        if (state != null
+                && state.getPropertyKeys().contains(PlaceholderProperty)) {
+            EnumPlaceholder value = state.getValue(PlaceholderProperty);
+
+            if (value != null) {
+                return value.getBlock();
+            }
+        }
+
+        return Blocks.AIR;
     }
 }

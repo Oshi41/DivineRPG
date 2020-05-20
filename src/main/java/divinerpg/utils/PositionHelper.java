@@ -1,7 +1,9 @@
 package divinerpg.utils;
 
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
+import divinerpg.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
@@ -9,6 +11,7 @@ import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
@@ -213,6 +216,68 @@ public class PositionHelper {
 
             if (clazz.isInstance(entity)) {
                 result.add((T) entity);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Searching tile in multistructure
+     *
+     * @param world  - world
+     * @param pos    - pos of controller/structure block
+     * @param clazz  - class of controller block
+     * @param result - list of tiles
+     * @param cache  - loading cache
+     * @param <T>    - type of TileEntity
+     * @return
+     */
+    public static <T> List<T> findTilesInStructureBlocks(World world,
+                                                         BlockPos pos,
+                                                         Class<T> clazz,
+                                                         @Nullable List<T> result,
+                                                         @Nullable Set<BlockPos> checkedPos,
+                                                         @Nullable LoadingCache<BlockPos, BlockWorldState> cache) {
+        if (result == null) {
+            result = new ArrayList<>();
+        }
+
+        if (checkedPos == null) {
+            checkedPos = Sets.newHashSet();
+        }
+
+        if (cache == null) {
+            cache = BlockPattern.createLoadingCache(world, true);
+        }
+
+        checkedPos.add(pos);
+
+        TileEntity tileEntity = world.getTileEntity(pos);
+
+        if (clazz.isInstance(tileEntity)) {
+            result.add((T) tileEntity);
+        }
+
+        for (EnumFacing facing : EnumFacing.values()) {
+            BlockPos offset = pos.offset(facing);
+            Block block = cache.getUnchecked(offset).getBlockState().getBlock();
+            tileEntity = world.getTileEntity(offset);
+
+            boolean canSearchFurther = false;
+
+            if (clazz.isInstance(tileEntity)) {
+                result.add((T) tileEntity);
+                canSearchFurther = true;
+            }
+
+            if (block == ModBlocks.structure_block) {
+                canSearchFurther = true;
+            }
+
+            // can go futher but we havet ever been there
+            if (canSearchFurther && !checkedPos.contains(offset)) {
+                findTilesInStructureBlocks(world, offset, clazz, result, checkedPos, cache);
             }
         }
 

@@ -2,6 +2,7 @@ package divinerpg.utils.multiblock;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
 import divinerpg.utils.PositionHelper;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
@@ -68,9 +69,16 @@ public class StructurePattern {
      * @return
      */
     public StructureMatch recheck(World world, StructureMatch match) {
-        return match.isConstructed()
-                ? checkMultiblock(world, match.getCorner())
-                : checkStructure(world, match.getCorner());
+
+        // should check anyway
+        Set<Predicate<BlockWorldState>> set = Sets.newHashSet();
+        set.add(StructureBuilder.ANY);
+
+        Predicate<BlockWorldState>[][][] predicates = match.isConstructed()
+                ? buildedStructurePredicates
+                : structurePredicates;
+
+        return canBuildStructure(world, match.getCorner(), set, predicates);
     }
 
     /**

@@ -11,7 +11,7 @@ public enum EnumPlaceholder implements IStringSerializable {
     AIR(Blocks.AIR.getRegistryName()),
     OBSIDIAN(Blocks.OBSIDIAN.getRegistryName()),
     NETHER_BRICK(Blocks.NETHER_BRICK.getRegistryName()),
-    ICON_BARS(Blocks.IRON_BARS.getRegistryName()),
+    IRON_BARS(Blocks.IRON_BARS.getRegistryName()),
     ANVIL(Blocks.ANVIL.getRegistryName()),
     QUARTZ_STAIRS(Blocks.QUARTZ_STAIRS.getRegistryName()),
     PILLAR("pillar"),

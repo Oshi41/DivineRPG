@@ -1,15 +1,17 @@
 package divinerpg.objects.blocks.tile.entity;
 
 import com.google.common.collect.Sets;
+import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.Reference;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.config.Config;
+import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
 import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import divinerpg.registry.ModItems;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
@@ -25,10 +27,15 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.items.wrapper.EmptyHandler;
@@ -127,16 +134,24 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public void onFinished() {
+        if (!isConstructed())
+            return;
+
         if (canMakeKingSet()) {
             absorbedSets.clear();
 
             // todo get boss summon item
-        } else {
-            absorbedSets.addAll(getSetsToApply());
+            return;
+        }
 
-            for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
-                setInventorySlotContents(slot.getSlotIndex(), ItemStack.EMPTY);
-            }
+        recreateContainer(getMultiblockMatch());
+
+        if (!haveItemsToSmelt())
+            return;
+
+        absorbedSets.addAll(getSetsToApply());
+        for (int i = 0; i < container.getSlots(); i++) {
+            container.setStackInSlot(0, ItemStack.EMPTY);
         }
     }
 
@@ -255,19 +270,9 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     // endregion
 
     @Override
-    public void onBuilt(@Nonnull StructureMatch match){
+    public void onBuilt(@Nonnull StructureMatch match) {
         super.onBuilt(match);
-
-        List<TileEntityPillar> pillars = PositionHelper.findTiles(world, match.area, TileEntityPillar.class);
-
-        container = new CombinedInvWrapper(pillars
-                .stream()
-                .map(TileEntityPillar::getInventory)
-                .toArray(IItemHandlerModifiable[]::new)
-        );
-
-        pillars.stream().filter(x -> x.getInventory() instanceof IStackListener)
-                .forEach(x -> ((IStackListener) x.getInventory()).addListener(this::recheckRecipe));
+        recreateContainer(match);
     }
 
     @Override
@@ -280,6 +285,10 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     @Override
     public void update() {
         updateBurningTick();
+
+        if (world.isRemote) {
+            spawnParticles();
+        }
     }
 
     @Override
@@ -343,5 +352,52 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
      */
     public int getLimit() {
         return setsLimit;
+    }
+
+    private void recreateContainer(@Nonnull StructureMatch match) {
+        // find all pedestals staying on solid ground
+        List<TileEntityPedestal> pillars = PositionHelper.findTiles(world, match.area.grow(1), TileEntityPedestal.class)
+                .stream()
+                .filter(x -> world.getBlockState(x.getPos().down()).isSideSolid(world, x.getPos().down(), EnumFacing.UP))
+                .collect(Collectors.toList());
+
+        container = new CombinedInvWrapper(pillars
+                .stream()
+                .map(TileEntityPedestal::getInventory)
+                .toArray(IItemHandlerModifiable[]::new)
+        );
+
+        pillars.stream().filter(x -> x.getInventory() instanceof IStackListener)
+                .forEach(x -> ((IStackListener) x.getInventory()).addListener(this::recheckRecipe));
+
+        recheckRecipe(0);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void spawnParticles() {
+        if (!isConstructed())
+            return;
+
+        AxisAlignedBB area = getMultiblockMatch().area;
+
+        Random rand = world.rand;
+
+        // above contruction
+        Vec3d center = area.getCenter().addVector(2 - rand.nextDouble() * 3, (area.maxY - area.minY) / 2 + 2, 2 - rand.nextDouble() * 3);
+
+        ParticleType particleType = ParticleType.values()[1 + rand.nextInt(5)];
+
+        for (int i = 0; i < 15; i++) {
+            DivineRPG.proxy.spawnParticle(
+                    world,
+                    particleType,
+                    center.x,
+                    center.y,
+                    center.z,
+                    rand.nextFloat() * 2 - rand.nextFloat() * 2,
+                    rand.nextFloat() * 3,
+                    rand.nextFloat() * 2 - rand.nextFloat() * 2
+                    );
+        }
     }
 }

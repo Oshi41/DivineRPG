@@ -1,8 +1,8 @@
-package divinerpg.objects.blocks.vanilla;
+package divinerpg.objects.blocks.structure;
 
 import divinerpg.enums.EnumBlockType;
 import divinerpg.objects.blocks.BlockMod;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
@@ -23,10 +23,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 
-public class Pillar extends BlockMod implements ITileEntityProvider {
+public class Pedestal extends BlockMod implements ITileEntityProvider {
     private final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
 
-    public Pillar(String name) {
+    public Pedestal(String name) {
         super(EnumBlockType.ROCK, name, 5);
         setResistance(2000);
         setLightOpacity(0);
@@ -35,7 +35,7 @@ public class Pillar extends BlockMod implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityPillar();
+        return new TileEntityPedestal();
     }
 
     @Override
@@ -79,8 +79,8 @@ public class Pillar extends BlockMod implements ITileEntityProvider {
         if (entity == null)
             return null;
 
-        if (entity instanceof TileEntityPillar) {
-            return ((TileEntityPillar) entity).getInventory();
+        if (entity instanceof TileEntityPedestal) {
+            return ((TileEntityPedestal) entity).getInventory();
         }
 
         if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {

@@ -3,7 +3,7 @@ package divinerpg.registry;
 import divinerpg.api.Reference;
 import divinerpg.client.render.*;
 import divinerpg.objects.blocks.tile.entity.*;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPillar;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import divinerpg.objects.blocks.tile.render.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -54,8 +54,8 @@ public class ModModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStatue.class, new RenderStatue());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEdenChest.class, new RenderEdenChest());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityNightmareBed.class, new RenderNightmareBed());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPillar.class, new RenderPillar());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKingCompressor.class, new RenderKingCompressor());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new RenderPillar());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKingCompressor.class, new RenderKingCompressor());
 
         registerRenders(new RenderItemStatue(),
                 ModBlocks.ancientEntityStatue,

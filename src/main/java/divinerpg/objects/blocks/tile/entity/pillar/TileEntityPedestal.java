@@ -11,10 +11,10 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class TileEntityPillar extends ModUpdatableTileEntity {
+public class TileEntityPedestal extends ModUpdatableTileEntity {
     private ItemStackHandler inventory;
 
-    public TileEntityPillar() {
+    public TileEntityPedestal() {
         inventory = new DivineStackHandler(1, integer -> markDirty(), this::isSlotValid, 1);
     }
 
