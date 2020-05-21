@@ -1,13 +1,10 @@
 package divinerpg.objects.blocks.structure;
 
-import divinerpg.enums.EnumBlockType;
 import divinerpg.enums.EnumPlaceholder;
 import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import divinerpg.utils.PositionHelper;
-import divinerpg.utils.multiblock.MultiblockDescription;
-import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.properties.IProperty;
@@ -18,22 +15,21 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class StructureBlock extends BlockMod {
     public static final IProperty<EnumPlaceholder> PlaceholderProperty;
@@ -43,7 +39,7 @@ public class StructureBlock extends BlockMod {
     }
 
     public StructureBlock() {
-        super(EnumBlockType.ROCK, "structure_block", 3, null);
+        super("structure_block", 3, null);
         setDefaultState(withPlaceHolder(EnumPlaceholder.AIR));
 
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {

@@ -47,6 +47,8 @@ public class GeneralConfig {
         public int arcanaDimensionID = 426;
         @Config.Name("Vethea")
         public int vetheaDimensionID = 427;
+        @Config.Name("Galaxy")
+        public int galaxyDimensionID = 428;
     }
 
     @Config.Name("GUI Options")

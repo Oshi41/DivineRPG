@@ -1,9 +1,9 @@
 package divinerpg.objects.blocks.structure;
 
-import divinerpg.enums.EnumBlockType;
 import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +27,7 @@ public class Pedestal extends BlockMod implements ITileEntityProvider {
     private final AxisAlignedBB AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
 
     public Pedestal(String name) {
-        super(EnumBlockType.ROCK, name, 5);
+        super(name, 5);
         setResistance(2000);
         setLightOpacity(0);
     }

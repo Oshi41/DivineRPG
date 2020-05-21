@@ -15,7 +15,7 @@ public class GalaxyWorldProvider extends WorldProvider {
 
     public GalaxyWorldProvider() {
         skyRender = new GalaxySkyRender();
-        biomeProvider = new BiomeProviderSingle(ModBiomes.Galaxy);
+        biomeProvider = new BiomeProviderSingle(ModBiomes.biomeGalaxy);
     }
 
     @Override

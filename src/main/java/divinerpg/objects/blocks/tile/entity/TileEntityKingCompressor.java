@@ -107,7 +107,8 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
         container = new EmptyHandler();
 
-        setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.kingCreationPercentage / 100.0));
+        // todo
+        // setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.kingCreationPercentage / 100.0));
     }
 
     // region IFuelProvider

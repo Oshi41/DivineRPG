@@ -1,10 +1,10 @@
 package divinerpg.objects.blocks.structure;
 
-import divinerpg.enums.EnumBlockType;
 import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,15 +24,15 @@ public class MultiBlockMod extends BlockMod implements ITileEntityProvider {
     private final Class<? extends TileEntity> clazz;
 
     public MultiBlockMod(Class<? extends TileEntity> clazz,
-                         EnumBlockType blockType,
+                         Material material,
                          String name,
                          float hardness) {
-        this(clazz, blockType, name, hardness, null);
+        this(clazz, material, name, hardness, null);
     }
 
-    public MultiBlockMod(Class<? extends TileEntity> clazz, EnumBlockType blockType, String name,
+    public MultiBlockMod(Class<? extends TileEntity> clazz, Material material, String name,
                          float hardness, CreativeTabs tab) {
-        super(blockType, name, hardness, tab);
+        super(name, hardness, material, tab);
 
         this.clazz = clazz;
     }

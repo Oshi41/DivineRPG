@@ -1220,7 +1220,7 @@ public class ModBlocks {
         register(registry, new BlockMod("diamond_bricks", 3.0F).setResistance(30.0F));
         register(registry, new BlockMod("gold_bricks", 3.0F).setResistance(30.0F));
         register(registry, new BlockMod("green_bricks", 3.0F).setResistance(30.0F));
-        register(registry, new BlockMod( "iron_bricks", 3.0F).setResistance(30.0F));
+        register(registry, new BlockMod("iron_bricks", 3.0F).setResistance(30.0F));
         register(registry, new BlockMod("lapis_lazuli_bricks", 3.0F).setResistance(30.0F));
         register(registry, new BlockMod("milk_stone_bricks", 3.0F).setResistance(30.0F));
         register(registry, new BlockMod("netherite_bricks", 3.0F).setResistance(30.0F));
@@ -1357,7 +1357,7 @@ public class ModBlocks {
         register(registry, new BlockModLog("frozen_log", MapColor.WHITE_STAINED_HARDENED_CLAY).setHardness(5.0F));
         register(registry, new BlockModLeaves("brittle_leaves", 0.1F, () -> frozenSapling,
                 MapColor.WHITE_STAINED_HARDENED_CLAY, 10));
-        Block frozenPlanks = new BlockMod( "frozen_planks", 2.0F, Material.WOOD);
+        Block frozenPlanks = new BlockMod("frozen_planks", 2.0F, Material.WOOD);
         register(registry, frozenPlanks);
         register(registry, new BlockModStairs("frozen_stairs", frozenPlanks));
         register(registry, new BlockModSapling("frozen_sapling", () -> frozenGrass, () -> frozenDirt, new IceTreeGen(true, true)));
@@ -1781,7 +1781,7 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockModSlab("eucalyptus_double_slab", BlockModPlank.EnumType.EUCALYPTUS, true));
 
         register(registry, new BlockKingCompressor("king_compressor"));
-        register(registry, new BlockMod(EnumBlockType.ROCK, "king_compressor_part", 5).setLightLevel(14));
+        register(registry, new BlockMod("king_compressor_part", 5).setLightLevel(14));
 
         //
         // newSpawners

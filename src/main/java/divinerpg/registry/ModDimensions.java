@@ -61,7 +61,7 @@ public class ModDimensions {
                 WorldProviderArcana.class, false);
         vetheaDimension = DimensionType.register(Reference.MODID + ":vethea", "_vethea", GeneralConfig.dimensionIDs.vetheaDimensionID,
         		VetheaWorldProvider.class, false); //VetheaWorldProvider = new, WorldProviderVethea = old
-        galaxyDimension = DimensionType.register(Reference.MODID + ":galaxy", "_galaxy", Config.galaxyDimsnionID,
+        galaxyDimension = DimensionType.register(Reference.MODID + ":galaxy", "_galaxy", GeneralConfig.dimensionIDs.galaxyDimensionID,
                 GalaxyWorldProvider.class, false);
     }
 
@@ -74,7 +74,6 @@ public class ModDimensions {
         DimensionManager.registerDimension(GeneralConfig.dimensionIDs.iceikaDimensionID, iceikaDimension);
         DimensionManager.registerDimension(GeneralConfig.dimensionIDs.arcanaDimensionID, arcanaDimension);
         DimensionManager.registerDimension(GeneralConfig.dimensionIDs.vetheaDimensionID, vetheaDimension);
-
-        //DimensionManager.registerDimension(GeneralConfig.dimensionIDs.galaxyDimsnionID, galaxyDimension);
+        DimensionManager.registerDimension(GeneralConfig.dimensionIDs.galaxyDimensionID, galaxyDimension);
     }
 }
