@@ -39,7 +39,7 @@ public class StructureBlock extends BlockMod {
     }
 
     public StructureBlock() {
-        super("structure_block", 3, null);
+        super("structure_block", 3);
         setDefaultState(withPlaceHolder(EnumPlaceholder.AIR));
 
         if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
@@ -105,10 +105,6 @@ public class StructureBlock extends BlockMod {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-
-        PositionHelper.findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null)
-                .forEach(IMultiblockTile::recheckStructure);
-
         SwapFactory.instance.requestCheck(worldIn, pos, null);
     }
 

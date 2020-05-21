@@ -2,8 +2,8 @@ package divinerpg.utils.multiblock;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
-import com.sun.org.apache.bcel.internal.generic.IMUL;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
@@ -13,6 +13,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNullableByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class StructureMatch {
      * @param world
      */
     public void buildStructure(World world) {
-        buildStructure(world, builtStructurePredicates, buildedStructure, false);
+        buildStructure(world, builtStructurePredicates, buildedStructure, null);
         constructed = true;
     }
 
@@ -79,7 +81,15 @@ public class StructureMatch {
      * @param world
      */
     public void destroy(World world) {
-        buildStructure(world, structurePredicates, structure, true);
+        buildStructure(world, structurePredicates, structure,
+                // should destroy all non air blocks
+                input -> {
+                    IBlockState multiBlockState = buildedStructure.get(input.getPos());
+
+                    return multiBlockState.getBlock() == input.getBlockState().getBlock()
+                            &&
+                            input.getBlockState().getMaterial() == Material.AIR;
+                });
         constructed = false;
     }
 
@@ -98,22 +108,19 @@ public class StructureMatch {
      * @param world      - world
      * @param predicates - current structure predicates. If block don't match a condition, replacing it with structure block
      * @param structure  - structure blocks by position
-     * @param ignoreAir  - ignore replacing if there is an air block
      */
-    private void buildStructure(World world, Map<BlockPos, Predicate<BlockWorldState>> predicates, Map<BlockPos, IBlockState> structure, boolean ignoreAir) {
+    private void buildStructure(World world, Map<BlockPos, Predicate<BlockWorldState>> predicates, Map<BlockPos, IBlockState> structure, @Nullable final Predicate<BlockWorldState> shouldReplace) {
         LoadingCache<BlockPos, BlockWorldState> cache = BlockPattern.createLoadingCache(world, true);
 
         List<IMultiblockTile> tiles = new ArrayList<>();
 
         predicates.forEach((pos, condition) -> {
-            if (!condition.test(cache.getUnchecked(pos))) {
-
-                if (ignoreAir || !world.isAirBlock(pos))
-                    world.setBlockState(pos, structure.get(pos), 2);
+            if (!condition.test(cache.getUnchecked(pos)) || (shouldReplace != null && shouldReplace.test(cache.getUnchecked(pos)))) {
+                world.setBlockState(pos, structure.get(pos), 2);
             }
 
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity instanceof IMultiblockTile){
+            if (tileEntity instanceof IMultiblockTile) {
                 tiles.add((IMultiblockTile) tileEntity);
             }
         });

@@ -21,8 +21,6 @@ public class MultiblockDescription {
     private final Map<ResourceLocation, StructurePattern> possibleStructures = new HashMap<>();
 
     private MultiblockDescription() {
-
-        // todo debug
         register(new ResourceLocation(Reference.MODID, "king_compressor"),
                 new StructureBuilder()
                         .aisle(
@@ -36,20 +34,20 @@ public class MultiblockDescription {
                         )
                         .aisle(
                                 "anbbbna",
-                                "nAaaaAn",
-                                "nAaaaAn",
-                                "nAaKaAn",
-                                "nAaaaAn",
+                                "nAAAAAn",
+                                "nAAAAAn",
+                                "nAAKAAn",
+                                "nAAAAAn",
                                 "nAaaaAn",
                                 "anbbbna"
                         )
                         .aisle(
                                 "aanbnaa",
-                                "anaaana",
-                                "anaaana",
-                                "anaaana",
-                                "anaaana",
-                                "anaaana",
+                                "anAAAna",
+                                "anAAAna",
+                                "anAAAna",
+                                "anAAAna",
+                                "anAAAna",
                                 "aanbnaa"
                         )
                         .aisle(
