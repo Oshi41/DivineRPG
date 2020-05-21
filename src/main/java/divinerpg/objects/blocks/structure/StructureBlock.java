@@ -69,7 +69,7 @@ public class StructureBlock extends BlockMod {
 
         List<IMultiblockTile> tiles = PositionHelper.findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null);
 
-        if (tiles.isEmpty()) {
+        if (!tiles.isEmpty()) {
             tiles.get(0).click(playerIn);
             return true;
         } else {

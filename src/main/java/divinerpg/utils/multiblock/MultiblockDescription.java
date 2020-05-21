@@ -36,11 +36,11 @@ public class MultiblockDescription {
                         )
                         .aisle(
                                 "anbbbna",
-                                "naaaaan",
-                                "naaaaan",
-                                "naaKaan",
-                                "naaaaan",
-                                "naaaaan",
+                                "nAaaaAn",
+                                "nAaaaAn",
+                                "nAaKaAn",
+                                "nAaaaAn",
+                                "nAaaaAn",
                                 "anbbbna"
                         )
                         .aisle(
@@ -62,6 +62,7 @@ public class MultiblockDescription {
                                 "aaanaaa"
                         )
                         .where('a', null)
+                        .where('A', null, ModBlocks.structure_block.getDefaultState())
                         .where('n', Blocks.NETHER_BRICK.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.NETHER_BRICK))
                         .where('b', Blocks.IRON_BARS.getDefaultState(), ModBlocks.structure_block.withPlaceHolder(EnumPlaceholder.IRON_BARS))
                         .where('K', null, ModBlocks.king_compressor.getDefaultState())

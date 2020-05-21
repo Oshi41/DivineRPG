@@ -3,6 +3,7 @@ package divinerpg.events.server;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 import divinerpg.objects.blocks.structure.MultiBlockMod;
+import divinerpg.objects.blocks.structure.StructureBlock;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import divinerpg.registry.ModBlocks;
 import divinerpg.utils.PositionHelper;
@@ -11,6 +12,7 @@ import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.ITask;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -133,13 +135,7 @@ public class DestroyStructureEventTask implements ITask {
      * @param cache - block search cache
      */
     private void removeAll(World world, AxisAlignedBB area, LoadingCache<BlockPos, BlockWorldState> cache) {
-        PositionHelper.forEveryBlock(area, pos -> {
-            Block block = cache.getUnchecked(pos).getBlockState().getBlock();
-
-            if (block == ModBlocks.structure_block)
-                return true;
-
-            return block instanceof MultiBlockMod;
-        }).forEachRemaining(x -> world.destroyBlock(x, true));
+        PositionHelper.forEveryBlock(area, pos -> cache.getUnchecked(pos).getBlockState().getPropertyKeys().contains(StructureBlock.PlaceholderProperty))
+                .forEachRemaining(x -> world.setBlockState(x, cache.getUnchecked(x).getBlockState().getValue(StructureBlock.PlaceholderProperty).getBlock().getDefaultState()));
     }
 }
