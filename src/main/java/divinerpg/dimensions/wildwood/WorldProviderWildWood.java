@@ -18,7 +18,7 @@ public class WorldProviderWildWood extends WorldProvider {
 	
 	@Override
 	public void init() {
-		this.biomeProvider = new BiomeProviderSingle(ModBiomes.WildWood);
+		this.biomeProvider = new BiomeProviderSingle(ModBiomes.biomeWildwood);
 		this.nether = false;
 		this.hasSkyLight = true;
 	}
@@ -62,7 +62,7 @@ public class WorldProviderWildWood extends WorldProvider {
 
 	@Override
 	public DimensionType getDimensionType() {
-		return ModDimensions.wildWoodDimension;
+		return ModDimensions.wildwoodDimension;
 	}
 	@Nullable
     @Override

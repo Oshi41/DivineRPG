@@ -52,7 +52,6 @@ public class CommonProxy {
         if (config.hasChanged()) {
             config.save();
         }
-        ModEntities.initMobs();
 
         GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
         GameRegistry.registerWorldGenerator(new WorldGenCustomOres(), 0);

@@ -1,13 +1,13 @@
-itemGroup.Blocks=DivineRPG: Blocks
-itemGroup.Ranged=DivineRPG: Ranged Weapons
-itemGroup.Swords=DivineRPG: Melee Weapons
-itemGroup.Tools=DivineRPG: Tools
-itemGroup.Materials=DivineRPG: Raw Materials
-itemGroup.Armor=DivineRPG: Armor
-itemGroup.Spawner=DivineRPG: Spawner
-itemGroup.Utility=DivineRPG: Utility
-itemGroup.Herbalism=DivineRPG: Herbalism
-itemGroup.Vethea=DivineRPG: Vethea
+itemGroup.divinerpg_blocks=DivineRPG: Blocks
+itemGroup.divinerpg_ranged_weapons=DivineRPG: Ranged Weapons
+itemGroup.divinerpg_melee_weapons=DivineRPG: Melee Weapons
+itemGroup.divinerpg_tools=DivineRPG: Tools
+itemGroup.divinerpg_materials=DivineRPG: Raw Materials
+itemGroup.divinerpg_armor=DivineRPG: Armor
+itemGroup.divinerpg_boss_spawners=DivineRPG: Spawner
+itemGroup.divinerpg_utility=DivineRPG: Utility
+itemGroup.divinerpg_food_and_agriculture=DivineRPG: Food and Agriculture
+itemGroup.divinerpg_vethea=DivineRPG: Vethea
 
 tile.divine_sapling.name=Divine Sapling
 tile.rupee_ore.name=Rupee Ore
@@ -230,6 +230,7 @@ tile.bacterial_acid.name=Bacterial Acid
 tile.acid_block.name=Acid Block
 tile.sunstorm_spawner.name=Sunstorm Spawner
 tile.termasect_spawner.name=Termasect Spawner
+tile.eternal_archer_spawner.name=Eternal Archer Spawner
 tile.experienced_cori_spawner.name=Experienced Cori Spawner
 
 tile.lunic_acid.name=Lunic Acid
@@ -1650,9 +1651,10 @@ tooltip.food.saturation=%s Saturation
 tooltip.food.pet=Pet Food
 tooltip.food.heal=Replenishes %s Health
 
-tooltip.spawner.sunstorm_spawner=Spawns Sunstorm when the player right clicks the block
-tooltip.spawner.termasect_spawner=Spawns Termasect when the player right clicks the block
-tooltip.spawner.experienced_cori_spawner=Spawns Experienced Cori when the player right clicks the block
+tooltip.spawner.sunstorm_spawner=Spawns Sunstorm when the player is nearby
+tooltip.spawner.termasect_spawner=Spawns Termasect when the player is nearby
+tooltip.spawner.eternal_archer_spawner=Spawns Eternal when the player is nearby
+tooltip.spawner.experienced_cori_spawner=Spawns Experienced Cori when the player is nearby
 
 enchantment.world_break=Rive
 enchantment.double_dealing_damage=Aftershock

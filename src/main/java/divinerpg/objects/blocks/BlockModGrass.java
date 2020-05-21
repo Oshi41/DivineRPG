@@ -3,7 +3,6 @@ package divinerpg.objects.blocks;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import divinerpg.enums.EnumBlockType;
 import divinerpg.objects.blocks.twilight.BlockBrambles;
 import divinerpg.objects.blocks.twilight.BlockModDoublePlant;
 import divinerpg.objects.blocks.twilight.BlockTwilightFlower;
@@ -28,7 +27,7 @@ public class BlockModGrass extends BlockMod implements IGrowable {
     private MapColor mapColor;
 
     public BlockModGrass(String name, Supplier<BlockModDirt> dirtSupplier, float hardness,  @Nonnull MapColor mapColorIn) {
-        super(EnumBlockType.GRASS, name, hardness);
+        super(name, hardness, Material.GRASS);
         this.setMapColor(mapColorIn);
         this.dirtSupplier = dirtSupplier;
         setTickRandomly(true);
@@ -79,7 +78,31 @@ public class BlockModGrass extends BlockMod implements IGrowable {
     }
 
     public void grow(World worldIn, Random rand, BlockPos pos, IBlockState state) {
+        /*
+        BlockPos blockpos = pos.up();
 
+        label35:
+        for(int i = 0; i < 128; ++i) {
+            BlockPos blockpos1 = blockpos;
+
+            for(int j = 0; j < i / 16; ++j) {
+                blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2, rand.nextInt(3) - 1);
+                if (worldIn.getBlockState(blockpos1.down()).getBlock() != this || worldIn.getBlockState(blockpos1).isNormalCube()) {
+                    continue label35;
+                }
+            }
+
+            if (worldIn.isAirBlock(blockpos1)) {
+                if (rand.nextInt(8) == 0) {
+                    worldIn.getBiome(blockpos1).plantFlower(worldIn, rand, blockpos1);
+                } else {
+                    IBlockState iblockstate1 = Blocks.TALLGRASS.getDefaultState().withProperty(BlockTallGrass.TYPE, BlockTallGrass.EnumType.GRASS);
+                    if (Blocks.TALLGRASS.canBlockStay(worldIn, blockpos1, iblockstate1)) {
+                        worldIn.setBlockState(blockpos1, iblockstate1, 3);
+                    }
+                }
+            }
+        }*/
     }
 
     @Override
@@ -146,4 +169,6 @@ public class BlockModGrass extends BlockMod implements IGrowable {
     public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         return this.mapColor;
     }
+
+
 }

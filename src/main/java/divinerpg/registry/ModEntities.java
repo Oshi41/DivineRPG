@@ -2,7 +2,7 @@ package divinerpg.registry;
 
 import divinerpg.DivineRPG;
 import divinerpg.api.Reference;
-import divinerpg.config.Config;
+import divinerpg.config.GeneralConfig;
 import divinerpg.objects.entities.assets.render.arcana.*;
 import divinerpg.objects.entities.assets.render.iceika.*;
 import divinerpg.objects.entities.assets.render.projectiles.*;
@@ -55,8 +55,8 @@ public class ModEntities {
     public static void registerEnities(RegistryEvent.Register<EntityEntry> event) {
         IForgeRegistry<EntityEntry> registry = event.getRegistry();
 
-        registry.registerAll(initProjectiles());
-        registry.registerAll(initMobs());
+        registry.registerAll(createProjectileEntries());
+        registry.registerAll(createMobEntries());
     }
 
     public static EntityEntry buildEntityEntry(Class entityClass, String entityID, SpawnEggColors.Dimension dimension) { 
@@ -72,7 +72,7 @@ public class ModEntities {
                 .tracker(250, 5, true).build();
     }
 
-    public static EntityEntry[] initMobs() {
+    public static EntityEntry[] createMobEntries() {
         EntityEntry[] divineMobs;
         divineMobs = new EntityEntry[]{
                 // Overworld
@@ -269,7 +269,7 @@ public class ModEntities {
         return divineMobs;
     }
 
-    public static EntityEntry[] initProjectiles() {
+    public static EntityEntry[] createProjectileEntries() {
         // Projectiles
         EntityEntry[] divineProjectiles = {buildProjectileEntry(EntityCaveRock.class, "cave_rock"),
                 buildProjectileEntry(EntitySerenadeOfDeath.class, "serenade_of_death"),
@@ -324,7 +324,7 @@ public class ModEntities {
                 buildProjectileEntry(EntityKingRage.class, "king_rage"),
         };
 
-        if (Config.debug) {
+        if (GeneralConfig.generalOptions.debugMode) {
             DivineRPG.logger.info(Reference.MODID + " entities have been loaded");
         }
 

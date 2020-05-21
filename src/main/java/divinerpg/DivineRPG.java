@@ -3,8 +3,10 @@
  */
 package divinerpg;
 
+import divinerpg.config.GeneralConfig;
 import divinerpg.events.enchants.WorldBreakEnchantHandler;
 import divinerpg.events.server.SwapFactory;
+import divinerpg.utils.UpdateChecker;
 import org.apache.logging.log4j.LogManager;
 
 import divinerpg.api.Reference;
@@ -39,7 +41,6 @@ public class DivineRPG {
     public static CommonProxy proxy;
 
     public static org.apache.logging.log4j.Logger logger;
-
     public static SimpleNetworkWrapper network = new SimpleNetworkWrapper(Reference.MODID);
 
     static {
@@ -73,6 +74,7 @@ public class DivineRPG {
         ModOreDict.init();
         ModTriggers.registerTriggers();
         ModSmelting.init();
+        MinecraftForge.EVENT_BUS.register(new GeneralConfig());
     }
 
     @Mod.EventHandler
@@ -86,6 +88,8 @@ public class DivineRPG {
         DimensionHelper.initPortalDescriptions();
 
         MinecraftForge.EVENT_BUS.register(SwapFactory.instance);
+
+        UpdateChecker.checkForUpdates();
     }
 
     /**
