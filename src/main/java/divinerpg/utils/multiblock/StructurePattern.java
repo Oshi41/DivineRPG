@@ -7,7 +7,6 @@ import divinerpg.utils.PositionHelper;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
-import net.minecraft.block.state.pattern.BlockStateMatcher;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -40,10 +39,6 @@ public class StructurePattern {
 
         Arrays.stream(structurePattern).forEach(x1 -> Arrays.stream(x1).forEach(x2 -> structureBlocks.addAll(Arrays.asList(x2))));
         Arrays.stream(buildedStructurePattern).forEach(x1 -> Arrays.stream(x1).forEach(x2 -> buildedStructureBlocks.addAll(Arrays.asList(x2))));
-
-        // only actual checks
-        structureBlocks.remove(StructureBuilder.ANY);
-        buildedStructureBlocks.remove(StructureBuilder.ANY);
 
         this.fingerLength = structurePattern.length;
 
@@ -119,33 +114,43 @@ public class StructurePattern {
         if (fastSearch.stream().noneMatch(x -> x.apply(cache.getUnchecked(pos))))
             return null;
 
-        int max = Math.max(Math.max(this.palmLength, this.thumbLength), this.fingerLength);
+        // possible structure corners
+        Set<BlockPos> checkedPoses = new HashSet<>();
 
-        for (BlockPos blockpos : BlockPos.getAllInBox(pos, pos.add(max - 1, max - 1, max - 1))) {
+        for (int i = 0; i < palmLength; ++i) {
+            for (int j = 0; j < thumbLength; ++j) {
+                for (int k = 0; k < fingerLength; ++k) {
 
-            for (int i = 0; i < palmLength; ++i) {
-                for (int j = 0; j < thumbLength; ++j) {
-                    for (int k = 0; k < fingerLength; ++k) {
-                        // block is belongs to structure
-                        if (!Objects.equals(StructureBuilder.ANY, predicates[k][j][i])
-                                && predicates[k][j][i].test(cache.getUnchecked(blockpos))) {
+                    // if current block pos belows to structure
+                    if (predicates[k][j][i].test(cache.getUnchecked(pos))) {
 
-                            // checking all directions
-                            for (EnumFacing enumfacing : EnumFacing.values()) {
-                                for (EnumFacing enumfacing1 : EnumFacing.values()) {
-                                    if (enumfacing1 != enumfacing && enumfacing1 != enumfacing.getOpposite()) {
-                                        // trying to get corner of structure
-                                        BlockPos cornerPos = PositionHelper.translateOffset(blockpos, enumfacing.getOpposite(), enumfacing1.getOpposite(), i, j, k);
+                        // checking all directions
+                        for (EnumFacing enumfacing : EnumFacing.values()) {
+                            for (EnumFacing enumfacing1 : EnumFacing.values()) {
+                                if (enumfacing1 != enumfacing && enumfacing1 != enumfacing.getOpposite()) {
 
-                                        if (checkCorners(cornerPos, enumfacing, enumfacing1, predicates, cache)) {
-                                            StructureMatch match = checkPatternAt(cornerPos, enumfacing, enumfacing1, predicates, cache);
-                                            if (match != null)
-                                                return match;
-                                        }
-                                    }
+                                    // calculating corner position
+                                    BlockPos corner = PositionHelper.translateOffset(pos, enumfacing, enumfacing1, -i, -j, -k);
+                                    checkedPoses.add(corner);
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+
+        // iterating through all corners
+        for (BlockPos corner : checkedPoses) {
+            // checking all directions
+            for (EnumFacing finger : EnumFacing.values()) {
+                for (EnumFacing thumb : EnumFacing.values()) {
+                    if (thumb != finger && thumb != finger.getOpposite()) {
+                        // checking the whole structure
+                        StructureMatch match = checkPatternAt(corner, finger, thumb, predicates, cache);
+                        if (match != null)
+                            return match;
                     }
                 }
             }
@@ -155,45 +160,11 @@ public class StructurePattern {
     }
 
     /**
-     * Trying to check wherever pos is the corner of structure
-     *
-     * @return
-     */
-    private boolean checkCorners(BlockPos corner, EnumFacing finger, EnumFacing thumb,
-                                 Predicate<BlockWorldState>[][][] predicates, LoadingCache<BlockPos, BlockWorldState> cache) {
-        int f = fingerLength - 1;
-        int t = thumbLength - 1;
-        int p = palmLength - 1;
-
-        Map<BlockPos, Predicate<BlockWorldState>> corners = new HashMap<BlockPos, Predicate<BlockWorldState>>() {{
-            put(new BlockPos(0, 0, 0), predicates[0][0][0]);
-            put(new BlockPos(p, 0, 0), predicates[0][0][p]);
-            put(new BlockPos(0, t, 0), predicates[0][t][0]);
-            put(new BlockPos(p, t, 0), predicates[0][t][p]);
-            put(new BlockPos(0, 0, f), predicates[f][0][0]);
-            put(new BlockPos(p, 0, f), predicates[f][0][p]);
-            put(new BlockPos(0, t, f), predicates[f][t][0]);
-            put(new BlockPos(p, t, f), predicates[f][t][p]);
-        }};
-
-        for (Map.Entry<BlockPos, Predicate<BlockWorldState>> entry : corners.entrySet()) {
-            Predicate<BlockWorldState> predicate = entry.getValue();
-            BlockPos offset = entry.getKey();
-            offset = PositionHelper.translateOffset(corner, finger, thumb, offset.getX(), offset.getY(), offset.getZ());
-            BlockWorldState state = cache.getUnchecked(offset);
-
-            if (!predicate.test(state))
-                return false;
-        }
-
-        return true;
-    }
-
-    /**
      * checks that the given pattern & rotation is at the block co-ordinates.
      */
     @Nullable
-    private StructureMatch checkPatternAt(BlockPos pos, EnumFacing finger, EnumFacing thumb, Predicate<BlockWorldState>[][][] predicates, LoadingCache<BlockPos, BlockWorldState> lcache) {
+    private StructureMatch checkPatternAt(BlockPos pos, EnumFacing finger, EnumFacing
+            thumb, Predicate<BlockWorldState>[][][] predicates, LoadingCache<BlockPos, BlockWorldState> lcache) {
         Map<BlockPos, IBlockState> structure = new HashMap<>();
         Map<BlockPos, Predicate<BlockWorldState>> structurePattern = new HashMap<>();
         Map<BlockPos, IBlockState> builtStructure = new HashMap<>();
@@ -203,9 +174,17 @@ public class StructurePattern {
         for (int i = 0; i < palmLength; ++i) {
             for (int j = 0; j < thumbLength; ++j) {
                 for (int k = 0; k < fingerLength; ++k) {
+                    Predicate<BlockWorldState> predicate = predicates[k][j][i];
+
+                    // do not need to check ANY block pos, it's always true
+                    // todo
+                    // (large speed up but need to investigate is it correct)
+                    if (Objects.equals(predicate, StructureBuilder.ANY))
+                        continue;
+
                     BlockPos currentPos = PositionHelper.translateOffset(pos, finger, thumb, i, j, k);
 
-                    if (!predicates[k][j][i].apply(lcache.getUnchecked(currentPos))) {
+                    if (!predicate.apply(lcache.getUnchecked(currentPos))) {
                         return null;
                     }
 

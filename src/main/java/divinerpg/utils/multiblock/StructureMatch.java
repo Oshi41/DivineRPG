@@ -88,7 +88,7 @@ public class StructureMatch {
 
                     return multiBlockState.getBlock() == input.getBlockState().getBlock()
                             &&
-                            input.getBlockState().getMaterial() == Material.AIR;
+                            structure.get(input.getPos()).getMaterial() == Material.AIR;
                 });
         constructed = false;
     }
@@ -115,7 +115,10 @@ public class StructureMatch {
         List<IMultiblockTile> tiles = new ArrayList<>();
 
         predicates.forEach((pos, condition) -> {
-            if (!condition.test(cache.getUnchecked(pos)) || (shouldReplace != null && shouldReplace.test(cache.getUnchecked(pos)))) {
+            boolean notMatch = !condition.test(cache.getUnchecked(pos));
+            boolean canReplace = !notMatch && shouldReplace != null && shouldReplace.test(cache.getUnchecked(pos));
+
+            if (notMatch || canReplace) {
                 world.setBlockState(pos, structure.get(pos), 2);
             }
 

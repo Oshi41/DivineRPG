@@ -1,6 +1,7 @@
 package divinerpg.objects.blocks.tile.entity.multiblock;
 
 import divinerpg.DivineRPG;
+import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;

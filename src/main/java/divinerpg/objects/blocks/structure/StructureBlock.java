@@ -69,7 +69,7 @@ public class StructureBlock extends BlockMod {
             tiles.get(0).click(playerIn);
             return true;
         } else {
-            SwapFactory.instance.requestCheck(worldIn, pos, null);
+            SwapFactory.instance.recheck(worldIn, pos);
             return false;
         }
     }
@@ -105,12 +105,12 @@ public class StructureBlock extends BlockMod {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        SwapFactory.instance.requestCheck(worldIn, pos, null);
+        SwapFactory.instance.recheck(worldIn, pos);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        SwapFactory.instance.requestCheck(worldIn, pos, null);
+        SwapFactory.instance.recheck(worldIn, pos);
     }
 
     @Override

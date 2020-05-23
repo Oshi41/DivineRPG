@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public abstract class TaskFactory<T extends Event> {
     private final Map<UUID, ScheduledTask<T>> playerTasks = new ConcurrentHashMap<>();
-    private final Map<UUID, ScheduledTask<T>> pendingTasks = new ConcurrentHashMap<>();
     private Function<T, UUID> findActorFunc;
 
     protected TaskFactory(Function<T, UUID> findActorFunc) {
