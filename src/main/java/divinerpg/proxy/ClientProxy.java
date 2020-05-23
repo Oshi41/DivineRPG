@@ -5,15 +5,11 @@ import divinerpg.client.ArcanaRenderer;
 import divinerpg.enums.ParticleType;
 import divinerpg.events.EventBowZoom;
 import divinerpg.events.EventClientLogin;
-import divinerpg.events.EventTooltip;
 import divinerpg.objects.entities.assets.render.PlayerHatRender;
 import divinerpg.particle.*;
 import divinerpg.registry.ModEntities;
 import divinerpg.registry.ModSounds;
-import divinerpg.utils.log.InitLog;
-import divinerpg.utils.log.IntenseDebug;
-import divinerpg.utils.log.PostInitLog;
-import divinerpg.utils.log.PreInitLog;
+import divinerpg.utils.log.DebugLogging;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.particle.Particle;
@@ -45,7 +41,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
-        InitLog.init();
+        DebugLogging.initStageLog();
         Music_Iceika = EnumHelperClient.addMusicType("iceika_music", ModSounds.ICEIKA_MUSIC, 1200, 12000);
     }
 
@@ -54,11 +50,8 @@ public class ClientProxy extends CommonProxy {
         super.postInit(e);
         MinecraftForge.EVENT_BUS.register(new ArcanaRenderer());
         MinecraftForge.EVENT_BUS.register(new EventClientLogin());
-        MinecraftForge.EVENT_BUS.register(new EventTooltip());
 
-        PostInitLog.init();
-        IntenseDebug.init();
-
+        DebugLogging.postInitStageLog();
         RenderPlayer renderPlayer = Minecraft.getMinecraft().getRenderManager().getSkinMap().get("default");
         if (renderPlayer != null) {
             renderPlayer.addLayer(new PlayerHatRender(renderPlayer));
@@ -71,7 +64,7 @@ public class ClientProxy extends CommonProxy {
         ModEntities.initModels();
         OBJLoader.INSTANCE.addDomain(Reference.MODID);
         MinecraftForge.EVENT_BUS.register(new EventBowZoom());
-        PreInitLog.init();
+        DebugLogging.preInitStageLog();
     }
 
     @Override
