@@ -149,7 +149,7 @@ public interface IFuelProvider extends IInventory {
     @Override
     default ItemStack getStackInSlot(int index) {
         if (0 <= index && index < getSizeInventory()) {
-            return getInventoryRef().getStackInSlot(index);
+            return getInventoryRef().getStackInSlot(index).copy();
         }
 
         return ItemStack.EMPTY;

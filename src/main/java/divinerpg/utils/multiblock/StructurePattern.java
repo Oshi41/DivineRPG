@@ -147,7 +147,7 @@ public class StructurePattern {
 
                         // checking the whole structure
                         StructureMatch match = checkPatternAt(corner, finger, thumb, predicates, cache);
-                        if (match != null)
+                        if (match != null) {
                             // corrent match
                             if (PositionHelper.containsInArea(match.area, pos)) {
                                 return match;
@@ -155,6 +155,7 @@ public class StructurePattern {
                                 // find near match, should remove all other structure block
                                 checkedPoses.removeIf(x -> PositionHelper.containsInArea(match.area, x));
                             }
+                        }
                     }
                 }
             }

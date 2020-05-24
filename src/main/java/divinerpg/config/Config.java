@@ -33,9 +33,11 @@ public class Config {
     public static final OreInfo twilight = new OreInfo("twilightOres", 10, 4, 15, 100);
     private static final String CATEGORY_GUI = "GUI";
     private static final String CATEGORY_WORLD_GEN = "World Gen";
+    private static final String Category_king_compressor = "King Compressor";
     public static boolean generateHuts = true;
     public static boolean generateTrees = true;
     public static boolean generateTar = true;
+    public static int maxSetsPercentage = 50;
 
     private static void initGeneralConfig(Configuration cfg) {
         cfg.addCustomCategoryComment(CATEGORY_WORLD_GEN, "World gen variables");
@@ -43,6 +45,9 @@ public class Config {
         generateHuts = cfg.getBoolean("generateHuts", CATEGORY_WORLD_GEN, true, "Generate livestock merchant huts in the overworld");
         generateTrees = cfg.getBoolean("generateTrees", CATEGORY_WORLD_GEN, true, "Generate divine trees in the overworld");
         generateTar = cfg.getBoolean("generateTar", CATEGORY_WORLD_GEN, true, "Generate tar lakes in the overworld");
+
+        cfg.addCustomCategoryComment(Category_king_compressor, "King compressor settings");
+        maxSetsPercentage = cfg.getInt("maxSetsPercentage", CATEGORY_WORLD_GEN, 50, 1, 100, "Percentage of sets need to be burn to get king spawner");
     }
 
     private static void initMobStats(Configuration cfg) {

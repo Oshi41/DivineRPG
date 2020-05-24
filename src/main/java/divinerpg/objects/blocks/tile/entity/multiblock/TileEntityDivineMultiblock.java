@@ -33,7 +33,7 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
      * Data from NBT
      */
     @SideOnly(Side.CLIENT)
-    protected boolean constructedOnServer;
+    protected boolean constructedOnServer = true;
 
     public TileEntityDivineMultiblock(StructurePattern pattern, String name, Integer guiId) {
         this.pattern = pattern;
@@ -77,11 +77,10 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         StructureMatch prevMatch = getMultiblockMatch();
         StructureMatch multiMatch = getPattern().checkMultiblock(world, getPos());
 
-        // changes detected
-        if (!Objects.equals(prevMatch, multiMatch)) {
-            if (multiMatch != null) {
-                onBuilt(multiMatch);
-            } else {
+        if (multiMatch != null) {
+            onBuilt(multiMatch);
+        } else {
+            if (prevMatch != null) {
                 onDestroy(prevMatch);
             }
         }

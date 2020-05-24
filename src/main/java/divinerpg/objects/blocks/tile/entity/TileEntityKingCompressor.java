@@ -2,8 +2,11 @@ package divinerpg.objects.blocks.tile.entity;
 
 import com.google.common.collect.Sets;
 import divinerpg.DivineRPG;
+import divinerpg.api.DivineAPI;
 import divinerpg.api.Reference;
 import divinerpg.api.armor.ArmorEquippedEvent;
+import divinerpg.config.Config;
+import divinerpg.config.GeneralConfig;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
@@ -29,6 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -94,6 +98,9 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
      * Oprimizing. Check if we really have recipe for smelting
      */
     private boolean hasRecipe;
+
+    @SideOnly(Side.CLIENT)
+    private boolean firstTick = true;
     //endregion
 
     public TileEntityKingCompressor() {
@@ -107,9 +114,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         outputSlot = 7;
 
         container = new EmptyHandler();
-
-        // todo
-        // setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.kingCreationPercentage / 100.0));
+        setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.maxSetsPercentage / 100.0));
     }
 
     // region IFuelProvider
@@ -209,14 +214,16 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (fuelSlots.contains(index)) {
-            return fuelMap.containsKey(stack.getItem());
-        }
+        return !canMakeKingSet();
 
-        if (canMakeKingSet())
-            return false;
-
-        return index != outputSlot;
+//        if (fuelSlots.contains(index)) {
+//            return fuelMap.containsKey(stack.getItem());
+//        }
+//
+//        if (canMakeKingSet())
+//            return false;
+//
+//        return index != outputSlot;
     }
 
     @Override
@@ -286,7 +293,24 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         updateBurningTick();
 
         if (world.isRemote) {
+
+            if (firstTick) {
+                firstTick = false;
+
+                if (!isConstructed())
+                    recheckStructure();
+            }
+
             spawnParticles();
+        }
+
+        if (hasRecipe && getMultiblockMatch() != null) {
+            AxisAlignedBB area = getMultiblockMatch().area;
+            BlockPos pos = new BlockPos(area.minX, area.maxY + 2, area.minZ);
+
+            pos = pos.add(world.rand.nextInt((int) (area.maxX - area.minX)), world.rand.nextInt(2), world.rand.nextInt((int) (area.minZ - area.minZ)));
+
+            world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 5, true);
         }
     }
 
@@ -396,8 +420,9 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
             if (constructedOnServer) {
                 recheckStructure();
             }
-        }
 
+            return;
+        }
 
         AxisAlignedBB area = getMultiblockMatch().area;
 

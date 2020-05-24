@@ -3,7 +3,9 @@ package divinerpg.events.server;
 import divinerpg.events.server.tasks.BuildTask;
 import divinerpg.events.server.tasks.DestroyTask;
 import divinerpg.events.server.tasks.RecheckTask;
+import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.utils.Lazy;
+import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
@@ -154,4 +156,25 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     }
 
 
+    /**
+     * Searches tile on that place
+     *
+     * @param clazz   - tile entity class
+     * @param worldIn - current world
+     * @param pos     - structure position
+     * @param <T>     - type of tile entity
+     * @return
+     */
+    @Nullable
+    public <T> T findMultiblockTile(Class<T> clazz, World worldIn, BlockPos pos) {
+        Map<StructureMatch, StructurePattern> map = currentStructures.get(worldIn.provider.getDimension());
+        if (map == null)
+            return null;
+
+        StructureMatch match = map.keySet().stream().filter(x -> PositionHelper.containsInArea(x.area, pos)).findFirst().orElse(null);
+        if (match == null)
+            return null;
+
+        return PositionHelper.findTile(worldIn, match.area, clazz);
+    }
 }

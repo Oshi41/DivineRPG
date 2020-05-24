@@ -36,7 +36,7 @@ public class ArmorEquippedEvent extends Event {
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             HashSet<Item> slotItems = new HashSet<>();
 
-            ItemStack stack = items.get(slot);
+            ItemStack stack = items.getOrDefault(slot, ItemStack.EMPTY);
             slotItems.add(stack.getItem());
 
             if (stack.getItem() instanceof IItemContainer) {

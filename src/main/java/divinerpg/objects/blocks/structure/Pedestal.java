@@ -1,11 +1,14 @@
 package divinerpg.objects.blocks.structure;
 
+import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.BlockMod;
+import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
@@ -62,6 +65,16 @@ public class Pedestal extends BlockMod implements ITileEntityProvider {
         }
 
         super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+
+        TileEntityKingCompressor tile = SwapFactory.instance.findMultiblockTile(TileEntityKingCompressor.class, worldIn, pos.down());
+        if (tile != null) {
+            tile.recheckStructure();
+        }
     }
 
     @Override
