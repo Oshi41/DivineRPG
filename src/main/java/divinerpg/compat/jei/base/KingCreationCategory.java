@@ -1,11 +1,11 @@
 package divinerpg.compat.jei.base;
 
+import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
-import divinerpg.api.Reference;
 import divinerpg.compat.jei.JeiReferences;
 import divinerpg.objects.blocks.tile.container.gui.KIngCompressionGUI;
 import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
-import divinerpg.registry.ModArmor;
+import divinerpg.registry.ArmorRegistry;
 import divinerpg.utils.LocalizeUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.*;
@@ -33,7 +33,7 @@ public class KingCreationCategory implements IRecipeCategory {
         ResourceLocation texture = KIngCompressionGUI.Texture;
 
         this.background = helper.createDrawable(texture, 0, 0, 176, 82);
-        this.icon = helper.createDrawableIngredient(new ItemStack(ModArmor.king_helmet));
+        this.icon = helper.createDrawableIngredient(new ItemStack(ArmorRegistry.king_helmet));
         name = LocalizeUtils.i18n("tile.king_compressor.name");
 
         IDrawableStatic staticFlame = helper.createDrawable(texture, 176, 0, 14, 14);
@@ -57,7 +57,7 @@ public class KingCreationCategory implements IRecipeCategory {
 
     @Override
     public String getModName() {
-        return Reference.NAME;
+        return DivineRPG.NAME;
     }
 
     @Override

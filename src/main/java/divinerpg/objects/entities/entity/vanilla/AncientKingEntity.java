@@ -9,7 +9,7 @@ import divinerpg.objects.entities.entity.projectiles.king.EnumKingThrowable;
 import divinerpg.objects.entities.entity.vanilla.dragon.DivineDragonBase;
 import divinerpg.objects.entities.entity.vanilla.dragon.PhaseRegistry;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.IPhase;
-import divinerpg.registry.ModArmor;
+import divinerpg.registry.ArmorRegistry;
 import divinerpg.utils.LocalizeUtils;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -128,10 +128,10 @@ public class AncientKingEntity extends DivineDragonBase {
         world.setBlockState(center, Blocks.CHEST.getDefaultState());
         TileEntityChest chest = (TileEntityChest) world.getTileEntity(center);
 
-        chest.setInventorySlotContents(0, ModArmor.king_helmet.getDefaultInstance());
-        chest.setInventorySlotContents(1, ModArmor.king_chestplate.getDefaultInstance());
-        chest.setInventorySlotContents(2, ModArmor.king_leggings.getDefaultInstance());
-        chest.setInventorySlotContents(3, ModArmor.king_boots.getDefaultInstance());
+        chest.setInventorySlotContents(0, ArmorRegistry.king_helmet.getDefaultInstance());
+        chest.setInventorySlotContents(1, ArmorRegistry.king_chestplate.getDefaultInstance());
+        chest.setInventorySlotContents(2, ArmorRegistry.king_leggings.getDefaultInstance());
+        chest.setInventorySlotContents(3, ArmorRegistry.king_boots.getDefaultInstance());
     }
 
     @Override

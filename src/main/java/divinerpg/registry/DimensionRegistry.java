@@ -61,7 +61,7 @@ public class DimensionRegistry {
                 WorldProviderArcana.class, false);
         vetheaDimension = DimensionType.register(DivineRPG.MODID + ":vethea", "_vethea", GeneralConfig.dimensionIDs.vetheaDimensionID,
         		VetheaWorldProvider.class, false); //VetheaWorldProvider = new, WorldProviderVethea = old
-        galaxyDimension = DimensionType.register(Reference.MODID + ":galaxy", "_galaxy", GeneralConfig.dimensionIDs.galaxyDimensionID,
+        galaxyDimension = DimensionType.register(DivineRPG.MODID + ":galaxy", "_galaxy", GeneralConfig.dimensionIDs.galaxyDimensionID,
                 GalaxyWorldProvider.class, false);
     }
 

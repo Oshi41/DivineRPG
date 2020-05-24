@@ -1,5 +1,6 @@
 package divinerpg.objects.entities.entity.projectiles;
 
+import divinerpg.objects.entities.assets.render.projectiles.base.IBlockRender;
 import divinerpg.registry.BlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,27 +13,29 @@ import net.minecraft.world.World;
 
 public class EntityWildwoodLog extends EntityThrowable implements IBlockRender {
 
-	public EntityWildwoodLog(World worldIn) {
-		super(worldIn);
-		this.setSize(1f, 1f);
-	}
-	public EntityWildwoodLog(World worldIn, EntityLivingBase entity) {
-	    super(worldIn, entity);
-	}
-	@Override
-	protected void onImpact(RayTraceResult result) {
-		if(!world.isRemote) {
-			world.spawnEntity(new EntityItem(world, this.posX, this.posY, this.posZ, new ItemStack(getBlock())));
-		}
-		if (result.entityHit != null) {
-	        result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 8.0F);
-	    }
-	    if (!this.world.isRemote) {
-	        this.setDead();
-	    }
-	}
-	
-	public static Block getBlock() {
-		return BlockRegistry.wildwoodLog;
-	}
+    public EntityWildwoodLog(World worldIn) {
+        super(worldIn);
+        this.setSize(1f, 1f);
+    }
+
+    public EntityWildwoodLog(World worldIn, EntityLivingBase entity) {
+        super(worldIn, entity);
+    }
+
+    @Override
+    protected void onImpact(RayTraceResult result) {
+        if (!world.isRemote) {
+            world.spawnEntity(new EntityItem(world, this.posX, this.posY, this.posZ, new ItemStack(getBlock())));
+        }
+        if (result.entityHit != null) {
+            result.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.getThrower()), 8.0F);
+        }
+        if (!this.world.isRemote) {
+            this.setDead();
+        }
+    }
+
+    public Block getBlock() {
+        return BlockRegistry.wildwoodLog;
+    }
 }

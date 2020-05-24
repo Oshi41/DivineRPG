@@ -1,6 +1,6 @@
 package divinerpg.objects.entities.assets.render.projectiles;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.entity.projectiles.king.EntityKingRage;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -12,7 +12,7 @@ public class RenderKingRage extends RenderProjectile<EntityKingRage> {
 
     public RenderKingRage(RenderManager manager) {
         super(manager, 1);
-        texture = new ResourceLocation(Reference.MODID, "textures/projectiles/fractite_cannon.png");
+        texture = new ResourceLocation(DivineRPG.MODID, "textures/projectiles/fractite_cannon.png");
     }
 
     @Nullable

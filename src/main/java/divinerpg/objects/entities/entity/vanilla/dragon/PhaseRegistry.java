@@ -1,26 +1,25 @@
 package divinerpg.objects.entities.entity.vanilla.dragon;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.*;
 import divinerpg.objects.entities.entity.vanilla.dragon.phase.base.IPhase;
 import net.minecraft.util.ResourceLocation;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class PhaseRegistry {
-    public static final ResourceLocation HOVER = new ResourceLocation(Reference.MODID, "hover");
-    public static final ResourceLocation STRIFE_PLAYER = new ResourceLocation(Reference.MODID, "strife_player");
-    public static final ResourceLocation DYING = new ResourceLocation(Reference.MODID, "dying");
-    public static final ResourceLocation LANDING_APPROACH = new ResourceLocation(Reference.MODID, "landing_approach");
-    public static final ResourceLocation TAKEOFF = new ResourceLocation(Reference.MODID, "takeoff");
-    public static final ResourceLocation SITTING_FLAMING = new ResourceLocation(Reference.MODID, "sitting_flaming");
-    public static final ResourceLocation LANDING = new ResourceLocation(Reference.MODID, "landing");
-    public static final ResourceLocation CHARGING_PLAYER = new ResourceLocation(Reference.MODID, "charging_player");
-    public static final ResourceLocation SITTING_SCANNING = new ResourceLocation(Reference.MODID, "sitting_scanning");
-    public static final ResourceLocation SITTING_ATTACKING = new ResourceLocation(Reference.MODID, "sitting_attacking");
+    public static final ResourceLocation HOVER = new ResourceLocation(DivineRPG.MODID, "hover");
+    public static final ResourceLocation STRIFE_PLAYER = new ResourceLocation(DivineRPG.MODID, "strife_player");
+    public static final ResourceLocation DYING = new ResourceLocation(DivineRPG.MODID, "dying");
+    public static final ResourceLocation LANDING_APPROACH = new ResourceLocation(DivineRPG.MODID, "landing_approach");
+    public static final ResourceLocation TAKEOFF = new ResourceLocation(DivineRPG.MODID, "takeoff");
+    public static final ResourceLocation SITTING_FLAMING = new ResourceLocation(DivineRPG.MODID, "sitting_flaming");
+    public static final ResourceLocation LANDING = new ResourceLocation(DivineRPG.MODID, "landing");
+    public static final ResourceLocation CHARGING_PLAYER = new ResourceLocation(DivineRPG.MODID, "charging_player");
+    public static final ResourceLocation SITTING_SCANNING = new ResourceLocation(DivineRPG.MODID, "sitting_scanning");
+    public static final ResourceLocation SITTING_ATTACKING = new ResourceLocation(DivineRPG.MODID, "sitting_attacking");
 
     /**
      * List of all phases

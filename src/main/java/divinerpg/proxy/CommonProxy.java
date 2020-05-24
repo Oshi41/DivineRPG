@@ -13,9 +13,6 @@ import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.entity.*;
 import divinerpg.registry.DimensionRegistry;
 import divinerpg.registry.EntityRegistry;
-import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
-import divinerpg.registry.ModDimensions;
-import divinerpg.registry.ModEntities;
 import divinerpg.world.WorldGenCustomOres;
 import divinerpg.world.WorldGenTreeGenerator;
 import divinerpg.world.structures.WorldGenCustomStructures;
@@ -94,7 +91,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityInfusionTable.class, DivineRPG.MODID + ":te_infusion_table");
         GameRegistry.registerTileEntity(TileEntityDreamLamp.class, DivineRPG.MODID + ":te_dream_lamp");
         GameRegistry.registerTileEntity(TileEntityNightmareBed.class, DivineRPG.MODID + ":te_bed");
-        GameRegistry.registerTileEntity(TileEntityKingCompressior.class, DivineRPG.MODID + ":te_king_compressor");
+        GameRegistry.registerTileEntity(TileEntityKingCompressor.class, DivineRPG.MODID + ":te_king_compressor");
         GameRegistry.registerTileEntity(TileEntitySingleUseSpawner.class, DivineRPG.MODID + ":te_single_use_spawner");
     }
 

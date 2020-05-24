@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = DivineRPG.MODID)
-@ObjectHolder(Reference.MODID)
+@ObjectHolder(DivineRPG.MODID)
 public class BiomeRegistry {
 
     @ObjectHolder("eden")

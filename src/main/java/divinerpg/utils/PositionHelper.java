@@ -2,7 +2,7 @@ package divinerpg.utils;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
@@ -282,7 +282,7 @@ public class PositionHelper {
                 canSearchFurther = true;
             }
 
-            if (block == ModBlocks.structure_block) {
+            if (block == BlockRegistry.structure_block) {
                 canSearchFurther = true;
             }
 

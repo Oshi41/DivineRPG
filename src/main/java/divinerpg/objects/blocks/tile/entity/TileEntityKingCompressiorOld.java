@@ -1,39 +1,12 @@
 package divinerpg.objects.blocks.tile.entity;
 
-import com.google.common.collect.Sets;
-import divinerpg.api.DivineAPI;
-import divinerpg.api.Reference;
-import divinerpg.api.armor.ArmorEquippedEvent;
-import divinerpg.api.armor.IItemContainer;
-import divinerpg.config.Config;
-import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
-import divinerpg.registry.ModItems;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
-import net.minecraftforge.common.MinecraftForge;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class TileEntityKingCompressiorOld extends ModUpdatableTileEntity implements ITickable, IInteractionObject, IFuelProvider {
-//    private final ResourceLocation id = new ResourceLocation(Reference.MODID, "king_compressor");
+//    private final ResourceLocation id = new ResourceLocation(DivineRPG.MODID, "king_compressor");
 //    private final NonNullList<ItemStack> container;
 //    /**
 //     * Amount of registered power sets need to create king set
@@ -131,10 +104,10 @@ public abstract class TileEntityKingCompressiorOld extends ModUpdatableTileEntit
 //            case KingSetCreation:
 //                absorbedSets.clear();
 //
-////                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ModArmor.king_helmet));
-////                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ModArmor.king_chestplate));
-////                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ModArmor.king_leggings));
-////                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ModArmor.king_boots));
+////                setInventorySlotContents(EntityEquipmentSlot.HEAD.getSlotIndex(), new ItemStack(ArmorRegistry.king_helmet));
+////                setInventorySlotContents(EntityEquipmentSlot.CHEST.getSlotIndex(), new ItemStack(ArmorRegistry.king_chestplate));
+////                setInventorySlotContents(EntityEquipmentSlot.LEGS.getSlotIndex(), new ItemStack(ArmorRegistry.king_leggings));
+////                setInventorySlotContents(EntityEquipmentSlot.FEET.getSlotIndex(), new ItemStack(ArmorRegistry.king_boots));
 //                break;
 //
 //            case Infusion:
@@ -226,8 +199,8 @@ public abstract class TileEntityKingCompressiorOld extends ModUpdatableTileEntit
 //        TileEntity tileentity = world.getTileEntity(pos);
 //
 ////        Block block = isBurning
-////                ? ModBlocks.king_compression
-////                : ModBlocks.king_compression_still;
+////                ? BlockRegistry.king_compression
+////                : BlockRegistry.king_compression_still;
 //
 //        keepInventory = true;
 ////        world.setBlockState(pos, block.getDefaultState(), 3);

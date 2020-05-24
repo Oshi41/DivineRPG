@@ -3,7 +3,6 @@ package divinerpg.objects.blocks.tile.entity;
 import com.google.common.collect.Sets;
 import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
-import divinerpg.api.Reference;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.config.Config;
 import divinerpg.config.GeneralConfig;
@@ -13,7 +12,7 @@ import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
 import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
 import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
-import divinerpg.registry.ModItems;
+import divinerpg.registry.ItemRegistry;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.multiblock.StructureMatch;
@@ -55,11 +54,11 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
      * List of possible fuels
      */
     public static final Map<Item, Integer> fuelMap = new HashMap<Item, Integer>() {{
-        put(ModItems.shadowStone, 500);
-        put(ModItems.divineStone, 250);
-        put(ModItems.arlemiteIngot, (int) Math.ceil(500 / 3.0));
+        put(ItemRegistry.shadowStone, 500);
+        put(ItemRegistry.divineStone, 250);
+        put(ItemRegistry.arlemiteIngot, (int) Math.ceil(500 / 3.0));
     }};
-    private static final ResourceLocation id = new ResourceLocation(Reference.MODID, "king_compressor");
+    private static final ResourceLocation id = new ResourceLocation(DivineRPG.MODID, "king_compressor");
 
     /**
      * Id's of fuel slots
@@ -104,7 +103,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     //endregion
 
     public TileEntityKingCompressor() {
-        super(MultiblockDescription.instance.findById(new ResourceLocation(Reference.MODID, "king_compressor")),
+        super(MultiblockDescription.instance.findById(new ResourceLocation(DivineRPG.MODID, "king_compressor")),
                 id.toString(), null);
         burnTime = 0;
         cookTime = 0;

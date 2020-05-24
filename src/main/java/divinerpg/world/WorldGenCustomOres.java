@@ -139,7 +139,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
         // 512:512, 1024:1024 ...
         if (chunkX % 32 == 0 && chunkZ % 32 == 0 && Math.abs(chunkX) == Math.abs(chunkZ)) {
             // todo
-//            spawnOre(world, random, ModBlocks.king_ore.getDefaultState(), stonePredicate, chunkX, chunkZ,
+//            spawnOre(world, random, BlockRegistry.king_ore.getDefaultState(), stonePredicate, chunkX, chunkZ,
 //                    Config.king);
         }
 

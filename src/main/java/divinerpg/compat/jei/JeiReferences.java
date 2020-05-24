@@ -14,4 +14,5 @@ public class JeiReferences {
     public static final String LORD_VATTICUS_CATEGORY = DivineRPG.MODID + ":lord_vatticus";
     public static final String ZELUS_CATEGORY = DivineRPG.MODID + ":zelus";
     public static final String ARCANA_EXTRACTOR_CATEGORY = DivineRPG.MODID + ":arcana_extractor";
+    public static final String KING_ARMOR_CREATION = DivineRPG.MODID + ":king_compressor";
 }

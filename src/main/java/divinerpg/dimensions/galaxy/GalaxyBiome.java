@@ -17,15 +17,15 @@ public class GalaxyBiome extends TwilightBiomeBase {
 
 //        this.genTree = new EdenTree(false, 3);
 //        this.genLargeTree = new LargeTwilightTree(false, 7,
-//                ModBlocks.edenLog.getDefaultState(),
-//                ModBlocks.edenLeaves.getDefaultState(),
-//                ModBlocks.edenGrass);
-//        this.genConeUp = new WorldGenConeUp(ModBlocks.divineMossStone);
+//                BlockRegistry.edenLog.getDefaultState(),
+//                BlockRegistry.edenLeaves.getDefaultState(),
+//                BlockRegistry.edenGrass);
+//        this.genConeUp = new WorldGenConeUp(BlockRegistry.divineMossStone);
 //        this.genLakes = new WorldGenLakes(Blocks.WATER);
-//        this.brush = new WorldGenTwilightSinglePlants(ModBlocks.edenBrush, ModBlocks.edenGrass);
-//        this.bloom = new WorldGenTwilightSinglePlants(ModBlocks.sunbloom, ModBlocks.edenGrass);
-//        this.blossom = new WorldGenTwilightSinglePlants(ModBlocks.sunBlossom,
-//                ModBlocks.edenGrass);
+//        this.brush = new WorldGenTwilightSinglePlants(BlockRegistry.edenBrush, BlockRegistry.edenGrass);
+//        this.bloom = new WorldGenTwilightSinglePlants(BlockRegistry.sunbloom, BlockRegistry.edenGrass);
+//        this.blossom = new WorldGenTwilightSinglePlants(BlockRegistry.sunBlossom,
+//                BlockRegistry.edenGrass);
 
         this.topBlock = Blocks.GRASS.getDefaultState();
         this.fillerBlock = Blocks.DIRT.getDefaultState();

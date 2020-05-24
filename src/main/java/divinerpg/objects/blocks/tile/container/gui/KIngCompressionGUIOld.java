@@ -1,17 +1,10 @@
 package divinerpg.objects.blocks.tile.container.gui;
 
-import divinerpg.api.Reference;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainerOld;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 public abstract class KIngCompressionGUIOld extends GuiContainer {
-//    private final ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/gui/king_compression_gui.png");
+//    private final ResourceLocation texture = new ResourceLocation(DivineRPG.MODID, "textures/gui/king_compression_gui.png");
 //    private KingCompressorContainerOld container;
 //
     public KIngCompressionGUIOld(KingCompressorContainerOld inventorySlotsIn) {

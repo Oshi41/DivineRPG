@@ -1,6 +1,6 @@
 package divinerpg.enums;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IStringSerializable;
@@ -25,7 +25,7 @@ public enum EnumPlaceholder implements IStringSerializable {
     }
 
     EnumPlaceholder(String divineName) {
-        this(new ResourceLocation(Reference.MODID, divineName));
+        this(new ResourceLocation(DivineRPG.MODID, divineName));
     }
 
     /**

@@ -3,7 +3,7 @@ package divinerpg.events.server.tasks;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 import divinerpg.objects.blocks.structure.StructureBlock;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BlockRegistry;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.StructureMatch;
 import io.netty.util.internal.ConcurrentSet;
@@ -38,7 +38,7 @@ public class DestroyTask extends BaseStructureTask {
             BlockPos pos = requestedPos.stream().findFirst().orElse(null);
             requestedPos.remove(pos);
 
-            Set<BlockPos> connected = PositionHelper.search(pos, ModBlocks.structure_block, Sets.newHashSet(), cache);
+            Set<BlockPos> connected = PositionHelper.search(pos, BlockRegistry.structure_block, Sets.newHashSet(), cache);
             requestedPos.removeAll(connected);
 
             // find any match in existing structures

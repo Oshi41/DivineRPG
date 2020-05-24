@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class KIngCompressionGUI extends GuiContainer {
-    public static final ResourceLocation Texture = new ResourceLocation(Reference.MODID, "textures/gui/king_compression_gui.png");
+    public static final ResourceLocation Texture = new ResourceLocation(DivineRPG.MODID, "textures/gui/king_compression_gui.png");
     private final TileEntityKingCompressor tile;
 
     public KIngCompressionGUI(KingCompressorContainer inventorySlotsIn) {

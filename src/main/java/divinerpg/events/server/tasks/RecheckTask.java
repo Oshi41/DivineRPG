@@ -3,7 +3,7 @@ package divinerpg.events.server.tasks;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 import divinerpg.events.server.SwapFactory;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BlockRegistry;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
@@ -63,7 +63,7 @@ public class RecheckTask extends BaseStructureTask {
                 continue;
 
             // find all connected poses
-            Set<BlockPos> toCheck = PositionHelper.search(pos, ModBlocks.structure_block, Sets.newHashSet(), cache);
+            Set<BlockPos> toCheck = PositionHelper.search(pos, BlockRegistry.structure_block, Sets.newHashSet(), cache);
             recheckingPoses.removeAll(toCheck);
 
             // part of structure isn't loaded
@@ -125,7 +125,7 @@ public class RecheckTask extends BaseStructureTask {
         if (recheckingStructures.keySet().stream().anyMatch(x -> PositionHelper.containsInArea(x.area, pos)))
             return;
 
-        Set<BlockPos> toCheck = PositionHelper.search(pos, ModBlocks.structure_block, Sets.newHashSet(), BlockPattern.createLoadingCache(world, true));
+        Set<BlockPos> toCheck = PositionHelper.search(pos, BlockRegistry.structure_block, Sets.newHashSet(), BlockPattern.createLoadingCache(world, true));
         recheckingPoses.addAll(toCheck);
     }
 

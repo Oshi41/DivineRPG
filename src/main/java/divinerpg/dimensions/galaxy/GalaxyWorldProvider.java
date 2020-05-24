@@ -1,8 +1,8 @@
 package divinerpg.dimensions.galaxy;
 
 import divinerpg.dimensions.galaxy.render.GalaxySkyRender;
-import divinerpg.registry.ModBiomes;
-import divinerpg.registry.ModDimensions;
+import divinerpg.registry.BiomeRegistry;
+import divinerpg.registry.DimensionRegistry;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
@@ -15,12 +15,12 @@ public class GalaxyWorldProvider extends WorldProvider {
 
     public GalaxyWorldProvider() {
         skyRender = new GalaxySkyRender();
-        biomeProvider = new BiomeProviderSingle(ModBiomes.biomeGalaxy);
+        biomeProvider = new BiomeProviderSingle(BiomeRegistry.biomeGalaxy);
     }
 
     @Override
     public DimensionType getDimensionType() {
-        return ModDimensions.galaxyDimension;
+        return DimensionRegistry.galaxyDimension;
     }
 
     @Override
