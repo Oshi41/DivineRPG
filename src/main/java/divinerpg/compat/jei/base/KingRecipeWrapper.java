@@ -1,7 +1,6 @@
 package divinerpg.compat.jei.base;
 
 import divinerpg.api.DivineAPI;
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -47,8 +46,8 @@ public class KingRecipeWrapper implements IRecipeWrapper {
             slotItems.add(map.get(slot));
         }
 
-        TileEntityKingCompressor.fuelMap.size();
-        slotItems.add(TileEntityKingCompressor.fuelMap.keySet().stream().map(ItemStack::new).collect(Collectors.toList()));
+        // TileEntityKingCompressor.fuelMap.size();
+        // slotItems.add(TileEntityKingCompressor.fuelMap.keySet().stream().map(ItemStack::new).collect(Collectors.toList()));
     }
 
 

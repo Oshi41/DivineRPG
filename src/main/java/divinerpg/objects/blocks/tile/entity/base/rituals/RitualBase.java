@@ -1,8 +1,10 @@
 package divinerpg.objects.blocks.tile.entity.base.rituals;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,5 +64,12 @@ public abstract class RitualBase implements IRitualDescription {
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         setIsPerformed(nbt.getBoolean("isPerformed"));
+    }
+
+    protected void confirmRutual(Entity entity) {
+        if (entity == null)
+            return;
+
+        entity.sendMessage(new TextComponentString("Process has started..."));
     }
 }

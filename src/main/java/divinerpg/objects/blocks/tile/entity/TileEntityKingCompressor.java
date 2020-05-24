@@ -23,7 +23,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -53,11 +53,11 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     /**
      * List of possible fuels
      */
-    public static final Map<Item, Integer> fuelMap = new HashMap<Item, Integer>() {{
-        put(ItemRegistry.shadowStone, 500);
-        put(ItemRegistry.divineStone, 250);
-        put(ItemRegistry.arlemiteIngot, (int) Math.ceil(500 / 3.0));
-    }};
+//    public static final Map<Item, Integer> fuelMap = new HashMap<Item, Integer>() {{
+//        put(ItemRegistry.shadowStone, 500);
+//        put(ItemRegistry.divineStone, 250);
+//        put(ItemRegistry.arlemiteIngot, (int) Math.ceil(500 / 3.0));
+//    }};
     private static final ResourceLocation id = new ResourceLocation(DivineRPG.MODID, "king_compressor");
 
     /**
@@ -127,16 +127,16 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public int consumeFuel() {
-        for (int i = 0; i < getInventoryRef().getSlots(); i++) {
-            ItemStack stack = getStackInSlot(i);
-
-            Integer burntime = fuelMap.get(stack.getItem());
-            if (burntime != null) {
-
-                decrStackSize(i, 1);
-                return burntime;
-            }
-        }
+//        for (int i = 0; i < getInventoryRef().getSlots(); i++) {
+//            ItemStack stack = getStackInSlot(i);
+//
+//            Integer burntime = fuelMap.get(stack.getItem());
+//            if (burntime != null) {
+//
+//                decrStackSize(i, 1);
+//                return burntime;
+//            }
+//        }
 
         return 0;
     }
@@ -187,6 +187,8 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
             for (int i = 0; i < container.getSlots(); i++) {
                 container.setStackInSlot(i, ItemStack.EMPTY);
             }
+
+            setNextRitual();
         }
     }
 
@@ -225,7 +227,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public int getCookTimeLength() {
-        return 20 * 5;
+        return 1000;
     }
 
     @Override
@@ -326,6 +328,11 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
             spawnParticles();
         }
+
+        if (getWorld().getTotalWorldTime() % 20 == 1
+                && getCurrentRitual() instanceof ITickable) {
+            ((ITickable) getCurrentRitual()).update();
+        }
     }
 
     @Override
@@ -343,13 +350,25 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         super.click(player);
 
         if (world.isRemote) {
-            ITextComponent msg = new TextComponentString(
-                    String.format("%s of %s was collected",
-                            absorbedSets.size(),
-                            setsLimit));
+            ITextComponent msg;
 
-            for (ResourceLocation set : absorbedSets) {
-                msg.appendText("\n" + set.toString());
+            if (hasRecipe
+                    && !wasRitualPerformed()
+                    && getCurrentRitual() != null) {
+                // description about needed ritual
+                msg = getCurrentRitual().getDescription();
+
+                msg.getStyle().setColor(TextFormatting.RED);
+            } else {
+                // sets information
+                msg = new TextComponentString(
+                        String.format("%s of %s was collected",
+                                absorbedSets.size(),
+                                setsLimit));
+
+                for (ResourceLocation set : absorbedSets) {
+                    msg.appendText("\n" + set.toString());
+                }
             }
 
             player.sendMessage(msg);
@@ -496,5 +515,12 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
                         0.0D);
             }
         }
+    }
+
+    /**
+     * Set new ritual
+     */
+    private void setNextRitual() {
+        setCurrentRitual(RitualRegistry.getRandom(this));
     }
 }

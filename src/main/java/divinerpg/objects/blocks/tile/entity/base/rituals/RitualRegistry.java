@@ -4,14 +4,17 @@ import divinerpg.DivineRPG;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
 
 public class RitualRegistry {
     public static final ResourceLocation KILL_ANGRY_MOB = new ResourceLocation(DivineRPG.MODID, "kill_angry_mob");
+    public static final ResourceLocation NEED_FUEL = new ResourceLocation(DivineRPG.MODID, "need_fuel");
 
 
     private static final Map<ResourceLocation, Function<TileEntity, ? extends IRitualDescription>> ritualsMap = new HashMap<>();
@@ -27,8 +30,10 @@ public class RitualRegistry {
 
                     return deadMob.getAttackTarget() != null || deadMob.getRevengeTarget() != null;
                 },
-                "msg.kill_angry_mob_in_radius",
+                new TextComponentString("Kill angry mob near the structure"),
                 4));
+
+        register(NEED_FUEL, x -> new FuelRitual(NEED_FUEL, x));
     }
 
     /**
@@ -69,5 +74,20 @@ public class RitualRegistry {
         }
 
         return null;
+    }
+
+    /**
+     * Gets random ritual
+     *
+     * @param entity - tile entity
+     * @return
+     */
+    public static IRitualDescription getRandom(TileEntity entity) {
+        Random rand = entity.getWorld().rand;
+
+        int index = rand.nextInt(ritualsMap.size());
+        ResourceLocation id = ritualsMap.keySet().stream().skip(index).findFirst().orElse(KILL_ANGRY_MOB);
+
+        return ritualsMap.get(id).apply(entity);
     }
 }

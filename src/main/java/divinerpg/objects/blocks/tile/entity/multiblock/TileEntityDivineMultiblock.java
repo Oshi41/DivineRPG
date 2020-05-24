@@ -152,6 +152,10 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         if (compound.hasKey("ritual")) {
             NBTTagCompound tag = compound.getCompoundTag("ritual");
             setCurrentRitual(RitualRegistry.createById(new ResourceLocation(tag.getString("Id")), this, IRitualDescription.class));
+            IRitualDescription ritual = getCurrentRitual();
+            if (ritual != null) {
+                ritual.deserializeNBT(tag);
+            }
         }
     }
 

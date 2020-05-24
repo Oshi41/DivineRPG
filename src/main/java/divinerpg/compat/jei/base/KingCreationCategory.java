@@ -4,7 +4,6 @@ import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.compat.jei.JeiReferences;
 import divinerpg.objects.blocks.tile.container.gui.KIngCompressionGUI;
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.registry.ArmorRegistry;
 import divinerpg.utils.LocalizeUtils;
 import mezz.jei.api.IGuiHelper;
@@ -122,7 +121,7 @@ public class KingCreationCategory implements IRecipeCategory {
 
         // fuel
         if (slotIndex == 6) {
-            result.add(String.format("Burn for %s ticks", TileEntityKingCompressor.fuelMap.get(stack.getItem())));
+            // result.add(String.format("Burn for %s ticks", TileEntityKingCompressor.fuelMap.get(stack.getItem())));
         }
     }
 }

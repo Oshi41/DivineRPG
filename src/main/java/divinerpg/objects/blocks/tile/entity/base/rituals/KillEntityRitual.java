@@ -10,7 +10,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -26,11 +25,11 @@ public class KillEntityRitual extends RitualBase {
     public KillEntityRitual(ResourceLocation id,
                             TileEntity entity,
                             Predicate<Entity> canAccept,
-                            String langKey,
+                            ITextComponent msg,
                             double maxDistance) {
         super(id, entity);
         this.canAccept = canAccept;
-        msg = new TextComponentTranslation(langKey);
+        this.msg = msg;
         this.maxDistance = maxDistance;
 
         if (!(entity instanceof IMultiblockTile)) {
@@ -70,6 +69,8 @@ public class KillEntityRitual extends RitualBase {
         if (traceResult != null) {
             if (traceResult.hitVec.distanceTo(entityPosition) <= maxDistance) {
                 setIsPerformed(true);
+
+                confirmRutual(event.getSource().getTrueSource());
             } else {
                 event.getSource().getTrueSource().sendMessage(new TextComponentString("Too far away..."));
             }
