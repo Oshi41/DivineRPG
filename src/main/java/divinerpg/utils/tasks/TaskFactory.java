@@ -6,15 +6,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.List;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public abstract class TaskFactory<T extends Event> {
-    private final Map<UUID, ScheduledTask<T>> playerTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, ScheduledTask<IEventTask<T>>> playerTasks = new ConcurrentHashMap<>();
+    private final Map<UUID, ScheduledTask<ITask>> pendings = new ConcurrentHashMap<>();
     private Function<T, UUID> findActorFunc;
 
     protected TaskFactory(Function<T, UUID> findActorFunc) {
@@ -51,7 +52,7 @@ public abstract class TaskFactory<T extends Event> {
      * Called after server tick with default delay
      */
     protected void checkPendings() {
-
+        pendings.values().forEach(ScheduledTask::onServerTick);
     }
 
     /**
@@ -77,12 +78,12 @@ public abstract class TaskFactory<T extends Event> {
             return;
 
         // find task on current player
-        ScheduledTask<T> task = playerTasks.get(id);
+        ScheduledTask<IEventTask<T>> task = playerTasks.get(id);
 
         if (task != null) {
 
             // check should we merge work with current event
-            if (task.shouldMerge(event)) {
+            if (task.notStarted() && task.getTask().shouldMerge(event)) {
                 // merging work and set delay
                 task.getTask().merge(event);
             }
@@ -116,6 +117,45 @@ public abstract class TaskFactory<T extends Event> {
                 getDelay()));
     }
 
+    /**
+     * Shedules pending task
+     *
+     * @param listener - execution listener
+     * @param task     - pending task
+     */
+    protected void scheduleTask(IThreadListener listener, ITask task) {
+        scheduleTask(listener, task, 0, null);
+    }
+
+    /**
+     * Shedules pending task
+     *
+     * @param listener - execution listener
+     * @param task     - pending task
+     * @param delay    - task delay execution. Mesured NOT in ticks but in pending check cycles.
+     *                 So 3 means task will skip 3 cycles and will execute on 4 time
+     * @param onFinish - call back on execution finish. Called after task removal from common list
+     */
+    protected <T extends ITask> void scheduleTask(IThreadListener listener, T task, int delay, @Nullable Consumer<T> onFinish) {
+        if (listener == null)
+            return;
+
+        Consumer<ITask> afterExecution = iTask -> {
+            pendings.remove(iTask.getActor());
+
+            if (onFinish != null) {
+                onFinish.accept((T) iTask);
+            }
+        };
+
+        pendings.put(task.getActor(), new ScheduledTask<>(
+                listener,
+                task,
+                afterExecution,
+                delay)
+        );
+    }
+
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent e) {
         if (e.phase != TickEvent.Phase.END)
@@ -129,15 +169,25 @@ public abstract class TaskFactory<T extends Event> {
     }
 
     /**
-     * Returns all not finished tasks
+     * Search not started task in schedulad work
      *
-     * @param clazz
+     * @param id    - id of task
+     * @param clazz - task class
      * @param <T1>
      * @return
      */
-    protected <T1 extends IEventTask<T>> List<T1> getPendingTasks(Class<T1> clazz) {
-        return playerTasks.values().stream().filter(x -> x.notStarted() && clazz.isInstance(x.getTask()))
-                .map(x -> ((T1) x.getTask())).collect(Collectors.toList());
-    }
+    @Nullable
+    protected <T1 extends ITask> T1 findPendingById(UUID id, Class<T1> clazz) {
+        ScheduledTask<IEventTask<T>> task = playerTasks.get(id);
+        if (task != null && task.notStarted() && clazz.isInstance(task.getTask())) {
+            return (T1) task.getTask();
+        }
 
+        ScheduledTask<ITask> scheduledTask = pendings.get(id);
+        if (scheduledTask != null && scheduledTask.notStarted() && clazz.isInstance(scheduledTask.getTask())) {
+            return (T1) scheduledTask.getTask();
+        }
+
+        return null;
+    }
 }

@@ -2,10 +2,8 @@ package divinerpg.objects.blocks.tile.entity;
 
 import com.google.common.collect.Sets;
 import divinerpg.DivineRPG;
-import divinerpg.api.DivineAPI;
 import divinerpg.api.Reference;
 import divinerpg.api.armor.ArmorEquippedEvent;
-import divinerpg.config.Config;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
@@ -32,6 +30,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TileEntityKingCompressor extends TileEntityDivineMultiblock implements IFuelProvider, ITickable, IInteractionObject {
+
     //region Fields
     /**
      * List of possible fuels
@@ -272,14 +273,11 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public void onBuilt(@Nonnull StructureMatch match) {
-        super.onBuilt(match);
         recreateContainer(match);
     }
 
     @Override
     public void onDestroy(@Nonnull StructureMatch match) {
-        super.onDestroy(match);
-
         container = new EmptyHandler();
     }
 
@@ -300,6 +298,24 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     @Override
     public String getGuiID() {
         return id.toString();
+    }
+
+    @Override
+    public void click(EntityPlayer player) {
+        super.click(player);
+
+        if (world.isRemote) {
+            ITextComponent msg = new TextComponentString(
+                    String.format("%s of %s was collected",
+                            absorbedSets.size(),
+                            setsLimit));
+
+            for (ResourceLocation set : absorbedSets) {
+                msg.appendText(set.toString());
+            }
+
+            player.sendMessage(msg);
+        }
     }
 
     private void recheckRecipe(int slot) {
@@ -376,7 +392,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
-        if (!isConstructed())
+        if (getMultiblockMatch() == null)
             return;
 
         AxisAlignedBB area = getMultiblockMatch().area;
@@ -398,7 +414,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
                     rand.nextFloat() * 2 - rand.nextFloat() * 2,
                     rand.nextFloat() * 3,
                     rand.nextFloat() * 2 - rand.nextFloat() * 2
-                    );
+            );
         }
     }
 }

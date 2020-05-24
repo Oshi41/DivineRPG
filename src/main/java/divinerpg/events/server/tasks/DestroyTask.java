@@ -9,9 +9,7 @@ import divinerpg.utils.multiblock.StructureMatch;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.pattern.BlockPattern;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Set;
@@ -36,6 +34,30 @@ public class DestroyTask extends BaseStructureTask {
     public void execute() {
         LoadingCache<BlockPos, BlockWorldState> cache = BlockPattern.createLoadingCache(world, true);
 
+        while (!requestedPos.isEmpty()) {
+            BlockPos pos = requestedPos.stream().findFirst().orElse(null);
+            requestedPos.remove(pos);
+
+            Set<BlockPos> connected = PositionHelper.search(pos, ModBlocks.structure_block, Sets.newHashSet(), cache);
+            requestedPos.removeAll(connected);
+
+            // find any match in existing structures
+            StructureMatch existing = currentWorldStructures
+                    .keySet()
+                    .stream()
+                    .filter(x -> PositionHelper.containsInArea(x.area, requestedPos.toArray(new BlockPos[0])))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existing != null) {
+                toDestroy.add(existing);
+            } else {
+                // just replacing old blocks
+                connected.stream().filter(x -> havePlaceholder(cache.getUnchecked(x))).forEach(x -> swap(world, cache.getUnchecked(x)));
+            }
+        }
+
+
         while (!toDestroy.isEmpty()) {
             StructureMatch match = toDestroy.stream().findFirst().orElse(null);
             toDestroy.remove(match);
@@ -49,18 +71,10 @@ public class DestroyTask extends BaseStructureTask {
                         .forEachRemaining(x -> swap(world, cache.getUnchecked(x)));
             }
 
+            currentWorldStructures.remove(match);
+
             // removing all blocks in that area
-            requestedPos.removeIf(pos -> match.area.contains(new Vec3d(pos)));
-        }
-
-        while (!requestedPos.isEmpty()) {
-            BlockPos pos = requestedPos.stream().findFirst().orElse(null);
-            requestedPos.remove(pos);
-
-            Set<BlockPos> connected = PositionHelper.search(pos, ModBlocks.structure_block, Sets.newHashSet(), cache);
-            requestedPos.removeAll(connected);
-
-            connected.stream().filter(x -> havePlaceholder(cache.getUnchecked(x))).forEach(x -> swap(world, cache.getUnchecked(x)));
+            requestedPos.removeIf(pos -> PositionHelper.containsInArea(match.area, pos));
         }
     }
 
@@ -78,8 +92,7 @@ public class DestroyTask extends BaseStructureTask {
         if (requestedPos.contains(pos))
             return;
 
-        Vec3d vec3d = new Vec3d(pos);
-        if (toDestroy.stream().anyMatch(x -> x.area.contains(vec3d)))
+        if (toDestroy.stream().anyMatch(x -> PositionHelper.containsInArea(x.area, pos)))
             return;
 
         requestedPos.add(pos);

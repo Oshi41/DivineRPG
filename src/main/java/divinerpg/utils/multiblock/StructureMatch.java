@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNullableByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -81,15 +80,8 @@ public class StructureMatch {
      * @param world
      */
     public void destroy(World world) {
-        buildStructure(world, structurePredicates, structure,
-                // should destroy all non air blocks
-                input -> {
-                    IBlockState multiBlockState = buildedStructure.get(input.getPos());
-
-                    return multiBlockState.getBlock() == input.getBlockState().getBlock()
-                            &&
-                            structure.get(input.getPos()).getMaterial() == Material.AIR;
-                });
+        // destroy blocks that replaces air in multi structure
+        buildStructure(world, structurePredicates, structure, this::shouldSwapMultiblock);
         constructed = false;
     }
 
@@ -109,16 +101,17 @@ public class StructureMatch {
      * @param predicates - current structure predicates. If block don't match a condition, replacing it with structure block
      * @param structure  - structure blocks by position
      */
-    private void buildStructure(World world, Map<BlockPos, Predicate<BlockWorldState>> predicates, Map<BlockPos, IBlockState> structure, @Nullable final Predicate<BlockWorldState> shouldReplace) {
+    private void buildStructure(World world, Map<BlockPos, Predicate<BlockWorldState>> predicates, Map<BlockPos, IBlockState> structure, @Nullable Predicate<BlockWorldState> shouldReplace) {
         LoadingCache<BlockPos, BlockWorldState> cache = BlockPattern.createLoadingCache(world, true);
 
         List<IMultiblockTile> tiles = new ArrayList<>();
 
-        predicates.forEach((pos, condition) -> {
-            boolean notMatch = !condition.test(cache.getUnchecked(pos));
-            boolean canReplace = !notMatch && shouldReplace != null && shouldReplace.test(cache.getUnchecked(pos));
+        if (shouldReplace == null) {
+            shouldReplace = input -> !predicates.get(input.getPos()).test(input);
+        }
 
-            if (notMatch || canReplace) {
+        for (BlockPos pos : predicates.keySet()) {
+            if (shouldReplace.test(cache.getUnchecked(pos))) {
                 world.setBlockState(pos, structure.get(pos), 2);
             }
 
@@ -126,7 +119,7 @@ public class StructureMatch {
             if (tileEntity instanceof IMultiblockTile) {
                 tiles.add((IMultiblockTile) tileEntity);
             }
-        });
+        }
 
         tiles.forEach(IMultiblockTile::recheckStructure);
     }
@@ -136,7 +129,44 @@ public class StructureMatch {
         if (this == o) return true;
         if (!(o instanceof StructureMatch)) return false;
         StructureMatch that = (StructureMatch) o;
-        return Objects.equals(area, that.area);
+
+        return Objects.equals(area, that.area)
+                && Objects.equals(structure, that.structure)
+                && Objects.equals(constructed, that.constructed)
+                && Objects.equals(buildedStructure, that.buildedStructure)
+                && Objects.equals(structurePredicates, that.structurePredicates)
+                && Objects.equals(builtStructurePredicates, that.builtStructurePredicates);
+    }
+
+    /**
+     * Checks wherever should replace block from builded structure
+     *
+     * @param worldState
+     * @return
+     */
+    private boolean shouldSwapMultiblock(BlockWorldState worldState) {
+        IBlockState blockState = worldState.getBlockState();
+        boolean isAir = blockState.getMaterial() == Material.AIR;
+
+        BlockPos pos = worldState.getPos();
+
+        // there is a special block on that position
+        boolean specialBlock = builtStructurePredicates.get(pos) != StructureBuilder.ANY;
+
+        // seems like block was broken
+        if (specialBlock && isAir) {
+            return false;
+        }
+
+        // there is any block can be on that place
+        boolean acceptAny = structurePredicates.get(pos) == StructureBuilder.ANY;
+
+        // need to replace special block
+        if (specialBlock && acceptAny)
+            return true;
+
+        // if block do not match the prebuild structure block
+        return !structurePredicates.get(pos).test(worldState);
     }
 
     @Override

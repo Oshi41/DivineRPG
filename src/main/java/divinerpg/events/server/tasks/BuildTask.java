@@ -1,12 +1,12 @@
 package divinerpg.events.server.tasks;
 
 import divinerpg.events.server.SwapFactory;
+import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.IEventTask;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 
@@ -35,9 +35,9 @@ public class BuildTask extends BaseStructureTask implements IEventTask<EntityStr
 
             if (recheck != null) {
                 recheck.buildStructure(world);
-                currentWorldStructures.put(recheck, pattern);
+                addMultiStructure(recheck, pattern);
             } else {
-                SwapFactory.instance.destroy(world, match);
+                SwapFactory.instance.destroy(world, match, null);
             }
         }
     }
@@ -55,8 +55,12 @@ public class BuildTask extends BaseStructureTask implements IEventTask<EntityStr
         if (poses.contains(event.getLightning().getPosition()))
             return false;
 
-        Vec3d pos = new Vec3d(event.getLightning().getPosition());
-        if (currentWorldStructures.keySet().stream().anyMatch(x -> x.area.contains(pos))) {
+        StructureMatch existing = currentWorldStructures.keySet().stream()
+                .filter(x -> PositionHelper.containsInArea(x.area, event.getLightning().getPosition()))
+                .findFirst().orElse(null);
+
+        if (existing != null) {
+            SwapFactory.instance.recheck(world, null, currentWorldStructures.get(existing), existing);
             return false;
         }
 
@@ -69,8 +73,7 @@ public class BuildTask extends BaseStructureTask implements IEventTask<EntityStr
             return;
 
         // already activated them
-        Vec3d vec3d = new Vec3d(pos);
-        if (currentWorldStructures.keySet().stream().anyMatch(x -> x.area.contains(vec3d))) {
+        if (currentWorldStructures.keySet().stream().anyMatch(x -> PositionHelper.containsInArea(x.area, pos))) {
             return;
         }
 
@@ -86,7 +89,7 @@ public class BuildTask extends BaseStructureTask implements IEventTask<EntityStr
     }
 
     public void merge(StructureMatch match, StructurePattern structure) {
-        if (requestedToBuild.keySet().contains(match))
+        if (requestedToBuild.containsKey(match))
             return;
 
         if (requestedToBuild.keySet().stream().anyMatch(x -> x.area.equals(match.area)))

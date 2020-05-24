@@ -16,10 +16,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     public final static SwapFactory instance = new SwapFactory();
@@ -28,12 +31,11 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
      * Lazy request
      */
     private Lazy<Set<StructurePattern>> ref = new Lazy<>(MultiblockDescription.instance::getAll);
-    private Map<UUID, ITask> requestedTasks = new ConcurrentHashMap<>();
 
     /**
      * List of current structures
      */
-    public Map<Integer, Map<StructureMatch, StructurePattern>> currentStructures = new ConcurrentHashMap<>();
+    public Map<Integer, Map<StructureMatch, StructurePattern>> currentStructures = new WeakHashMap<>();
 
     protected SwapFactory() {
         super(x -> new UUID(x.getLightning().getEntityWorld().provider.getDimension(), 0));
@@ -50,38 +52,6 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     }
 
     @Override
-    protected void checkPendings() {
-        if (requestedTasks.isEmpty())
-            return;
-
-        List<ITask> queue = requestedTasks.values().stream().filter(x -> x instanceof RecheckTask)
-                .collect(Collectors.toList());
-
-        while (!queue.isEmpty()) {
-            ITask task = queue.get(0);
-            requestedTasks.remove(task.getActor());
-            queue.remove(0);
-            task.execute();
-        }
-
-        queue = requestedTasks.values().stream().filter(x -> x instanceof DestroyTask)
-                .collect(Collectors.toList());
-
-        while (!queue.isEmpty()) {
-            ITask task = queue.get(0);
-            requestedTasks.remove(task.getActor());
-            queue.remove(0);
-            task.execute();
-        }
-
-        while (!requestedTasks.isEmpty()) {
-            ITask task = requestedTasks.values().stream().findFirst().orElse(null);
-            task.execute();
-            requestedTasks.remove(task.getActor());
-        }
-    }
-
-    @Override
     protected IThreadListener getListener(EntityStruckByLightningEvent event) {
         return event.getLightning().getServer();
     }
@@ -91,56 +61,97 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
         return 20;
     }
 
+    @Override
+    protected void checkPendings() {
+        super.checkPendings();
+    }
+
     @SubscribeEvent
     public void onlisten(EntityStruckByLightningEvent e) {
         super.listen(e);
     }
 
-    public void destroy(World world, BlockPos pos) {
+    public void destroy(World world, @Nullable StructureMatch match, @Nullable BlockPos pos) {
+        if (world.isRemote || (match == null && pos == null))
+            return;
+
+        DestroyTask destroyTask = findOrCreate(new UUID(world.provider.getDimension(), 1),
+                DestroyTask.class,
+                x -> scheduleTask(world.getMinecraftServer(), new DestroyTask(world, x)));
+
+        if (match != null)
+            destroyTask.merge(match);
+
+        if (pos != null)
+            destroyTask.merge(pos);
+    }
+
+    public void recheck(World world, @Nullable BlockPos pos, @Nullable StructurePattern pattern, @Nullable StructureMatch match) {
+        if (world.isRemote || ((match == null || pattern == null) && pos == null))
+            return;
+
+        RecheckTask recheckTask = findOrCreate(new UUID(world.provider.getDimension(), 2),
+                RecheckTask.class,
+                x -> scheduleTask(world.getMinecraftServer(), new RecheckTask(world, x, ref.getValue()), 1, null));
+
+        if (match != null && pattern != null)
+            recheckTask.merge(match, pattern);
+
+        if (pos != null)
+            recheckTask.merge(pos);
+    }
+
+    /**
+     * @param world
+     * @param pattern
+     * @param recheck
+     */
+    public void scheduleRecheck(World world, StructurePattern pattern, StructureMatch recheck) {
         if (world.isRemote)
             return;
 
-        DestroyTask destroyTask = findOrCreate(new UUID(world.provider.getDimension(), 1), DestroyTask.class, x -> new DestroyTask(world, x));
-        destroyTask.merge(pos);
+        // using weak reference here to avoid memory leaking
+        // Cause match possibly can be deleted
+        WeakReference<StructurePattern> patterRef = new WeakReference<>(pattern);
+        WeakReference<StructureMatch> matchRef = new WeakReference<>(recheck);
+
+        // unique from other rechecks
+        UUID uuid = new UUID(world.provider.getDimension(), 4);
+
+        RecheckTask structureRecheck = findOrCreate(
+                uuid,
+                RecheckTask.class,
+                x -> scheduleTask(
+                        world.getMinecraftServer(),
+                        new RecheckTask(world, x, ref.getValue()),
+                        60,
+                        iTask -> new RecheckTask(iTask, matchRef, patterRef)));
+
+        structureRecheck.merge(recheck, pattern);
     }
 
-    public void destroy(World world, StructureMatch match) {
-        if (world.isRemote)
-            return;
+    /**
+     * Search or register new task
+     *
+     * @param id              - task ID
+     * @param clazz           - class of task
+     * @param registerPending - register function
+     * @param <T>
+     * @return
+     */
+    private <T extends ITask> T findOrCreate(UUID id, Class<T> clazz, Consumer<UUID> registerPending) {
+        // trying to find in pendings
+        T pending = findPendingById(id, clazz);
+        // success
+        if (pending != null)
+            return pending;
 
-        DestroyTask destroyTask = findOrCreate(new UUID(world.provider.getDimension(), 1), DestroyTask.class, x -> new DestroyTask(world, x));
-        destroyTask.merge(match);
+        // register new task by ID
+        registerPending.accept(id);
+
+        // trying to find it
+        return findPendingById(id, clazz);
     }
 
-    public void build(World world, StructurePattern pattern, StructureMatch match) {
-        if (world.isRemote)
-            return;
-
-        UUID id = new UUID(world.provider.getDimension(), 0);
-        BuildTask buildTask = getPendingTasks(BuildTask.class)
-                .stream()
-                .filter(x -> x.getActor().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (buildTask == null) {
-            buildTask = new BuildTask(world, ref.getValue());
-            scheduleTask(world.getMinecraftServer(), buildTask);
-        }
-
-        buildTask.merge(match, pattern);
-    }
-
-    public void recheck(World world, BlockPos pos) {
-        if (world.isRemote)
-            return;
-
-        RecheckTask recheckTask = findOrCreate(new UUID(world.provider.getDimension(), 2), RecheckTask.class, x -> new RecheckTask(world, x, ref.getValue()));
-        recheckTask.merge(pos);
-    }
-
-    private <T extends ITask> T findOrCreate(UUID id, Class<T> clazz, Function<UUID, T> newInstance) {
-        return (T) requestedTasks.computeIfAbsent(id, newInstance::apply);
-    }
 
 }

@@ -16,6 +16,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.client.EnumHelperClient;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -37,8 +38,13 @@ public class ClientProxy extends CommonProxy {
         return FMLClientHandler.instance().getClientPlayerEntity();
     }
 
+    @Override
+    public IThreadListener getListener() {
+        return Minecraft.getMinecraft();
+    }
+
     @Deprecated
-	@Override
+    @Override
     public void init(FMLInitializationEvent e) {
         super.init(e);
         DebugLogging.initStageLog();

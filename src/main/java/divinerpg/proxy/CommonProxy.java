@@ -19,6 +19,7 @@ import divinerpg.world.WorldGenCustomOres;
 import divinerpg.world.WorldGenTreeGenerator;
 import divinerpg.world.structures.WorldGenCustomStructures;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -39,6 +40,10 @@ public class CommonProxy {
 
     public EntityPlayer getPlayer() {
         return null;
+    }
+
+    public IThreadListener getListener() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance();
     }
 
     public void init(FMLInitializationEvent e) {

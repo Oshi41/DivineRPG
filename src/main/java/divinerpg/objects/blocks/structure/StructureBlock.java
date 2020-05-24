@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -69,7 +70,7 @@ public class StructureBlock extends BlockMod {
             tiles.get(0).click(playerIn);
             return true;
         } else {
-            SwapFactory.instance.recheck(worldIn, pos);
+            SwapFactory.instance.recheck(worldIn, pos, null, null);
             return false;
         }
     }
@@ -105,12 +106,12 @@ public class StructureBlock extends BlockMod {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         super.breakBlock(worldIn, pos, state);
-        SwapFactory.instance.recheck(worldIn, pos);
+        SwapFactory.instance.destroy(worldIn, null, pos);
     }
 
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        SwapFactory.instance.recheck(worldIn, pos);
+        SwapFactory.instance.recheck(worldIn, pos, null, null);
     }
 
     @Override
@@ -145,6 +146,12 @@ public class StructureBlock extends BlockMod {
                 .findFirst().orElse(EnumPlaceholder.AIR);
 
         return withPlaceHolder(placeholder);
+    }
+
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return super.getRenderType(state);
+        //return getInnerBlock(state).getRenderType(state);
     }
 
     @SideOnly(Side.CLIENT)

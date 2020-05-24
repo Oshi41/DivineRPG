@@ -5,7 +5,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockStateMatcher;
@@ -14,7 +13,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +122,7 @@ public class StructureBuilder {
     }
 
     private void checkMissingPredicates(Map<Character, Predicate<BlockWorldState>> symbolMap) {
-        List<Character> list = Lists.<Character>newArrayList();
+        List<Character> list = Lists.newArrayList();
 
         for (Map.Entry<Character, Predicate<BlockWorldState>> entry : symbolMap.entrySet()) {
             if (entry.getValue() == null) {
@@ -138,13 +136,13 @@ public class StructureBuilder {
     }
 
     /**
-     * Returns ANY if it's air block
+     * Returns ANY if null passed
      *
      * @param state
      * @return
      */
     private Predicate<BlockWorldState> getFromBlock(IBlockState state) {
-        if (state == null || state.getMaterial() == Material.AIR)
+        if (state == null)
             return ANY;
 
         return BlockWorldState.hasState(BlockStateMatcher.forBlock(state.getBlock()));

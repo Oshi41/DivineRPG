@@ -1,37 +1,25 @@
 package divinerpg.utils.tasks;
 
 import net.minecraft.util.IThreadListener;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.function.Consumer;
 
-public class ScheduledTask<T extends Event> {
-    private final IEventTask<T> task;
+public class ScheduledTask<T extends ITask> {
+    private final T task;
     private IThreadListener listener;
-    private Consumer<IEventTask<T>> onFinish;
+    private Consumer<T> onFinish;
     private boolean isExecuting;
     private int delay;
 
-    public ScheduledTask(IThreadListener listener, IEventTask<T> task, Consumer<IEventTask<T>> onFinish, int delay) {
+    public ScheduledTask(IThreadListener listener, T task, Consumer<T> onFinish, int delay) {
         this.listener = listener;
         this.task = task;
         this.onFinish = onFinish;
         this.delay = delay;
     }
 
-    public IEventTask<T> getTask() {
+    public T getTask() {
         return task;
-    }
-
-    /**
-     * Can merge new events only if not already executing.
-     * Avoid cascading execution
-     *
-     * @param event
-     * @return
-     */
-    public boolean shouldMerge(T event) {
-        return notStarted() && getTask().shouldMerge(event);
     }
 
     /**

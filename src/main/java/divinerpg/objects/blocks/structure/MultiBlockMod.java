@@ -1,5 +1,6 @@
 package divinerpg.objects.blocks.structure;
 
+import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.multiblock.IMultiblockTile;
 import net.minecraft.block.Block;
@@ -39,14 +40,7 @@ public class MultiBlockMod extends BlockMod implements ITileEntityProvider {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        TileEntity entity = worldIn.getTileEntity(pos);
-        if (entity instanceof IMultiblockTile) {
-            IMultiblockTile multi = (IMultiblockTile) entity;
-            if (multi.getMultiblockMatch() != null) {
-                multi.onDestroy(multi.getMultiblockMatch());
-            }
-        }
-
+        SwapFactory.instance.destroy(worldIn, null, pos);
         super.breakBlock(worldIn, pos, state);
     }
 

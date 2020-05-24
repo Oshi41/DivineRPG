@@ -2,7 +2,6 @@ package divinerpg.utils.multiblock;
 
 import com.google.common.base.Predicate;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Sets;
 import divinerpg.utils.PositionHelper;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
@@ -65,15 +64,9 @@ public class StructurePattern {
      */
     public StructureMatch recheck(World world, StructureMatch match) {
 
-        // should check anyway
-        Set<Predicate<BlockWorldState>> set = Sets.newHashSet();
-        set.add(StructureBuilder.ANY);
-
-        Predicate<BlockWorldState>[][][] predicates = match.isConstructed()
-                ? buildedStructurePredicates
-                : structurePredicates;
-
-        return canBuildStructure(world, match.getCorner(), set, predicates);
+        return match.isConstructed()
+                ? checkMultiblock(world, match.getCorner())
+                : checkStructure(world, match.getCorner());
     }
 
     /**
@@ -147,6 +140,7 @@ public class StructurePattern {
             for (EnumFacing finger : EnumFacing.values()) {
                 for (EnumFacing thumb : EnumFacing.values()) {
                     if (thumb != finger && thumb != finger.getOpposite()) {
+
                         // checking the whole structure
                         StructureMatch match = checkPatternAt(corner, finger, thumb, predicates, cache);
                         if (match != null)
@@ -165,11 +159,6 @@ public class StructurePattern {
     @Nullable
     private StructureMatch checkPatternAt(BlockPos pos, EnumFacing finger, EnumFacing
             thumb, Predicate<BlockWorldState>[][][] predicates, LoadingCache<BlockPos, BlockWorldState> lcache) {
-        Map<BlockPos, IBlockState> structure = new HashMap<>();
-        Map<BlockPos, Predicate<BlockWorldState>> structurePattern = new HashMap<>();
-        Map<BlockPos, IBlockState> builtStructure = new HashMap<>();
-        Map<BlockPos, Predicate<BlockWorldState>> builtStructurePattern = new HashMap<>();
-
 
         for (int i = 0; i < palmLength; ++i) {
             for (int j = 0; j < thumbLength; ++j) {
@@ -179,7 +168,7 @@ public class StructurePattern {
                     // do not need to check ANY block pos, it's always true
                     // todo
                     // (large speed up but need to investigate is it correct)
-                    if (Objects.equals(predicate, StructureBuilder.ANY))
+                    if (predicate == StructureBuilder.ANY)
                         continue;
 
                     BlockPos currentPos = PositionHelper.translateOffset(pos, finger, thumb, i, j, k);
@@ -187,6 +176,19 @@ public class StructurePattern {
                     if (!predicate.apply(lcache.getUnchecked(currentPos))) {
                         return null;
                     }
+                }
+            }
+        }
+
+        Map<BlockPos, IBlockState> structure = new HashMap<>();
+        Map<BlockPos, Predicate<BlockWorldState>> structurePattern = new HashMap<>();
+        Map<BlockPos, IBlockState> builtStructure = new HashMap<>();
+        Map<BlockPos, Predicate<BlockWorldState>> builtStructurePattern = new HashMap<>();
+
+        for (int i = 0; i < palmLength; ++i) {
+            for (int j = 0; j < thumbLength; ++j) {
+                for (int k = 0; k < fingerLength; ++k) {
+                    BlockPos currentPos = PositionHelper.translateOffset(pos, finger, thumb, i, j, k);
 
                     structure.put(currentPos, this.structure[k][j][i]);
                     builtStructure.put(currentPos, this.buildedStructure[k][j][i]);
@@ -196,6 +198,7 @@ public class StructurePattern {
                 }
             }
         }
+
 
         AxisAlignedBB size = new AxisAlignedBB(
                 PositionHelper.translateOffset(pos, finger, thumb, 0, 0, 0),

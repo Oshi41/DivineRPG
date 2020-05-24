@@ -2,7 +2,6 @@ package divinerpg.utils;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
 import divinerpg.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
@@ -11,7 +10,6 @@ import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Tuple;
@@ -19,9 +17,10 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import javax.crypto.SealedObject;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -141,15 +140,27 @@ public class PositionHelper {
     }
 
     /**
-     * Returns area of structure
+     * Check if any blocl belong to structure area
      *
-     * @param match
+     * @param area  - current area
+     * @param poses - list of structure block
      * @return
      */
-    public static AxisAlignedBB getArea(BlockPattern.PatternHelper match) {
-        return new AxisAlignedBB(match.getFrontTopLeft(), match.getFrontTopLeft()
-                .offset(match.getForwards(), match.getWidth())
-                .offset(match.getUp(), match.getHeight()));
+    public static boolean containsInArea(AxisAlignedBB area, BlockPos... poses) {
+        if (poses == null || poses.length < 1 || area == null)
+            return false;
+
+        for (BlockPos pos : poses) {
+            if (area.minX <= pos.getX() && pos.getX() <= area.maxX) {
+                if (area.minY <= pos.getY() && pos.getY() <= area.maxY) {
+                    if (area.minZ <= pos.getZ() && pos.getZ() <= area.maxZ) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
