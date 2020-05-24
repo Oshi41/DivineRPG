@@ -151,16 +151,16 @@ public class PositionHelper {
             return false;
 
         for (BlockPos pos : poses) {
-            if (area.minX <= pos.getX() && pos.getX() <= area.maxX) {
-                if (area.minY <= pos.getY() && pos.getY() <= area.maxY) {
-                    if (area.minZ <= pos.getZ() && pos.getZ() <= area.maxZ) {
+            if (pos.getX() >= area.minX && pos.getX() <= area.maxX) {
+                if (pos.getY() >= area.minY && pos.getY() <= area.maxY) {
+                    if (pos.getZ() >= area.minZ && pos.getZ() <= area.maxZ) {
                         return true;
                     }
                 }
             }
         }
 
-        return true;
+        return false;
     }
 
     /**

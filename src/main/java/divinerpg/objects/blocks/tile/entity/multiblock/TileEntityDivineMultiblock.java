@@ -13,6 +13,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +28,12 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
 
     private StructureMatch multiblockMatch;
     private boolean working;
+
+    /**
+     * Data from NBT
+     */
+    @SideOnly(Side.CLIENT)
+    protected boolean constructedOnServer;
 
     public TileEntityDivineMultiblock(StructurePattern pattern, String name, Integer guiId) {
         this.pattern = pattern;
@@ -132,11 +140,9 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
 
         NBTTagCompound compound = pkt.getNbtCompound();
         if (compound.hasKey("constructed")) {
-            boolean constructed = compound.getBoolean("constructed");
-            boolean wasConstructed = getMultiblockMatch() != null;
 
-            if (constructed != wasConstructed) {
-                DivineRPG.proxy.getListener().addScheduledTask(this::recheckStructure);
+            if (world.isRemote) {
+                constructedOnServer = compound.getBoolean("constructed");
             }
         }
     }

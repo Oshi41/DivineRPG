@@ -64,9 +64,11 @@ public class StructurePattern {
      */
     public StructureMatch recheck(World world, StructureMatch match) {
 
+        BlockPos corner = match.getCorner();
+
         return match.isConstructed()
-                ? checkMultiblock(world, match.getCorner())
-                : checkStructure(world, match.getCorner());
+                ? checkMultiblock(world, corner)
+                : checkStructure(world, corner);
     }
 
     /**
@@ -133,9 +135,11 @@ public class StructurePattern {
             }
         }
 
+        while (!checkedPoses.isEmpty()) {
+            // find first block and remove it from list
+            BlockPos corner = checkedPoses.stream().findFirst().orElse(null);
+            checkedPoses.remove(corner);
 
-        // iterating through all corners
-        for (BlockPos corner : checkedPoses) {
             // checking all directions
             for (EnumFacing finger : EnumFacing.values()) {
                 for (EnumFacing thumb : EnumFacing.values()) {
@@ -144,7 +148,13 @@ public class StructurePattern {
                         // checking the whole structure
                         StructureMatch match = checkPatternAt(corner, finger, thumb, predicates, cache);
                         if (match != null)
-                            return match;
+                            // corrent match
+                            if (PositionHelper.containsInArea(match.area, pos)) {
+                                return match;
+                            } else {
+                                // find near match, should remove all other structure block
+                                checkedPoses.removeIf(x -> PositionHelper.containsInArea(match.area, x));
+                            }
                     }
                 }
             }

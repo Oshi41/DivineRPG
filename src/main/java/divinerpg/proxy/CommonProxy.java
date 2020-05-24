@@ -42,10 +42,6 @@ public class CommonProxy {
         return null;
     }
 
-    public IThreadListener getListener() {
-        return FMLCommonHandler.instance().getMinecraftServerInstance();
-    }
-
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(DivineRPG.instance, new GUIHandler());
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());

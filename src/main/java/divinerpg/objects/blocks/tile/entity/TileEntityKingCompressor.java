@@ -392,8 +392,12 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @SideOnly(Side.CLIENT)
     private void spawnParticles() {
-        if (getMultiblockMatch() == null)
-            return;
+        if (getMultiblockMatch() == null) {
+            if (constructedOnServer) {
+                recheckStructure();
+            }
+        }
+
 
         AxisAlignedBB area = getMultiblockMatch().area;
 
