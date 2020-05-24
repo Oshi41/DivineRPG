@@ -5,7 +5,6 @@ import divinerpg.objects.blocks.BlockMod;
 import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -43,13 +42,7 @@ public class Pedestal extends BlockMod implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ))
-            return false;
-
-        if (!worldIn.isRemote) {
-            transferStack(worldIn, pos, playerIn, hand, playerIn.getHeldItem(hand));
-        }
-
+        transferStack(worldIn, pos, playerIn, hand, playerIn.getHeldItem(hand));
         return true;
     }
 

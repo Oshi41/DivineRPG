@@ -11,6 +11,7 @@ import divinerpg.capabilities.armor.ArmorPowers;
 import divinerpg.config.Config;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.entity.*;
+import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import divinerpg.registry.DimensionRegistry;
 import divinerpg.registry.EntityRegistry;
 import divinerpg.world.WorldGenCustomOres;
@@ -93,17 +94,18 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityNightmareBed.class, DivineRPG.MODID + ":te_bed");
         GameRegistry.registerTileEntity(TileEntityKingCompressor.class, DivineRPG.MODID + ":te_king_compressor");
         GameRegistry.registerTileEntity(TileEntitySingleUseSpawner.class, DivineRPG.MODID + ":te_single_use_spawner");
+        GameRegistry.registerTileEntity(TileEntityPedestal.class, DivineRPG.MODID + ":te_pedestal");
     }
 
     public void spawnParticle(World world, ParticleType particle, double z, double x, double y, double velX,
-            double velY, double velZ) {
+                              double velY, double velZ) {
     }
 
     public void spawnParticle(World w, double x, double y, double z, String particle, boolean random) {
     }
 
     public void spawnColoredParticle(World world, double x, double y, double z, Color color, boolean bigger,
-            boolean shortLived) {
+                                     boolean shortLived) {
     }
 
 //    @Deprecated()

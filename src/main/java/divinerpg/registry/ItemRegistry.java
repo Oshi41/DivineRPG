@@ -112,6 +112,8 @@ public class ItemRegistry {
     public static final Item mysteriousClock = null;
     @ObjectHolder("watching_eye")
     public static final Item watchingEye = null;
+    @ObjectHolder("forgotten_cage")
+    public static final Item forgotten_cage = null;
 
     // Diamond chunks
     @ObjectHolder("blue_diamond_chunk")
@@ -266,7 +268,7 @@ public class ItemRegistry {
     public static final Item skythernSoul = null;
     @ObjectHolder("mortum_soul")
     public static final Item mortumSoul = null;
-    
+
     @ObjectHolder("eden_heart")
     public static final Item edenHeart = null;
     @ObjectHolder("wildwood_heart")
@@ -325,8 +327,6 @@ public class ItemRegistry {
     public static final Item skythernDust = null;
     @ObjectHolder("mortum_dust")
     public static final Item mortumDust = null;
-
-
 
 
     // Twilight boss spawners
@@ -629,8 +629,9 @@ public class ItemRegistry {
     public static final Item skythern_shield = null;
     @ObjectHolder("mortum_shield")
     public static final Item mortum_shield = null;
-    
-    @SubscribeEvent(priority=EventPriority.HIGH)
+
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void registerItems(RegistryEvent.Register<Item> event) {
         DivineRPG.logger.info("Registering DivineRPG items");
 
@@ -999,7 +1000,7 @@ public class ItemRegistry {
 
     public static Item getItemFromMap(String itemName) {
         Item item = itemMap.get(itemName);
-        if(item == null) {
+        if (item == null) {
             DivineRPG.logger.error("Attempted to get item " + itemName + " from DivineRPG, but there was no such item.");
         }
         return item;

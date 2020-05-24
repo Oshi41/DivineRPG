@@ -29,7 +29,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 public class StructureBlock extends BlockMod {
@@ -64,10 +63,14 @@ public class StructureBlock extends BlockMod {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing clickFacing, float hitX, float hitY, float hitZ) {
 
-        List<IMultiblockTile> tiles = PositionHelper.findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null);
+        IMultiblockTile tile = PositionHelper
+                .findTilesInStructureBlocks(worldIn, pos, IMultiblockTile.class, null, null, null)
+                .stream()
+                .findFirst()
+                .orElse(null);
 
-        if (!tiles.isEmpty()) {
-            tiles.get(0).click(playerIn);
+        if (tile != null) {
+            tile.click(playerIn);
             return true;
         } else {
             SwapFactory.instance.recheck(worldIn, pos, null, null);

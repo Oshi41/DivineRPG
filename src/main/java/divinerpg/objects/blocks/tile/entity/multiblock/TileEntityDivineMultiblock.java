@@ -3,6 +3,9 @@ package divinerpg.objects.blocks.tile.entity.multiblock;
 import divinerpg.DivineRPG;
 import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
+import divinerpg.objects.blocks.tile.entity.base.rituals.IRitualConsumer;
+import divinerpg.objects.blocks.tile.entity.base.rituals.IRitualDescription;
+import divinerpg.objects.blocks.tile.entity.base.rituals.RitualRegistry;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,9 +22,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
-public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity implements IMultiblockTile, IInteractionObject {
+public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity implements IMultiblockTile, IInteractionObject, IRitualConsumer {
 
     private final StructurePattern pattern;
     private final String name;
@@ -28,6 +31,8 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
 
     private StructureMatch multiblockMatch;
     private boolean working;
+
+    private IRitualDescription current;
 
     /**
      * Data from NBT
@@ -120,11 +125,46 @@ public abstract class TileEntityDivineMultiblock extends ModUpdatableTileEntity 
         return false;
     }
 
+    // region NBT
+
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setBoolean("constructed", getMultiblockMatch() != null);
         return tag;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        NBTTagCompound nbt = super.writeToNBT(compound);
+
+        if (getCurrentRitual() != null) {
+            nbt.setTag("ritual", getCurrentRitual().serializeNBT());
+        }
+
+        return nbt;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey("ritual")) {
+            NBTTagCompound tag = compound.getCompoundTag("ritual");
+            setCurrentRitual(RitualRegistry.createById(new ResourceLocation(tag.getString("Id")), this, IRitualDescription.class));
+        }
+    }
+
+    //endregion
+
+    @Override
+    public IRitualDescription getCurrentRitual() {
+        return current;
+    }
+
+    @Override
+    public void setCurrentRitual(IRitualDescription description) {
+        current = description;
     }
 
     /**

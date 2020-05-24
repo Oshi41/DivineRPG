@@ -5,10 +5,10 @@ import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.config.Config;
-import divinerpg.config.GeneralConfig;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
+import divinerpg.objects.blocks.tile.entity.base.rituals.RitualRegistry;
 import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
 import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
@@ -17,8 +17,10 @@ import divinerpg.utils.PositionHelper;
 import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -27,9 +29,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -114,6 +114,9 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
         container = new EmptyHandler();
         setsLimit = (int) (DivineAPI.getArmorDescriptionRegistry().getKeys().size() * (Config.maxSetsPercentage / 100.0));
+
+        setsLimit = 3;
+        setCurrentRitual(RitualRegistry.KILL_ANGRY_MOB);
     }
 
     // region IFuelProvider
@@ -143,21 +146,47 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         if (!isConstructed())
             return;
 
+        recreateContainer(getMultiblockMatch());
+
         if (canMakeKingSet()) {
             absorbedSets.clear();
 
-            // todo get boss summon item
-            return;
+            if (!world.isRemote) {
+                EnumFacing forwards = getMultiblockMatch().up;
+
+                if (world.rand.nextBoolean()) {
+                    forwards = forwards.getOpposite();
+                }
+
+                AxisAlignedBB area = getMultiblockMatch().area;
+
+                double length = area.getAverageEdgeLength() / 3 * 2;
+
+                EntityItem cage = new EntityItem(world,
+                        (area.maxX - area.minX) / 2.0 + forwards.getFrontOffsetX() * length,
+                        (area.maxY - area.minY) / 2.0 + forwards.getFrontOffsetY() * length,
+                        (area.maxZ - area.minZ) / 2.0 + forwards.getFrontOffsetZ() * length,
+                        ItemRegistry.forgotten_cage.getDefaultInstance()
+                );
+
+                cage.motionX = forwards.getFrontOffsetX() * 0.3;
+                cage.motionY = forwards.getFrontOffsetY() * 0.3;
+                cage.motionZ = forwards.getFrontOffsetZ() * 0.3;
+
+                cage.setEntityInvulnerable(true);
+                cage.setNoDespawn();
+
+                world.spawnEntity(cage);
+            }
+
+        } else if (haveItemsToSmelt()) {
+            absorbedSets.addAll(getSetsToApply());
         }
 
-        recreateContainer(getMultiblockMatch());
-
-        if (!haveItemsToSmelt())
-            return;
-
-        absorbedSets.addAll(getSetsToApply());
-        for (int i = 0; i < container.getSlots(); i++) {
-            container.setStackInSlot(0, ItemStack.EMPTY);
+        if (canMakeKingSet() || haveItemsToSmelt()) {
+            for (int i = 0; i < container.getSlots(); i++) {
+                container.setStackInSlot(i, ItemStack.EMPTY);
+            }
         }
     }
 
@@ -168,7 +197,10 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public boolean haveItemsToSmelt() {
-        return hasRecipe;
+        if (!wasRitualPerformed())
+            return false;
+
+        return hasRecipe || canMakeKingSet();
     }
 
     @Override
@@ -193,7 +225,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
 
     @Override
     public int getCookTimeLength() {
-        return 1000;
+        return 20 * 5;
     }
 
     @Override
@@ -214,15 +246,6 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return !canMakeKingSet();
-
-//        if (fuelSlots.contains(index)) {
-//            return fuelMap.containsKey(stack.getItem());
-//        }
-//
-//        if (canMakeKingSet())
-//            return false;
-//
-//        return index != outputSlot;
     }
 
     @Override
@@ -285,6 +308,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     @Override
     public void onDestroy(@Nonnull StructureMatch match) {
         container = new EmptyHandler();
+        world.setBlockToAir(getPos());
     }
 
     @Override
@@ -301,15 +325,6 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
             }
 
             spawnParticles();
-        }
-
-        if (hasRecipe && getMultiblockMatch() != null) {
-            AxisAlignedBB area = getMultiblockMatch().area;
-            BlockPos pos = new BlockPos(area.minX, area.maxY + 2, area.minZ);
-
-            pos = pos.add(world.rand.nextInt((int) (area.maxX - area.minX)), world.rand.nextInt(2), world.rand.nextInt((int) (area.minZ - area.minZ)));
-
-            world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 5, true);
         }
     }
 
@@ -334,7 +349,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
                             setsLimit));
 
             for (ResourceLocation set : absorbedSets) {
-                msg.appendText(set.toString());
+                msg.appendText("\n" + set.toString());
             }
 
             player.sendMessage(msg);
@@ -428,7 +443,9 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
         Random rand = world.rand;
 
         // above contruction
-        Vec3d center = area.getCenter().addVector(2 - rand.nextDouble() * 3, (area.maxY - area.minY) / 2 + 2, 2 - rand.nextDouble() * 3);
+        Vec3d centerPos = area.getCenter();
+
+        Vec3d center = centerPos.addVector(2 - rand.nextDouble() * 3, (area.maxY - area.minY) / 2 + 2, 2 - rand.nextDouble() * 3);
 
         ParticleType particleType = ParticleType.values()[1 + rand.nextInt(5)];
 
@@ -443,6 +460,41 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
                     rand.nextFloat() * 3,
                     rand.nextFloat() * 2 - rand.nextFloat() * 2
             );
+        }
+
+        // perform actual work
+        if (hasRecipe && getBurningTicks() % 20 == 1) {
+            List<EnumFacing> directions = Arrays.asList(EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.EAST);
+            int length = (int) (area.getAverageEdgeLength() / 3 * 2);
+
+            for (int i = 0; i < 4; i++) {
+                EnumFacing finger = directions.get(rand.nextInt(directions.size()));
+                EnumFacing thumb = rand.nextBoolean()
+                        ? finger.rotateYCCW()
+                        : finger.rotateYCCW().getOpposite();
+
+                BlockPos temp = PositionHelper.translateOffset(new BlockPos(centerPos.x, centerPos.y, centerPos.z), finger, thumb,
+                        -length * 2,
+                        length,
+                        length);
+
+                Vec3d position = new Vec3d(temp).addVector(rand.nextDouble() * 2, rand.nextDouble() * 2, rand.nextDouble() * 2);
+
+                this.world.playSound(null,
+                        position.x, position.y, position.z,
+                        SoundEvents.ENTITY_GENERIC_EXPLODE,
+                        SoundCategory.BLOCKS,
+                        4.0F,
+                        (1.0F + (this.world.rand.nextFloat() - this.world.rand.nextFloat()) * 0.2F) * 0.7F);
+
+                this.world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE,
+                        position.x,
+                        position.y,
+                        position.z,
+                        1.0D,
+                        0.0D,
+                        0.0D);
+            }
         }
     }
 }
