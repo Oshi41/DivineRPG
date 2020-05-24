@@ -9,7 +9,6 @@ import divinerpg.events.server.SwapFactory;
 import divinerpg.utils.UpdateChecker;
 import org.apache.logging.log4j.LogManager;
 
-import divinerpg.api.Reference;
 import divinerpg.api.armor.registry.IArmorDescription;
 import divinerpg.events.*;
 import divinerpg.proxy.CommonProxy;
@@ -27,13 +26,18 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.registries.RegistryBuilder;
 
-@Mod(modid = Reference.MODID, name = Reference.NAME, version = Reference.VERSION, updateJSON = Reference.UPDATE_URL, dependencies = "required:forge@[14.23.5.2768,)")
+@Mod(modid = DivineRPG.MODID, name = DivineRPG.NAME, version = DivineRPG.VERSION, updateJSON = DivineRPG.UPDATE_URL)
 public class DivineRPG {
+
+    public static final String MODID = "divinerpg";
+    public static final String NAME = "DivineRPG";
+    public static final String VERSION = "1.6.3";
+    public static final String UPDATE_URL = "https://raw.githubusercontent.com/NicosaurusRex99/DivineRPG/1.12.2/divinerpg_update.json";
+
     @Mod.Instance
     public static DivineRPG instance;
 
@@ -41,7 +45,8 @@ public class DivineRPG {
     public static CommonProxy proxy;
 
     public static org.apache.logging.log4j.Logger logger;
-    public static SimpleNetworkWrapper network = new SimpleNetworkWrapper(Reference.MODID);
+
+    public static SimpleNetworkWrapper network = new SimpleNetworkWrapper(MODID);
 
     static {
         FluidRegistry.enableUniversalBucket();
@@ -58,22 +63,22 @@ public class DivineRPG {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        ModLiquids.registerFluids();
+        LiquidRegistry.registerFluids();
         proxy.preInit(event);
         proxy.registerTileEntities();
         MinecraftForge.EVENT_BUS.register(new ArcanaTickHandler());
         MinecraftForge.EVENT_BUS.register(new EventEntityDrop());
         MinecraftForge.EVENT_BUS.register(new WorldBreakEnchantHandler());
-        ModMessages.initMessages();
+        MessageRegistry.initMessages();
         AttributeFixer.patchMaximumHealth();
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
-        ModOreDict.init();
-        ModTriggers.registerTriggers();
-        ModSmelting.init();
+        OreDictionaryHandler.registerOreDictionaryEntries();
+        TriggerRegistry.registerTriggers();
+        SmeltingRecipeRegistry.registerSmeltingRecipes();
         MinecraftForge.EVENT_BUS.register(new GeneralConfig());
     }
 
@@ -83,21 +88,13 @@ public class DivineRPG {
         if (Loader.isModLoaded("projecte")) {
             divinerpg.compat.ProjectECompat.init();
         }
-        ModSpawns.initSpawns();
+        EntitySpawnRegistry.initSpawns();
         Utils.loadHatInformation();
         DimensionHelper.initPortalDescriptions();
 
         MinecraftForge.EVENT_BUS.register(SwapFactory.instance);
 
         UpdateChecker.checkForUpdates();
-    }
-
-    /**
-     * For Registering Commands
-     */
-    @Mod.EventHandler
-    public void serverLoad(FMLServerStartingEvent event) {
-
     }
 
     /**
@@ -108,7 +105,7 @@ public class DivineRPG {
         logger.info("Creating registries");
 
         new RegistryBuilder<IArmorDescription>()
-                .setName(new ResourceLocation(Reference.MODID, "armor_descriptions"))
+                .setName(new ResourceLocation(MODID, "armor_descriptions"))
                 .setType(IArmorDescription.class)
                 .create();
     }

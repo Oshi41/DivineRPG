@@ -1,9 +1,9 @@
 package divinerpg.objects.blocks;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.registry.DivineRPGTabs;
-import divinerpg.registry.ModBlocks;
-import divinerpg.registry.ModItems;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.ItemRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockPlanks;
@@ -50,7 +50,7 @@ public class BlockModLeaves extends BlockLeaves implements IShearable {
         this.saplingSupplier = () -> null;
         this.setMapColor(mapColorIn);
         this.setUnlocalizedName(name);
-        this.setRegistryName(Reference.MODID, name);
+        this.setRegistryName(DivineRPG.MODID, name);
         this.setHardness(hardness);
         this.setCreativeTab(DivineRPGTabs.BlocksTab);
         this.setTickRandomly(true);
@@ -277,8 +277,8 @@ public class BlockModLeaves extends BlockLeaves implements IShearable {
             chance -= 10 << fortune;
             if (chance < 40) chance = 40;
         }
-        if (this == ModBlocks.edenLeaves && rand.nextInt(1500) == 0) {
-            drops.add(new ItemStack(ModItems.forbiddenFruit));
+        if (this == BlockRegistry.edenLeaves && rand.nextInt(1500) == 0) {
+            drops.add(new ItemStack(ItemRegistry.forbiddenFruit));
         }
         this.captureDrops(true);
         if (world instanceof World)

@@ -1,6 +1,6 @@
 package divinerpg.registry;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -19,10 +19,10 @@ public class MissingMappingHandler {
     public static void handleMissingBlocks(MissingMappings<Block> event) {
         for(MissingMappings.Mapping<Block> mapping: event.getAllMappings()) {
             if(mapping.key.equals(new ResourceLocation("divinerpg:karos_cannon"))) {
-                mapping.remap(ModBlocks.karosDispenser);
+                mapping.remap(BlockRegistry.karosDispenser);
             }
             else if(mapping.key.equals(new ResourceLocation("divinerpg:ayeraco_statue"))) {
-                mapping.remap(ModBlocks.ayeracoBlueStatue);
+                mapping.remap(BlockRegistry.ayeracoBlueStatue);
             }
         }
     }
@@ -32,16 +32,16 @@ public class MissingMappingHandler {
     public static void handleMissingItems(MissingMappings<Item> event) {
          for(MissingMappings.Mapping<Item> mapping: event.getAllMappings()) {
              if(mapping.key.equals(new ResourceLocation("divinerpg:ayeraco_statue"))) {
-                 mapping.remap(Item.getItemFromBlock(ModBlocks.ayeracoBlueStatue));
+                 mapping.remap(Item.getItemFromBlock(BlockRegistry.ayeracoBlueStatue));
              }
              else if(mapping.key.equals(new ResourceLocation("divinerpg:santa_cap"))) {
-                 mapping.remap(ModArmor.santaHelmet);
+                 mapping.remap(ArmorRegistry.santaHelmet);
              }
              else if(mapping.key.equals(new ResourceLocation("divinerpg:santa_tunic"))) {
-                 mapping.remap(ModArmor.santaChestplate);
+                 mapping.remap(ArmorRegistry.santaChestplate);
              }
              else if(mapping.key.equals(new ResourceLocation("divinerpg:santa_pants"))) {
-                 mapping.remap(ModArmor.santaLeggings);
+                 mapping.remap(ArmorRegistry.santaLeggings);
              }
          }
     }
@@ -49,8 +49,8 @@ public class MissingMappingHandler {
     @SubscribeEvent
     public static void handleMissingBiomes(MissingMappings<Biome> event) {
         for(MissingMappings.Mapping<Biome> mapping: event.getAllMappings()) {
-            if (mapping.key.equals(new ResourceLocation(Reference.MODID, "arksiane"))) {
-                mapping.remap(ModBiomes.biomeVethea);
+            if (mapping.key.equals(new ResourceLocation(DivineRPG.MODID, "arksiane"))) {
+                mapping.remap(BiomeRegistry.biomeVethea);
             }
         }
     }

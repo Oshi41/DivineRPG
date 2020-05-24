@@ -1,9 +1,9 @@
 package divinerpg.objects.entities.assets.render.twilight;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.assets.model.twilight.ModelDensos;
 import divinerpg.objects.entities.entity.twilight.EntityReyvor;
-import divinerpg.registry.ModWeapons;
+import divinerpg.registry.WeaponRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nullable;
 
 public class RenderReyvor extends RenderLiving<EntityReyvor> {
-    ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/entity/reyvor.png");
+    ResourceLocation texture = new ResourceLocation(DivineRPG.MODID, "textures/entity/reyvor.png");
 
 
     public RenderReyvor(RenderManager rendermanagerIn) {
@@ -49,7 +49,7 @@ public class RenderReyvor extends RenderLiving<EntityReyvor> {
             GlStateManager.rotate(90, 0, 1, 0);
             GlStateManager.rotate(45, 0, 0, -1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(ModWeapons.twilightBow),
+            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(WeaponRegistry.twilightBow),
                     ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();

@@ -1,9 +1,9 @@
 package divinerpg.objects.blocks.tile.container.gui;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.blocks.tile.container.ContainerDreamLamp;
 import divinerpg.objects.blocks.tile.entity.TileEntityInfusionTable;
-import divinerpg.registry.ModItems;
+import divinerpg.registry.ItemRegistry;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 public class DreamLampGUI extends GuiContainer {
     private TileEntityInfusionTable TeDreamLamp;
 
-    private ResourceLocation texture = new ResourceLocation(Reference.MODID + ":textures/gui/dream_lamp.png");
+    private ResourceLocation texture = new ResourceLocation(DivineRPG.MODID + ":textures/gui/dream_lamp.png");
     private IInventory blockInv;
     private IInventory playerInv;
 
@@ -37,7 +37,7 @@ public class DreamLampGUI extends GuiContainer {
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
-        if(this.blockInv.getStackInSlot(0) != ItemStack.EMPTY && this.blockInv.getStackInSlot(0).getItem() == ModItems.acid) this.drawTexturedModalRect(k+81, l+31, 176, 0, 13, 13);
+        if(this.blockInv.getStackInSlot(0) != ItemStack.EMPTY && this.blockInv.getStackInSlot(0).getItem() == ItemRegistry.acid) this.drawTexturedModalRect(k+81, l+31, 176, 0, 13, 13);
     }
 
     @Override

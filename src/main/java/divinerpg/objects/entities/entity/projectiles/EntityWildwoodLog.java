@@ -1,7 +1,6 @@
 package divinerpg.objects.entities.entity.projectiles;
 
-import divinerpg.objects.entities.assets.render.projectiles.base.IBlockRender;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -33,7 +32,7 @@ public class EntityWildwoodLog extends EntityThrowable implements IBlockRender {
 	    }
 	}
 	
-	public Block getBlock() {
-		return ModBlocks.wildwoodLog;
+	public static Block getBlock() {
+		return BlockRegistry.wildwoodLog;
 	}
 }

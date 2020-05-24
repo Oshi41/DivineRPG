@@ -1,8 +1,8 @@
 package divinerpg.objects.blocks.arcana;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.events.DimensionHelper;
-import divinerpg.registry.ModDimensions;
+import divinerpg.registry.DimensionRegistry;
 import divinerpg.utils.portals.description.IPortalDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -34,7 +34,7 @@ public class BlockArcanaPortal extends Block {
         super(Material.PORTAL);
         this.setSoundType(SoundType.STONE);
         this.setUnlocalizedName(name);
-        this.setRegistryName(Reference.MODID, name);
+        this.setRegistryName(DivineRPG.MODID, name);
         this.setCreativeTab(null);
         setLightLevel(1.0F);
         setBlockUnbreakable();
@@ -88,7 +88,7 @@ public class BlockArcanaPortal extends Block {
         if (!canTransfer)
             return;
 
-        DimensionType destination = ModDimensions.arcanaDimension;
+        DimensionType destination = DimensionRegistry.arcanaDimension;
         if (destination == worldIn.provider.getDimensionType()) {
             destination = DimensionType.OVERWORLD;
         }
@@ -100,7 +100,7 @@ public class BlockArcanaPortal extends Block {
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
 
-        IPortalDescription description = DimensionHelper.descriptionsByDimension.get(ModDimensions.arcanaDimension);
+        IPortalDescription description = DimensionHelper.descriptionsByDimension.get(DimensionRegistry.arcanaDimension);
         BlockPattern.PatternHelper frame = description.matchFrame(worldIn, pos);
         if (frame == null) {
             worldIn.setBlockToAir(pos);

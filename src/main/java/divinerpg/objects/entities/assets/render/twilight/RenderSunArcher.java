@@ -1,9 +1,9 @@
 package divinerpg.objects.entities.assets.render.twilight;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.assets.model.twilight.ModelSunArcher;
 import divinerpg.objects.entities.entity.twilight.EntitySunArcher;
-import divinerpg.registry.ModWeapons;
+import divinerpg.registry.WeaponRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class RenderSunArcher extends RenderLiving<EntitySunArcher> {
 
-    ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/entity/sun_archer.png");
+    ResourceLocation texture = new ResourceLocation(DivineRPG.MODID, "textures/entity/sun_archer.png");
 
     public RenderSunArcher(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelSunArcher(), 0);
@@ -49,7 +49,7 @@ public class RenderSunArcher extends RenderLiving<EntitySunArcher> {
             GlStateManager.rotate(90, 0, 1, 0);
             GlStateManager.rotate(45, 0, 0, -1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(ModWeapons.edenBow),
+            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(WeaponRegistry.edenBow),
                     ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();

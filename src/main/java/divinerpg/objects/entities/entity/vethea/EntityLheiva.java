@@ -1,8 +1,8 @@
 package divinerpg.objects.entities.entity.vethea;
 
-import divinerpg.registry.DRPGLootTables;
-import divinerpg.registry.ModItems;
-import divinerpg.registry.ModSounds;
+import divinerpg.registry.LootTableRegistry;
+import divinerpg.registry.ItemRegistry;
+import divinerpg.registry.SoundRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -30,7 +30,7 @@ public class EntityLheiva extends VetheaMob {
     public boolean attackEntityFrom(DamageSource source, float par2) {
         Entity var1 = source.getTrueSource();
         if (var1 != null && var1 instanceof EntityPlayer) {
-            if (((EntityPlayer)var1).inventory.hasItemStack(new ItemStack(ModItems.bandOfHeivaHunting)))
+            if (((EntityPlayer)var1).inventory.hasItemStack(new ItemStack(ItemRegistry.bandOfHeivaHunting)))
                 return super.attackEntityFrom(source, par2);
         } else if(source == DamageSource.OUT_OF_WORLD) return super.attackEntityFrom(source, par2);
         return false;
@@ -44,21 +44,21 @@ public class EntityLheiva extends VetheaMob {
     @Override
     protected ResourceLocation getLootTable()
     {
-        return DRPGLootTables.ENTITIES_LHEIVA;
+        return LootTableRegistry.ENTITIES_LHEIVA;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModSounds.LHEIVA;
+        return SoundRegistry.LHEIVA;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return ModSounds.LHEIVA_HURT;
+        return SoundRegistry.LHEIVA_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModSounds.LHEIVA_HURT;
+        return SoundRegistry.LHEIVA_HURT;
     }
 }

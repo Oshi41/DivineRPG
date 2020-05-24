@@ -82,7 +82,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber
 @ObjectHolder("divinerpg")
-public class ModBlocks {
+public class BlockRegistry {
     private static int WOOD_GOLD = 0, STONE = 1, IRON = 2, DIAMOND = 3, EDEN = 6, WILDWOOD = 7, APALACHIA = 8, SKYTHERN = 9, MORTUM = 10;
     private static List<Block> blockList = new ArrayList<Block>();
     private static List<Item> blockItemList = new ArrayList<>();
@@ -1134,7 +1134,7 @@ public class ModBlocks {
         register(registry, new BlockModOre("arlemite_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockModOre("realmite_ore", 3.0F, 2000F, IRON, () -> null));
         register(registry, new BlockModOre("rupee_ore", 3.0F, 2000F, DIAMOND, () -> null));
-        register(registry, new BlockModOre("bloodgem_ore", 3.0F, 2000F, DIAMOND, () -> ModItems.bloodgem));
+        register(registry, new BlockModOre("bloodgem_ore", 3.0F, 2000F, DIAMOND, () -> ItemRegistry.bloodgem));
         register(registry, new BlockNetheriteOre("netherite_ore", 3.0F, 2000F, DIAMOND));
         register(registry, new BlockModOre("king_ore", 5.0F, 2000F, DIAMOND + 1, () -> null));
 
@@ -1148,14 +1148,14 @@ public class ModBlocks {
         // Mob pumpkins
         register(registry, new BlockMobPumpkin("blaze_pumpkin", SoundEvents.ENTITY_BLAZE_AMBIENT));
         register(registry, new BlockMobPumpkin("creeper_pumpkin", SoundEvents.ENTITY_CREEPER_PRIMED));
-        register(registry, new BlockMobPumpkin("cyclops_pumpkin", ModSounds.CYCLOPS));
+        register(registry, new BlockMobPumpkin("cyclops_pumpkin", SoundRegistry.CYCLOPS));
         register(registry, new BlockMobPumpkin("ender_pumpkin", SoundEvents.ENTITY_ENDERMEN_SCREAM));
         register(registry, new BlockMobPumpkin("ender_watcher_pumpkin", SoundEvents.ENTITY_ENDERMEN_AMBIENT));
-        register(registry, new BlockMobPumpkin("frost_pumpkin", ModSounds.FROST));
+        register(registry, new BlockMobPumpkin("frost_pumpkin", SoundRegistry.FROST));
         register(registry, new BlockMobPumpkin("ghast_pumpkin", SoundEvents.ENTITY_GHAST_SCREAM));
-        register(registry, new BlockMobPumpkin("glacon_pumpkin", ModSounds.GLACIDE));
-        register(registry, new BlockMobPumpkin("hellspider_pumpkin", ModSounds.HELL_SPIDER));
-        register(registry, new BlockMobPumpkin("jungle_spider_pumpkin", ModSounds.HELL_SPIDER));
+        register(registry, new BlockMobPumpkin("glacon_pumpkin", SoundRegistry.GLACIDE));
+        register(registry, new BlockMobPumpkin("hellspider_pumpkin", SoundRegistry.HELL_SPIDER));
+        register(registry, new BlockMobPumpkin("jungle_spider_pumpkin", SoundRegistry.HELL_SPIDER));
         register(registry, new BlockMobPumpkin("skeleton_pumpkin", SoundEvents.ENTITY_SKELETON_AMBIENT));
         register(registry, new BlockMobPumpkin("spider_pumpkin", SoundEvents.ENTITY_SPIDER_AMBIENT));
         register(registry, new BlockMobPumpkin("zombie_pumpkin", SoundEvents.ENTITY_ZOMBIE_AMBIENT));
@@ -1319,7 +1319,7 @@ public class ModBlocks {
         registerItemlessBlock(registry, new BlockAyeracoSpawn());
 
         // Liquid
-        register(registry, new BlockTar("tar", ModLiquids.tar));
+        register(registry, new BlockTar("tar", LiquidRegistry.tar));
 
         // Iceika
 
@@ -1397,11 +1397,11 @@ public class ModBlocks {
         register(registry, new BlockMod("twilight_stone", 6.0F));
 
         // Ore
-        register(registry, new BlockTwilightOre("eden_ore", 5, 2000F, DIAMOND, () -> ModItems.edenFragments));
-        register(registry, new BlockTwilightOre("wildwood_ore", 6, 2000F, EDEN, () -> ModItems.wildwoodFragments));
-        register(registry, new BlockTwilightOre("apalachia_ore", 7, 2000F, WILDWOOD, () -> ModItems.apalachiaFragments));
-        register(registry, new BlockTwilightOre("skythern_ore", 8, 2000F, APALACHIA, () -> ModItems.skythernFragments));
-        register(registry, new BlockTwilightOre("mortum_ore", 9, 2000F, SKYTHERN, () -> ModItems.mortumFragments));
+        register(registry, new BlockTwilightOre("eden_ore", 5, 2000F, DIAMOND, () -> ItemRegistry.edenFragments));
+        register(registry, new BlockTwilightOre("wildwood_ore", 6, 2000F, EDEN, () -> ItemRegistry.wildwoodFragments));
+        register(registry, new BlockTwilightOre("apalachia_ore", 7, 2000F, WILDWOOD, () -> ItemRegistry.apalachiaFragments));
+        register(registry, new BlockTwilightOre("skythern_ore", 8, 2000F, APALACHIA, () -> ItemRegistry.skythernFragments));
+        register(registry, new BlockTwilightOre("mortum_ore", 9, 2000F, SKYTHERN, () -> ItemRegistry.mortumFragments));
 
         // Sapling
         register(registry, new BlockModSapling("eden_sapling", () -> edenGrass, () -> edenDirt, new EdenTree(true)));
@@ -1409,16 +1409,16 @@ public class ModBlocks {
         register(registry, new BlockModSapling("apalachia_sapling", () -> apalachiaGrass, () -> apalachiaDirt,
                 new TwilightTree(true,
                         5,
-                        () -> ModBlocks.apalachiaLog.getDefaultState(),
-                        () -> ModBlocks.apalachiaLeaves.getDefaultState(),
-                        () -> ModBlocks.apalachiaSapling)
+                        () -> BlockRegistry.apalachiaLog.getDefaultState(),
+                        () -> BlockRegistry.apalachiaLeaves.getDefaultState(),
+                        () -> BlockRegistry.apalachiaSapling)
         ));
         register(registry, new BlockModSapling("skythern_sapling", () -> skythernGrass, () -> skythernDirt,
                 new TwilightTree(true,
                         5,
-                        () -> ModBlocks.skythernLog.getDefaultState(),
-                        () -> ModBlocks.skythernLeaves.getDefaultState(),
-                        () -> ModBlocks.skythernSapling)));
+                        () -> BlockRegistry.skythernLog.getDefaultState(),
+                        () -> BlockRegistry.skythernLeaves.getDefaultState(),
+                        () -> BlockRegistry.skythernSapling)));
         register(registry, new BlockModSapling("mortum_sapling", () -> mortumGrass, () -> mortumDirt, new MortumTree(true)));
 
         // Logs
@@ -1533,10 +1533,10 @@ public class ModBlocks {
         register(registry, new BlockModUnbreakable("soul_stone"));
 
         // Door
-        registerItemlessBlock(registry, new BlockArcanaDoor("ancient_brick_door", () -> ModItems.ancientKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("degraded_brick_door", () -> ModItems.degradedKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("soul_sludge_door", () -> ModItems.sludgeKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("soul_stone_door", () -> ModItems.soulKey));
+        registerItemlessBlock(registry, new BlockArcanaDoor("ancient_brick_door", () -> ItemRegistry.ancientKey));
+        registerItemlessBlock(registry, new BlockArcanaDoor("degraded_brick_door", () -> ItemRegistry.degradedKey));
+        registerItemlessBlock(registry, new BlockArcanaDoor("soul_sludge_door", () -> ItemRegistry.sludgeKey));
+        registerItemlessBlock(registry, new BlockArcanaDoor("soul_stone_door", () -> ItemRegistry.soulKey));
 
         // Spawner
         register(registry, new BlockArcanaSpawner("death_hound_spawner", "death_hound"));
@@ -1564,7 +1564,7 @@ public class ModBlocks {
         register(registry, new BlockModGlass("stained_glass8", 0.3F).setUnlocalizedName("stained_glass"));
 
         // Portal blocks
-        register(registry, new BlockArcanaPortal("arcana_portal", ModDimensions.arcanaDimension.getId()));
+        register(registry, new BlockArcanaPortal("arcana_portal", DimensionRegistry.arcanaDimension.getId()));
         register(registry, new BlockArcanaPortalFrame("arcana_portal_frame"));
         register(registry, new BlockArcanaPortalFrame("arcana_hard_portal_frame").setBlockUnbreakable().setResistance(6000000F).setCreativeTab(null));
 
@@ -1609,7 +1609,7 @@ public class ModBlocks {
         // Terrain
         register(registry, new BlockModDirt("dream_dirt", 0.5F, MapColor.LIME_STAINED_HARDENED_CLAY).setCreativeTab(DivineRPGTabs.vethea));
         register(registry, new BlockDreamGrass("dream_grass", 0.6F).setCreativeTab(DivineRPGTabs.vethea));
-        register(registry, new BlockMod("dream_stone", 6.0F).setCreativeTab(DivineRPGTabs.vethea));
+        register(registry, new BlockMod("dream_stone", 1.5F).setCreativeTab(DivineRPGTabs.vethea));
 
         // Logs
         register(registry, new BlockVetheaLog("dreamwood_log", MapColor.LIGHT_BLUE).setHardness(5.0F).setCreativeTab(DivineRPGTabs.vethea));
@@ -1723,14 +1723,14 @@ public class ModBlocks {
 
         // Portal blocks
         // Portal
-        register(registry, new BlockModPortal("iceika_portal", ModDimensions.iceikaDimension, () -> iceikaFire, () -> Blocks.SNOW, ParticleType.FROST));
-        register(registry, new BlockModPortal("eden_portal", ModDimensions.edenDimension, () -> blueFire, () -> divineRock, ParticleType.EDEN_PORTAL));
-        register(registry, new BlockModPortal("wildwood_portal", ModDimensions.wildwoodDimension, () -> blueFire, () -> edenBlock, ParticleType.WILDWOOD_PORTAL));
-        register(registry, new BlockModPortal("apalachia_portal", ModDimensions.apalachiaDimension, () -> blueFire, () -> wildwoodBlock, ParticleType.APALACHIA_PORTAL));
-        register(registry, new BlockModPortal("skythern_portal", ModDimensions.skythernDimension, () -> blueFire, () -> apalachiaBlock, ParticleType.SKYTHERN_PORTAL));
-        register(registry, new BlockModPortal("mortum_portal", ModDimensions.mortumDimension, () -> blueFire, () -> skythernBlock, ParticleType.MORTUM_PORTAL));
-        register(registry, new BlockVetheaPortal("vethea_portal", ModDimensions.vetheaDimension, () -> blueFire, () -> mortumBlock, ParticleType.MORTUM_PORTAL));
-        register(registry, new BlockModPortal("galaxy_portal", ModDimensions.galaxyDimension, () -> blueFire, () -> galaxy_block, ParticleType.GALAXY));
+        register(registry, new BlockModPortal("iceika_portal", DimensionRegistry.iceikaDimension, () -> iceikaFire, () -> Blocks.SNOW, ParticleType.FROST));
+        register(registry, new BlockModPortal("eden_portal", DimensionRegistry.edenDimension, () -> blueFire, () -> divineRock, ParticleType.EDEN_PORTAL));
+        register(registry, new BlockModPortal("wildwood_portal", DimensionRegistry.wildwoodDimension, () -> blueFire, () -> edenBlock, ParticleType.WILDWOOD_PORTAL));
+        register(registry, new BlockModPortal("apalachia_portal", DimensionRegistry.apalachiaDimension, () -> blueFire, () -> wildwoodBlock, ParticleType.APALACHIA_PORTAL));
+        register(registry, new BlockModPortal("skythern_portal", DimensionRegistry.skythernDimension, () -> blueFire, () -> apalachiaBlock, ParticleType.SKYTHERN_PORTAL));
+        register(registry, new BlockModPortal("mortum_portal", DimensionRegistry.mortumDimension, () -> blueFire, () -> skythernBlock, ParticleType.MORTUM_PORTAL));
+        register(registry, new BlockVetheaPortal("vethea_portal", DimensionRegistry.vetheaDimension, () -> blueFire, () -> mortumBlock, ParticleType.MORTUM_PORTAL));
+        register(registry, new BlockModPortal("galaxy_portal", DimensionRegistry.galaxyDimension, () -> blueFire, () -> galaxy_block, ParticleType.GALAXY));
 
         //Slab
         registerItemlessBlock(registry, new BlockModSlab("eden_slab", BlockModPlank.EnumType.EDEN, false));
@@ -1774,7 +1774,7 @@ public class ModBlocks {
         for (Block block : blockList) {
             Item itemBlock = new ItemBlock(block).setRegistryName(block.getRegistryName());
             if (!itemBlock.equals(Item.getItemFromBlock(Blocks.AIR))) {
-                ModItems.itemMap.put(itemBlock.getRegistryName().getResourcePath(), itemBlock);
+                ItemRegistry.itemMap.put(itemBlock.getRegistryName().getResourcePath(), itemBlock);
             }
             event.getRegistry().register(itemBlock);
         }

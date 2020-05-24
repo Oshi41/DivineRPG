@@ -1,8 +1,8 @@
 package divinerpg.dimensions.skythern;
 
 import divinerpg.dimensions.IslandChunkGeneratorBase;
-import divinerpg.registry.ModBiomes;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.BiomeRegistry;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
@@ -12,20 +12,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import divinerpg.registry.ModDimensions;
+import divinerpg.registry.DimensionRegistry;
 
 public class WorldProviderSkythern extends WorldProvider {
 	
 	@Override
 	public void init() {
-		this.biomeProvider = new BiomeProviderSingle(ModBiomes.biomeSkythern);
+		this.biomeProvider = new BiomeProviderSingle(BiomeRegistry.biomeSkythern);
 		this.nether = false;
 		this.hasSkyLight = true;
 	}
 	
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new IslandChunkGeneratorBase(this.world, ModBlocks.twilightStone, ModBlocks.skythernGrass, ModBlocks.skythernDirt);
+		return new IslandChunkGeneratorBase(this.world, BlockRegistry.twilightStone, BlockRegistry.skythernGrass, BlockRegistry.skythernDirt);
 	}
 	
     @Override
@@ -62,7 +62,7 @@ public class WorldProviderSkythern extends WorldProvider {
 
 	@Override
 	public DimensionType getDimensionType() {
-		return ModDimensions.skythernDimension;
+		return DimensionRegistry.skythernDimension;
 	}
 	@Nullable
     @Override

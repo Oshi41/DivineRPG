@@ -1,6 +1,6 @@
 package divinerpg.registry;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.client.render.*;
 import divinerpg.objects.blocks.tile.entity.*;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
@@ -19,28 +19,28 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = Reference.MODID)
-public class ModModels {
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = DivineRPG.MODID)
+public class ModelRegistry {
 
     @SubscribeEvent
     public static void registerItemModels(ModelRegistryEvent event) {
-        for (Item item : ModItems.itemMap.values()) {
+        for (Item item : ItemRegistry.itemMap.values()) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
         registerTESRs();
     }
 
     public static void registerTESRs() {
-        Item.getItemFromBlock(ModBlocks.boneChest).setTileEntityItemStackRenderer(new RenderItemBoneChest());
-        Item.getItemFromBlock(ModBlocks.edenChest).setTileEntityItemStackRenderer(new RenderItemEdenChest());
-        Item.getItemFromBlock(ModBlocks.frostedChest).setTileEntityItemStackRenderer(new RenderItemFrostedChest());
-        Item.getItemFromBlock(ModBlocks.presentBox).setTileEntityItemStackRenderer(new RenderItemPresentBox());
-        Item.getItemFromBlock(ModBlocks.demonFurnace).setTileEntityItemStackRenderer(new RenderItemDemonFurnace());
-        Item.getItemFromBlock(ModBlocks.arcaniumExtractor).setTileEntityItemStackRenderer(new RenderItemArcaniumExtractor());
-        Item.getItemFromBlock(ModBlocks.dramixAltar).setTileEntityItemStackRenderer(new RenderItemDramixAltar());
-        Item.getItemFromBlock(ModBlocks.parasectaAltar).setTileEntityItemStackRenderer(new RenderItemParasectaAltar());
-        Item.getItemFromBlock(ModBlocks.frostedChest).setTileEntityItemStackRenderer(new RenderItemFrostedChest());
-        ModItems.nightmareBed.setTileEntityItemStackRenderer(new RenderItemNightmareBed());
+        Item.getItemFromBlock(BlockRegistry.boneChest).setTileEntityItemStackRenderer(new RenderItemBoneChest());
+        Item.getItemFromBlock(BlockRegistry.edenChest).setTileEntityItemStackRenderer(new RenderItemEdenChest());
+        Item.getItemFromBlock(BlockRegistry.frostedChest).setTileEntityItemStackRenderer(new RenderItemFrostedChest());
+        Item.getItemFromBlock(BlockRegistry.presentBox).setTileEntityItemStackRenderer(new RenderItemPresentBox());
+        Item.getItemFromBlock(BlockRegistry.demonFurnace).setTileEntityItemStackRenderer(new RenderItemDemonFurnace());
+        Item.getItemFromBlock(BlockRegistry.arcaniumExtractor).setTileEntityItemStackRenderer(new RenderItemArcaniumExtractor());
+        Item.getItemFromBlock(BlockRegistry.dramixAltar).setTileEntityItemStackRenderer(new RenderItemDramixAltar());
+        Item.getItemFromBlock(BlockRegistry.parasectaAltar).setTileEntityItemStackRenderer(new RenderItemParasectaAltar());
+        Item.getItemFromBlock(BlockRegistry.frostedChest).setTileEntityItemStackRenderer(new RenderItemFrostedChest());
+        ItemRegistry.nightmareBed.setTileEntityItemStackRenderer(new RenderItemNightmareBed());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityDramixAltar.class, new RenderDramixAltar());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityParasectaAltar.class, new RenderParasectaAltar());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFrostedChest.class, new RenderFrostedChest());
@@ -58,38 +58,38 @@ public class ModModels {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKingCompressor.class, new RenderKingCompressor());
 
         registerRenders(new RenderItemStatue(),
-                ModBlocks.ancientEntityStatue,
-                ModBlocks.ayeracoRedStatue,
-                ModBlocks.ayeracoGreenStatue,
-                ModBlocks.ayeracoBlueStatue,
-                ModBlocks.ayeracoYellowStatue,
-                ModBlocks.ayeracoPurpleStatue,
-                ModBlocks.densosStatue,
-                ModBlocks.dramixStatue,
-                ModBlocks.eternalArcherStatue,
-                ModBlocks.karotStatue,
-                ModBlocks.kingOfScorchersStatue,
-                ModBlocks.parasectaStatue,
-                ModBlocks.soulFiendStatue,
-                ModBlocks.reyvorStatue,
-                ModBlocks.theWatcherStatue,
-                ModBlocks.twilightDemonStatue,
-                ModBlocks.vamacheronStatue,
-                ModBlocks.termasect_statue,
-                ModBlocks.sunstorm_statue,
-                ModBlocks.experienced_cori_statue
+                BlockRegistry.ancientEntityStatue,
+                BlockRegistry.ayeracoRedStatue,
+                BlockRegistry.ayeracoGreenStatue,
+                BlockRegistry.ayeracoBlueStatue,
+                BlockRegistry.ayeracoYellowStatue,
+                BlockRegistry.ayeracoPurpleStatue,
+                BlockRegistry.densosStatue,
+                BlockRegistry.dramixStatue,
+                BlockRegistry.eternalArcherStatue,
+                BlockRegistry.karotStatue,
+                BlockRegistry.kingOfScorchersStatue,
+                BlockRegistry.parasectaStatue,
+                BlockRegistry.soulFiendStatue,
+                BlockRegistry.reyvorStatue,
+                BlockRegistry.theWatcherStatue,
+                BlockRegistry.twilightDemonStatue,
+                BlockRegistry.vamacheronStatue,
+                BlockRegistry.termasect_statue,
+                BlockRegistry.sunstorm_statue,
+                BlockRegistry.experienced_cori_statue
         );
 
         registerRenders(new ShieldsRender(),
-                ModItems.arlemite_shield,
-                ModItems.realmite_shield,
-                ModItems.rupee_shield,
-                ModItems.halite_shield,
-                ModItems.eden_shield,
-                ModItems.wildwood_shield,
-                ModItems.apalachia_shield,
-                ModItems.skythern_shield,
-                ModItems.mortum_shield
+                ItemRegistry.arlemite_shield,
+                ItemRegistry.realmite_shield,
+                ItemRegistry.rupee_shield,
+                ItemRegistry.halite_shield,
+                ItemRegistry.eden_shield,
+                ItemRegistry.wildwood_shield,
+                ItemRegistry.apalachia_shield,
+                ItemRegistry.skythern_shield,
+                ItemRegistry.mortum_shield
         );
     }
 

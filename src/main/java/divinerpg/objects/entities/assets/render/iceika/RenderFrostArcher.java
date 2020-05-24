@@ -1,8 +1,8 @@
 package divinerpg.objects.entities.assets.render.iceika;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.entity.iceika.EntityFrostArcher;
-import divinerpg.registry.ModWeapons;
+import divinerpg.registry.WeaponRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class RenderFrostArcher extends RenderLiving<EntityFrostArcher> {
 
-    ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/entity/frost_archer.png");
+    ResourceLocation texture = new ResourceLocation(DivineRPG.MODID, "textures/entity/frost_archer.png");
 
     public RenderFrostArcher(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelBiped(), 1);
@@ -48,7 +48,7 @@ public class RenderFrostArcher extends RenderLiving<EntityFrostArcher> {
             GlStateManager.rotate(90, 0, 1, 0);
             GlStateManager.rotate(45, 0, 0, -1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(ModWeapons.icicleBow),
+            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(WeaponRegistry.icicleBow),
                     ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();

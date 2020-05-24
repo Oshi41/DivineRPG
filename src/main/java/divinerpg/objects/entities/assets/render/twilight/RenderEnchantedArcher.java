@@ -1,9 +1,9 @@
 package divinerpg.objects.entities.assets.render.twilight;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.assets.model.twilight.ModelEnchantedArcher;
 import divinerpg.objects.entities.entity.twilight.EntityEnchantedArcher;
-import divinerpg.registry.ModWeapons;
+import divinerpg.registry.WeaponRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class RenderEnchantedArcher extends RenderLiving<EntityEnchantedArcher> {
 
-    ResourceLocation texture = new ResourceLocation(Reference.MODID, "textures/entity/enchanted_archer.png");
+    ResourceLocation texture = new ResourceLocation(DivineRPG.MODID, "textures/entity/enchanted_archer.png");
 
     public RenderEnchantedArcher(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelEnchantedArcher(), 0);
@@ -48,7 +48,7 @@ public class RenderEnchantedArcher extends RenderLiving<EntityEnchantedArcher> {
             GlStateManager.rotate(90, 0, 1, 0);
             GlStateManager.rotate(45, 0, 0, -1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(ModWeapons.shadowBow),
+            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(WeaponRegistry.shadowBow),
                     ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();

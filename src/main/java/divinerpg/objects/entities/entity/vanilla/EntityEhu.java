@@ -1,8 +1,8 @@
 package divinerpg.objects.entities.entity.vanilla;
 
 import divinerpg.objects.entities.entity.EntityDivineRPGTameable;
-import divinerpg.registry.ModItems;
-import divinerpg.registry.ModSounds;
+import divinerpg.registry.ItemRegistry;
+import divinerpg.registry.SoundRegistry;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -40,7 +40,7 @@ public class EntityEhu extends EntityDivineRPGTameable {
                 if (itemstack.getItem() instanceof ItemFood) {
                     ItemFood food = (ItemFood) itemstack.getItem();
                     if (food == Items.CARROT || food == Items.APPLE
-                            || food == ModItems.moonbulb && this.getHealth() < this.getMaxHealth()) {
+                            || food == ItemRegistry.moonbulb && this.getHealth() < this.getMaxHealth()) {
                         if (!player.capabilities.isCreativeMode) {
                             itemstack.shrink(1);
                         }
@@ -64,16 +64,16 @@ public class EntityEhu extends EntityDivineRPGTameable {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModSounds.GROWL;
+        return SoundRegistry.GROWL;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return ModSounds.GROWL_HURT;
+        return SoundRegistry.GROWL_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModSounds.GROWL_HURT;
+        return SoundRegistry.GROWL_HURT;
     }
 }

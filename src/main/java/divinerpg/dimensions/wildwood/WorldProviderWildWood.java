@@ -1,8 +1,9 @@
 package divinerpg.dimensions.wildwood;
 
 import divinerpg.dimensions.IslandChunkGeneratorBase;
-import divinerpg.registry.ModBiomes;
-import divinerpg.registry.ModBlocks;
+import divinerpg.registry.BiomeRegistry;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.DimensionRegistry;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
@@ -12,20 +13,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
-import divinerpg.registry.ModDimensions;
-
 public class WorldProviderWildWood extends WorldProvider {
 	
 	@Override
 	public void init() {
-		this.biomeProvider = new BiomeProviderSingle(ModBiomes.biomeWildwood);
+		this.biomeProvider = new BiomeProviderSingle(BiomeRegistry.biomeWildwood);
 		this.nether = false;
 		this.hasSkyLight = true;
 	}
 	
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new IslandChunkGeneratorBase(this.world, ModBlocks.twilightStone, ModBlocks.wildwoodGrass, ModBlocks.wildwoodDirt);
+		return new IslandChunkGeneratorBase(this.world, BlockRegistry.twilightStone, BlockRegistry.wildwoodGrass, BlockRegistry.wildwoodDirt);
 	}
 	
     @Override
@@ -62,7 +61,7 @@ public class WorldProviderWildWood extends WorldProvider {
 
 	@Override
 	public DimensionType getDimensionType() {
-		return ModDimensions.wildwoodDimension;
+		return DimensionRegistry.wildwoodDimension;
 	}
 	@Nullable
     @Override

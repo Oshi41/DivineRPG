@@ -1,9 +1,9 @@
 package divinerpg.objects.entities.assets.render.vanilla;
 
-import divinerpg.api.Reference;
+import divinerpg.DivineRPG;
 import divinerpg.objects.entities.assets.model.vanilla.ModelJackOMan;
 import divinerpg.objects.entities.entity.vanilla.EntityJackOMan;
-import divinerpg.registry.ModWeapons;
+import divinerpg.registry.WeaponRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class RenderJackOMan extends RenderLiving<EntityJackOMan> {
 
-    public static ResourceLocation TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/jackoman.png");
+    public static ResourceLocation TEXTURE = new ResourceLocation(DivineRPG.MODID, "textures/entity/jackoman.png");
 
     public RenderJackOMan(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelJackOMan(), 0.5F);
@@ -48,7 +48,7 @@ public class RenderJackOMan extends RenderLiving<EntityJackOMan> {
             GlStateManager.rotate(90, 0, 1, 0);
             GlStateManager.rotate(45, 0, 0, -1);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(ModWeapons.scythe),
+            Minecraft.getMinecraft().getItemRenderer().renderItem(entity, new ItemStack(WeaponRegistry.scythe),
                     ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();

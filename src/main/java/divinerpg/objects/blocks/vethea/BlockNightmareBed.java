@@ -2,9 +2,9 @@ package divinerpg.objects.blocks.vethea;
 
 import divinerpg.events.DimensionHelper;
 import divinerpg.objects.blocks.tile.entity.TileEntityNightmareBed;
+import divinerpg.registry.BlockRegistry;
 import divinerpg.registry.DivineRPGTabs;
-import divinerpg.registry.ModBlocks;
-import divinerpg.registry.ModDimensions;
+import divinerpg.registry.DimensionRegistry;
 import divinerpg.utils.LocalizeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
@@ -112,7 +112,7 @@ public class BlockNightmareBed extends BlockHorizontal implements ITileEntityPro
         if (!worldIn.isRemote) {
             if (worldIn.provider.getDimensionType() == DimensionType.OVERWORLD) {
                 if (worldIn.getLight(pos) < 7) {
-                    DimensionHelper.transferEntity(playerIn, ModDimensions.vetheaDimension);
+                    DimensionHelper.transferEntity(playerIn, DimensionRegistry.vetheaDimension);
                 } else {
                     playerIn.sendMessage(LocalizeUtils.getClientSideTranslation(playerIn, "message.nightmare_bed.restrict"));
                 }
@@ -128,7 +128,7 @@ public class BlockNightmareBed extends BlockHorizontal implements ITileEntityPro
      * Get the Item that this Block should drop when harvested.
      */
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return state.getValue(PART) == BlockNightmareBed.EnumPartType.FOOT ? Items.AIR : Item.getItemFromBlock(ModBlocks.nightmareBed);
+        return state.getValue(PART) == BlockNightmareBed.EnumPartType.FOOT ? Items.AIR : Item.getItemFromBlock(BlockRegistry.nightmareBed);
     }
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
@@ -173,7 +173,7 @@ public class BlockNightmareBed extends BlockHorizontal implements ITileEntityPro
         if (state.getValue(PART) == BlockNightmareBed.EnumPartType.HEAD) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            spawnAsEntity(worldIn, pos, new ItemStack(ModBlocks.nightmareBed, 1));
+            spawnAsEntity(worldIn, pos, new ItemStack(BlockRegistry.nightmareBed, 1));
         }
     }
 
@@ -189,7 +189,7 @@ public class BlockNightmareBed extends BlockHorizontal implements ITileEntityPro
         }
 
         TileEntity tileentity = worldIn.getTileEntity(blockpos);
-        return new ItemStack(ModBlocks.nightmareBed, 1);
+        return new ItemStack(BlockRegistry.nightmareBed, 1);
     }
 
     /**

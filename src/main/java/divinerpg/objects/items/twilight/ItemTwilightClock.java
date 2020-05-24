@@ -2,6 +2,7 @@ package divinerpg.objects.items.twilight;
 
 import divinerpg.events.DimensionHelper;
 import divinerpg.objects.items.base.ItemMod;
+import divinerpg.registry.BlockRegistry;
 import divinerpg.registry.DivineRPGTabs;
 import divinerpg.registry.ModBlocks;
 import divinerpg.utils.multiblock.MultiblockDescription;
@@ -26,12 +27,12 @@ import java.util.Set;
 
 public class ItemTwilightClock extends ItemMod {
     private final Set<Block> possibleBlocks = new HashSet<Block>() {{
-        add(ModBlocks.divineRock);
-        add(ModBlocks.edenBlock);
-        add(ModBlocks.wildwoodBlock);
-        add(ModBlocks.apalachiaBlock);
-        add(ModBlocks.skythernBlock);
-        add(ModBlocks.galaxy_block);
+        add(BlockRegistry.divineRock);
+        add(BlockRegistry.edenBlock);
+        add(BlockRegistry.wildwoodBlock);
+        add(BlockRegistry.apalachiaBlock);
+        add(BlockRegistry.skythernBlock);
+        add(BlockRegistry.galaxy_block);
     }};
 
     public ItemTwilightClock(String name) {

@@ -3,9 +3,9 @@ package divinerpg.objects.entities.entity.vethea;
 import divinerpg.objects.blocks.vethea.BlockHelioticBeam;
 import divinerpg.objects.blocks.vethea.BlockKarosDispenser;
 import divinerpg.objects.entities.entity.EntityDivineRPGBoss;
-import divinerpg.registry.DRPGLootTables;
-import divinerpg.registry.ModBlocks;
-import divinerpg.registry.ModSounds;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.LootTableRegistry;
+import divinerpg.registry.SoundRegistry;
 import divinerpg.utils.LocalizeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -41,7 +41,7 @@ public class EntityKaros extends EntityDivineRPGBoss {
 
     @Override
     protected ResourceLocation getLootTable() {
-        return DRPGLootTables.ENTITIES_KAROS;
+        return LootTableRegistry.ENTITIES_KAROS;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class EntityKaros extends EntityDivineRPGBoss {
             switch (this.rand.nextInt(3)) {
                 case 0:
                     ability = CEILING;
-                    this.playSound(ModSounds.CEILING_EXPLOSIONS, 1.0F, 1.0F);
+                    this.playSound(SoundRegistry.CEILING_EXPLOSIONS, 1.0F, 1.0F);
                     if (!this.world.isRemote) {
                         List<EntityPlayer> players = this.world.getEntitiesWithinAABB(EntityPlayer.class, this.getEntityBoundingBox().expand(30, 30, 30));
                         for (EntityPlayer p : players) {
@@ -121,7 +121,7 @@ public class EntityKaros extends EntityDivineRPGBoss {
             if (!this.world.isRemote) {
                 List<EntityPlayer> players = this.world.getEntitiesWithinAABB(EntityPlayer.class, this.getEntityBoundingBox().expand(30, 30, 30));
                 for (EntityPlayer p : players) {
-                    this.world.playSound(p, p.getPosition(), ModSounds.KAROS_INTRO, SoundCategory.HOSTILE, 1.0F, 1.0F);
+                    this.world.playSound(p, p.getPosition(), SoundRegistry.KAROS_INTRO, SoundCategory.HOSTILE, 1.0F, 1.0F);
                     p.sendMessage(LocalizeUtils.getClientSideTranslation(p, "message.karos.game"));
                     p.sendMessage(LocalizeUtils.getClientSideTranslation(p, "message.karos.begin"));
                 }
@@ -131,9 +131,9 @@ public class EntityKaros extends EntityDivineRPGBoss {
                     for (int z = -40; z < 40; z++) {
                         BlockPos currentPos = this.getPosition().add(x, y, z);
                         Block currentBlock = this.world.getBlockState(currentPos).getBlock();
-                        if (currentBlock == ModBlocks.helioticBeam) {
+                        if (currentBlock == BlockRegistry.helioticBeam) {
                             ceiling.add(currentPos);
-                        } else if (currentBlock == ModBlocks.karosDispenser) {
+                        } else if (currentBlock == BlockRegistry.karosDispenser) {
                             cannons.add(currentPos);
                         }
                     }
@@ -170,8 +170,8 @@ public class EntityKaros extends EntityDivineRPGBoss {
                     int var3 = (int) Math.round(Math.cos(var4) * i);
 
                     BlockPos currentPos = new BlockPos((int) this.posX + var1, (int) this.posY - 1, (int) this.posZ + var3);
-                    if (this.world.getBlockState(currentPos).getBlock() == ModBlocks.karosHeatTileGreen) {
-                        this.world.setBlockState(currentPos, ModBlocks.karosHeatTileRed.getDefaultState());
+                    if (this.world.getBlockState(currentPos).getBlock() == BlockRegistry.karosHeatTileGreen) {
+                        this.world.setBlockState(currentPos, BlockRegistry.karosHeatTileRed.getDefaultState());
                     }
                     var4 += Math.PI / 8.0D;
                 }
@@ -194,22 +194,22 @@ public class EntityKaros extends EntityDivineRPGBoss {
         switch (rand.nextInt(4)) {
             case 0:
                 langKey = "message.karos.laugh";
-                sound = ModSounds.KAROS_LAUGH;
+                sound = SoundRegistry.KAROS_LAUGH;
                 break;
 
             case 1:
                 langKey = "message.karos.doom";
-                sound = ModSounds.MEET_DOOM;
+                sound = SoundRegistry.MEET_DOOM;
                 break;
 
             case 2:
                 langKey = "message.karos.cmon";
-                sound = ModSounds.TRY_YOUR_BEST;
+                sound = SoundRegistry.TRY_YOUR_BEST;
                 break;
 
             default:
                 langKey = "message.karos.weak";
-                sound = ModSounds.YOU_CANT_KILL_ME;
+                sound = SoundRegistry.YOU_CANT_KILL_ME;
                 break;
         }
 

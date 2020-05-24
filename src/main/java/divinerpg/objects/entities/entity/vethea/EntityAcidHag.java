@@ -1,8 +1,8 @@
 package divinerpg.objects.entities.entity.vethea;
 
-import divinerpg.registry.DRPGLootTables;
-import divinerpg.registry.ModBlocks;
-import divinerpg.registry.ModSounds;
+import divinerpg.registry.LootTableRegistry;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.SoundRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
@@ -29,7 +29,7 @@ public class EntityAcidHag extends VetheaMob {
 
         if(this.world.getBlockState(current).getBlock() == Blocks.AIR) {
             if(belowState.isOpaqueCube() && belowState.isFullCube()) {
-                this.world.setBlockState(current, ModBlocks.acidBlock.getDefaultState());
+                this.world.setBlockState(current, BlockRegistry.acidBlock.getDefaultState());
             }
         }
     }
@@ -42,21 +42,21 @@ public class EntityAcidHag extends VetheaMob {
     @Override
     protected ResourceLocation getLootTable()
     {
-        return DRPGLootTables.ENTITIES_ACID_HAG;
+        return LootTableRegistry.ENTITIES_ACID_HAG;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return ModSounds.ACID_HAG;
+        return SoundRegistry.ACID_HAG;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return ModSounds.ACID_HAG_HURT;
+        return SoundRegistry.ACID_HAG_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModSounds.ACID_HAG_HURT;
+        return SoundRegistry.ACID_HAG_HURT;
     }
 }

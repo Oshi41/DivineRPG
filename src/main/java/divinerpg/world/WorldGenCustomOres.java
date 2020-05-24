@@ -4,8 +4,8 @@ package divinerpg.world;
 import com.google.common.base.Predicate;
 import divinerpg.config.Config;
 import divinerpg.config.OreInfo;
-import divinerpg.registry.ModBlocks;
-import divinerpg.registry.ModDimensions;
+import divinerpg.registry.BlockRegistry;
+import divinerpg.registry.DimensionRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockMatcher;
@@ -34,20 +34,20 @@ public class WorldGenCustomOres implements IWorldGenerator {
     // declaring predicats to prevent constantly creating
     private Predicate<IBlockState> stonePredicate = BlockMatcher.forBlock(Blocks.STONE);
     private Predicate<IBlockState> netherPredicate = BlockMatcher.forBlock(Blocks.NETHERRACK);
-    private Predicate<IBlockState> twilightPredicate = BlockMatcher.forBlock(ModBlocks.twilightStone);
+    private Predicate<IBlockState> twilightPredicate = BlockMatcher.forBlock(BlockRegistry.twilightStone);
 
     private WorldGenerator waterLake = new WorldGenLakes(Blocks.WATER);
-    private WorldGenerator tarLake = new WorldGenLakes(ModBlocks.tar);
-    private WorldGenerator twilightStoneLake = new WorldGenLakes(ModBlocks.twilightStone);
+    private WorldGenerator tarLake = new WorldGenLakes(BlockRegistry.tar);
+    private WorldGenerator twilightStoneLake = new WorldGenLakes(BlockRegistry.twilightStone);
 
     private final Map<Integer, DimensionGen> dimensionGenerators = new HashMap<Integer, DimensionGen>() {{
         put(DimensionType.NETHER.getId(), WorldGenCustomOres::genNether);
         put(DimensionType.OVERWORLD.getId(), WorldGenCustomOres::genOverworld);
-        put(ModDimensions.edenDimension.getId(), WorldGenCustomOres::genEden);
-        put(ModDimensions.wildwoodDimension.getId(), WorldGenCustomOres::genWild);
-        put(ModDimensions.apalachiaDimension.getId(), WorldGenCustomOres::genApalachia);
-        put(ModDimensions.skythernDimension.getId(), WorldGenCustomOres::genSkythern);
-        put(ModDimensions.mortumDimension.getId(), WorldGenCustomOres::genMortum);
+        put(DimensionRegistry.edenDimension.getId(), WorldGenCustomOres::genEden);
+        put(DimensionRegistry.wildwoodDimension.getId(), WorldGenCustomOres::genWild);
+        put(DimensionRegistry.apalachiaDimension.getId(), WorldGenCustomOres::genApalachia);
+        put(DimensionRegistry.skythernDimension.getId(), WorldGenCustomOres::genSkythern);
+        put(DimensionRegistry.mortumDimension.getId(), WorldGenCustomOres::genMortum);
     }};
 
     @Override
@@ -143,11 +143,11 @@ public class WorldGenCustomOres implements IWorldGenerator {
 //                    Config.king);
         }
 
-        spawnOre(world, random, ModBlocks.realmiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
+        spawnOre(world, random, BlockRegistry.realmiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.realmite);
-        spawnOre(world, random, ModBlocks.rupeeOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
+        spawnOre(world, random, BlockRegistry.rupeeOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.rupee);
-        spawnOre(world, random, ModBlocks.arlemiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
+        spawnOre(world, random, BlockRegistry.arlemiteOre.getDefaultState(), stonePredicate, chunkX, chunkZ,
                 Config.arlemite);
 
 
@@ -160,25 +160,25 @@ public class WorldGenCustomOres implements IWorldGenerator {
     }
 
     private void genNether(World world, Random random, int chunkX, int chunkZ) {
-        spawnOre(world, random, ModBlocks.netheriteOre.getDefaultState(), netherPredicate, chunkX, chunkZ, Config.nether);
-        spawnOre(world, random, ModBlocks.bloodgemOre.getDefaultState(), netherPredicate, chunkX, chunkZ, Config.nether);
+        spawnOre(world, random, BlockRegistry.netheriteOre.getDefaultState(), netherPredicate, chunkX, chunkZ, Config.nether);
+        spawnOre(world, random, BlockRegistry.bloodgemOre.getDefaultState(), netherPredicate, chunkX, chunkZ, Config.nether);
     }
 
     private void genEden(World world, Random random, int chunkX, int chunkZ) {
-        spawnTwilightOre(world, random, ModBlocks.edenOre, chunkX, chunkZ);
+        spawnTwilightOre(world, random, BlockRegistry.edenOre, chunkX, chunkZ);
     }
 
     private void genWild(World world, Random random, int chunkX, int chunkZ) {
-        spawnTwilightOre(world, random, ModBlocks.wildwoodOre, chunkX, chunkZ);
+        spawnTwilightOre(world, random, BlockRegistry.wildwoodOre, chunkX, chunkZ);
     }
 
     private void genApalachia(World world, Random random, int chunkX, int chunkZ) {
-        spawnTwilightOre(world, random, ModBlocks.apalachiaOre, chunkX, chunkZ);
+        spawnTwilightOre(world, random, BlockRegistry.apalachiaOre, chunkX, chunkZ);
         generateLake(world, random, waterLake, chunkX, chunkZ, 0, 150, 16);
     }
 
     private void genSkythern(World world, Random random, int chunkX, int chunkZ) {
-        spawnTwilightOre(world, random, ModBlocks.skythernOre, chunkX, chunkZ);
+        spawnTwilightOre(world, random, BlockRegistry.skythernOre, chunkX, chunkZ);
     }
 
     private void genMortum(World world, Random random, int chunkX, int chunkZ) {
@@ -187,7 +187,7 @@ public class WorldGenCustomOres implements IWorldGenerator {
         if (generateLake(world, random, twilightStoneLake, chunkX, chunkZ, 50, 70, chance)) {
             spawnOre(world,
                     random,
-                    ModBlocks.mortumOre.getDefaultState(),
+                    BlockRegistry.mortumOre.getDefaultState(),
                     twilightPredicate,
                     chunkX,
                     chunkZ,
