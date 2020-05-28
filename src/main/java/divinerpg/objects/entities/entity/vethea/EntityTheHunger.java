@@ -1,7 +1,7 @@
 package divinerpg.objects.entities.entity.vethea;
 
 import divinerpg.DivineRPG;
-import divinerpg.objects.entities.entity.EntityDivineRPGVillager;
+import divinerpg.objects.entities.entity.EntityDivineVillager;
 import divinerpg.proxy.GUIHandler;
 import divinerpg.registry.BlockRegistry;
 import divinerpg.registry.ItemRegistry;
@@ -15,7 +15,7 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 
-public class EntityTheHunger extends EntityDivineRPGVillager {
+public class EntityTheHunger extends EntityDivineVillager {
     public EntityTheHunger(World worldIn) {
         super(worldIn, "message.hunger.hungry",
                 "message.hunger.closer",
@@ -71,6 +71,7 @@ public class EntityTheHunger extends EntityDivineRPGVillager {
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.shinyPearls, 40, 0), new ItemStack(ItemRegistry.moonClock, 1, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.shinyPearls, 25, 0), new ItemStack(ItemRegistry.bandOfHeivaHunting, 1, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.shinyPearls, 1, 0), new ItemStack(ItemRegistry.dreamSours, 4, 0)));
+        recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.shinyPearls, 4, 0), new ItemStack(ItemRegistry.everArrow, 32, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.shinyPearls, 5, 0), new ItemStack(ItemRegistry.tormentedTemplate, 1, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.rockChunks, 25, 0), new ItemStack(WeaponRegistry.karosRockmaul, 1, 0)));
     }

@@ -1135,6 +1135,7 @@ public class BlockRegistry {
         register(registry, new BlockModOre("realmite_ore", 3.0F, 2000F, IRON, () -> null));
         register(registry, new BlockModOre("rupee_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockModOre("bloodgem_ore", 3.0F, 2000F, DIAMOND, () -> ItemRegistry.bloodgem));
+        register(registry, new BlockModOre("netherite_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockNetheriteOre("netherite_ore", 3.0F, 2000F, DIAMOND));
         register(registry, new BlockModOre("king_ore", 5.0F, 2000F, DIAMOND + 1, () -> null));
 
@@ -1349,7 +1350,7 @@ public class BlockRegistry {
         register(registry, new BlockModUnbreakable("icy_stone"));
         register(registry, new BlockModSpawner("rollum_spawner", "rollum"));
         register(registry, new BlockMod("snow_bricks", 6.0F));
-        registerItemlessBlock(registry, new BlockModDoor("steel_door", Material.IRON, 7.0f));
+        registerItemlessBlock(registry, new BlockModDoor("steel_door", Material.IRON, 7.0f, () -> ItemRegistry.steelDoor));
         register(registry, new BlockMod("workshop_bookcase", 1.5F));
         register(registry, new BlockMod("workshop_carpet", 0.1F, Material.CLOTH));
         register(registry, new BlockModLamp("workshop_lamp", 0.3F));
@@ -1533,10 +1534,10 @@ public class BlockRegistry {
         register(registry, new BlockModUnbreakable("soul_stone"));
 
         // Door
-        registerItemlessBlock(registry, new BlockArcanaDoor("ancient_brick_door", () -> ItemRegistry.ancientKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("degraded_brick_door", () -> ItemRegistry.degradedKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("soul_sludge_door", () -> ItemRegistry.sludgeKey));
-        registerItemlessBlock(registry, new BlockArcanaDoor("soul_stone_door", () -> ItemRegistry.soulKey));
+        registerItemlessBlock(registry, new BlockArcanaDoor("ancient_brick_door", () -> ItemRegistry.ancientKey, () -> ItemRegistry.ancientBrickDoor));
+        registerItemlessBlock(registry, new BlockArcanaDoor("degraded_brick_door", () -> ItemRegistry.degradedKey, () -> ItemRegistry.degradedBrickDoor));
+        registerItemlessBlock(registry, new BlockArcanaDoor("soul_sludge_door", () -> ItemRegistry.sludgeKey, () -> ItemRegistry.soulSludgeDoor));
+        registerItemlessBlock(registry, new BlockArcanaDoor("soul_stone_door", () -> ItemRegistry.soulKey, () -> ItemRegistry.soulStoneDoor));
 
         // Spawner
         register(registry, new BlockArcanaSpawner("death_hound_spawner", "death_hound"));
@@ -1646,7 +1647,7 @@ public class BlockRegistry {
         register(registry, new BlockModGlass("smooth_glass", 0.3F).setCreativeTab(DivineRPGTabs.vethea));
 
         // Door
-        registerItemlessBlock(registry, new BlockModDoor("barred_door", Material.IRON, 2.0f));
+        registerItemlessBlock(registry, new BlockModDoor("barred_door", Material.IRON, 2.0f, () -> ItemRegistry.barredDoor));
 
         // Lighting
         register(registry, new BlockLightCrystal("fire_crystal", 1.0F).setCreativeTab(DivineRPGTabs.vethea));

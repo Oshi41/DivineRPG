@@ -16,15 +16,19 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 public class BlockModDoor extends BlockDoor {
 
-    public BlockModDoor(String name, Material materialIn, float hardness) {
+    private Supplier<Item> doorItem;
+
+    public BlockModDoor(String name, Material materialIn, float hardness, Supplier<Item> doorItem) {
         super(materialIn);
         setUnlocalizedName(name);
         setRegistryName(DivineRPG.MODID, name);
         setHardness(hardness);
         this.setCreativeTab(DivineRPGTabs.BlocksTab);
+        this.doorItem = doorItem;
     }
 
     @Override
@@ -45,14 +49,13 @@ public class BlockModDoor extends BlockDoor {
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return (state.getValue(HALF) == BlockDoor.EnumDoorHalf.LOWER) ? Item.getItemFromBlock(this) :
-                Items.AIR;
+    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+        return new ItemStack(doorItem.get());
     }
 
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-            EntityPlayer player) {
-        return new ItemStack(this);
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return (state.getValue(HALF) == BlockDoor.EnumDoorHalf.LOWER) ? doorItem.get() :
+                Items.AIR;
     }
 }
