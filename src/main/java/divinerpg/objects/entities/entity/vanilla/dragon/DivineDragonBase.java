@@ -880,6 +880,16 @@ public abstract class DivineDragonBase extends EntityMob implements IEntityMulti
         return (float) d0;
     }
 
+    @SideOnly(Side.CLIENT)
+    public float getPrevAnimTime() {
+        return prevAnimTime;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float getAnimTime() {
+        return animTime;
+    }
+
     /**
      * handles entity death timer, experience orb and particle creation
      */

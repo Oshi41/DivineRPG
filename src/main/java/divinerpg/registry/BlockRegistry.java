@@ -1097,7 +1097,6 @@ public class BlockRegistry {
         register(registry, new BlockModOre("rupee_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockModOre("bloodgem_ore", 3.0F, 2000F, DIAMOND, () -> ItemRegistry.bloodgem));
         register(registry, new BlockModOre("netherite_ore", 3.0F, 2000F, DIAMOND, () -> null));
-        register(registry, new BlockModOre("netherite_ore", 3.0F, 2000F, DIAMOND, () -> null));
         register(registry, new BlockModOre("king_ore", 5.0F, 2000F, DIAMOND + 1, () -> null));
 
         // Compressed ore blocks

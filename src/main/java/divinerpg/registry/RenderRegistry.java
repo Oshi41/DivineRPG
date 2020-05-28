@@ -148,6 +148,7 @@ public class RenderRegistry {
         registerRender(EntityWhale.class, manager -> new RenderDivineMob(manager, new ModelWhale(), new ResourceLocation(DivineRPG.MODID, "textures/entity/whale.png")));
         registerRender(EntityWhiteGrizzle.class, manager -> new RenderDivinePet(manager, new ModelGrizzle(), new ResourceLocation(DivineRPG.MODID, "textures/entity/white_grizzle.png")));
         registerRender(EntityWildfire.class, RenderWildfire::new);
+        registerRender(AncientKingEntity.class, RenderDragonEntity::new);
 
         // Iceika
         registerRender(EntityAlicanto.class, manager -> new RenderDivineMob(manager, new ModelAlicanto(), new ResourceLocation(DivineRPG.MODID, "textures/entity/alicanto.png")));

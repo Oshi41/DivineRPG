@@ -210,6 +210,7 @@ public class Config {
             put(new ResourceLocation(DivineRPG.MODID, "zone"), new MobStatInfo(120.0, 0.0, 0.0));
             put(new ResourceLocation(DivineRPG.MODID, "zoragon"), new MobStatInfo(70.0, 0.0, 0.0));
             put(new ResourceLocation(DivineRPG.MODID, "moon_wolf"), new MobStatInfo(200.0, 1.0, 0.0));
+            put(new ResourceLocation(DivineRPG.MODID, "ancient_king"), new MobStatInfo(200.0, 10, 20.0));
         }};
 
         defaultModStates.forEach((location, mobStatInfo) -> {
