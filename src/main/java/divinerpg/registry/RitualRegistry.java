@@ -1,6 +1,9 @@
-package divinerpg.objects.blocks.tile.entity.base.rituals;
+package divinerpg.registry;
 
 import divinerpg.DivineRPG;
+import divinerpg.objects.blocks.tile.entity.base.rituals.FuelRitual;
+import divinerpg.objects.blocks.tile.entity.base.rituals.IRitualDescription;
+import divinerpg.objects.blocks.tile.entity.base.rituals.KillEntityRitual;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;

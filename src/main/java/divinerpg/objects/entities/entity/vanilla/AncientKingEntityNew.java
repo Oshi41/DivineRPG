@@ -1,9 +1,12 @@
 package divinerpg.objects.entities.entity.vanilla;
 
-import divinerpg.objects.entities.entity.EntityDivineRPGMob;
+import divinerpg.objects.entities.entity.EntityDivineMob;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
@@ -31,7 +34,7 @@ import net.minecraft.world.World;
 import java.util.Iterator;
 import java.util.List;
 
-public class AncientKingEntityNew extends EntityDivineRPGMob {
+public class AncientKingEntityNew extends EntityDivineMob {
     private static final DataParameter<Boolean> ANGRY = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> NICE = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Boolean> END_ATTACK = EntityDataManager.createKey(AncientKingEntityNew.class, DataSerializers.BOOLEAN);
@@ -531,8 +534,8 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                 this.attackEntityAsMob(e);
                             }
 
-                            dx = this.posX + 20.0D * Math.sin(Math.toRadians((double) this.rotationYawHead));
-                            dz = this.posZ - 20.0D * Math.cos(Math.toRadians((double) this.rotationYawHead));
+                            dx = this.posX + 20.0D * Math.sin(Math.toRadians(this.rotationYawHead));
+                            dz = this.posZ - 20.0D * Math.cos(Math.toRadians(this.rotationYawHead));
                             if (this.world.rand.nextInt(3) == 1) {
                                 this.doJumpDamage(dx, this.posY + 10.0D, dz, 15.0D, getMaxAttack() / 2, 1);
                             }
@@ -543,7 +546,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                     if (this.stream_count > 0) {
                                         this.setIsAngry(true);
                                         rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
-                                        rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
+                                        rhdir = Math.toRadians((this.rotationYawHead + 90.0F) % 360.0F);
                                         rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
                                         if (rdd > pi) {
                                             rdd -= pi * 2.0D;
@@ -558,7 +561,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                     if (this.stream_count_l > 0) {
                                         this.setIsAngry(true);
                                         rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
-                                        rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
+                                        rhdir = Math.toRadians((this.rotationYawHead + 90.0F) % 360.0F);
                                         rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
                                         if (rdd > pi) {
                                             rdd -= pi * 2.0D;
@@ -572,7 +575,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                                 } else if (this.stream_count_i > 0) {
                                     this.setIsAngry(true);
                                     rr = Math.atan2(e.posZ - this.posZ, e.posX - this.posX);
-                                    rhdir = Math.toRadians((double) ((this.rotationYawHead + 90.0F) % 360.0F));
+                                    rhdir = Math.toRadians((this.rotationYawHead + 90.0F) % 360.0F);
                                     rdd = Math.abs(rr - rhdir) % (pi * 2.0D);
                                     if (rdd > pi) {
                                         rdd -= pi * 2.0D;
@@ -973,11 +976,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                     if (this.getIsRapidAttacking()) {
                         if (par1EntityLiving instanceof EntityPlayer) {
                             p = (EntityPlayer) par1EntityLiving;
-                            if (p.isCreative()) {
-                                return false;
-                            }
-
-                            return true;
+                            return !p.isCreative();
                         }
 
 //                        if (par1EntityLiving instanceof Girlfriend) {
@@ -1002,11 +1001,7 @@ public class AncientKingEntityNew extends EntityDivineRPGMob {
                         return true;
                     } else if (par1EntityLiving instanceof EntityMob) {
                         return true;
-                    } else if (par1EntityLiving instanceof EntityDragon) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    } else return par1EntityLiving instanceof EntityDragon;
                 }
             }
         }

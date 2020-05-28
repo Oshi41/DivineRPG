@@ -1,5 +1,6 @@
 package divinerpg.objects.blocks.tile.entity.base.rituals;
 
+import divinerpg.registry.RitualRegistry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 

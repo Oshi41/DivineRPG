@@ -8,13 +8,13 @@ import divinerpg.config.Config;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.container.KingCompressorContainer;
 import divinerpg.objects.blocks.tile.entity.base.IFuelProvider;
-import divinerpg.objects.blocks.tile.entity.base.rituals.RitualRegistry;
 import divinerpg.objects.blocks.tile.entity.multiblock.TileEntityDivineMultiblock;
 import divinerpg.objects.blocks.tile.entity.pillar.IStackListener;
 import divinerpg.objects.blocks.tile.entity.pillar.TileEntityPedestal;
 import divinerpg.registry.ItemRegistry;
+import divinerpg.registry.MultiblockDescriptionRegistry;
+import divinerpg.registry.RitualRegistry;
 import divinerpg.utils.PositionHelper;
-import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.multiblock.StructureMatch;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
@@ -103,7 +103,7 @@ public class TileEntityKingCompressor extends TileEntityDivineMultiblock impleme
     //endregion
 
     public TileEntityKingCompressor() {
-        super(MultiblockDescription.instance.findById(new ResourceLocation(DivineRPG.MODID, "king_compressor")),
+        super(MultiblockDescriptionRegistry.instance.findById(new ResourceLocation(DivineRPG.MODID, "king_compressor")),
                 id.toString(), null);
         burnTime = 0;
         cookTime = 0;

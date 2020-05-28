@@ -3,19 +3,18 @@
  */
 package divinerpg;
 
+import divinerpg.api.armor.registry.IArmorDescription;
 import divinerpg.config.GeneralConfig;
+import divinerpg.events.ArcanaTickHandler;
+import divinerpg.events.DimensionHelper;
+import divinerpg.events.EventEntityDrop;
 import divinerpg.events.enchants.WorldBreakEnchantHandler;
 import divinerpg.events.server.SwapFactory;
-import divinerpg.utils.UpdateChecker;
-import org.apache.logging.log4j.LogManager;
-
-import divinerpg.api.armor.registry.IArmorDescription;
-import divinerpg.events.*;
 import divinerpg.proxy.CommonProxy;
 import divinerpg.registry.*;
+import divinerpg.utils.UpdateChecker;
 import divinerpg.utils.Utils;
 import divinerpg.utils.attributes.AttributeFixer;
-import divinerpg.utils.multiblock.MultiblockDescription;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -29,6 +28,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.apache.logging.log4j.LogManager;
 
 @Mod(modid = DivineRPG.MODID, name = DivineRPG.NAME, version = DivineRPG.VERSION, updateJSON = DivineRPG.UPDATE_URL)
 public class DivineRPG {

@@ -3,10 +3,9 @@ package divinerpg.events.server;
 import divinerpg.events.server.tasks.BuildTask;
 import divinerpg.events.server.tasks.DestroyTask;
 import divinerpg.events.server.tasks.RecheckTask;
-import divinerpg.objects.blocks.tile.entity.TileEntityKingCompressor;
+import divinerpg.registry.MultiblockDescriptionRegistry;
 import divinerpg.utils.Lazy;
 import divinerpg.utils.PositionHelper;
-import divinerpg.utils.multiblock.MultiblockDescription;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import divinerpg.utils.tasks.IEventTask;
@@ -32,7 +31,7 @@ public class SwapFactory extends TaskFactory<EntityStruckByLightningEvent> {
     /**
      * Lazy request
      */
-    private Lazy<Set<StructurePattern>> ref = new Lazy<>(MultiblockDescription.instance::getAll);
+    private Lazy<Set<StructurePattern>> ref = new Lazy<>(MultiblockDescriptionRegistry.instance::getAll);
 
     /**
      * List of current structures

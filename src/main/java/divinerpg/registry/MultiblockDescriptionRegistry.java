@@ -1,8 +1,9 @@
-package divinerpg.utils.multiblock;
+package divinerpg.registry;
 
 import divinerpg.DivineRPG;
 import divinerpg.enums.EnumPlaceholder;
-import divinerpg.registry.BlockRegistry;
+import divinerpg.utils.multiblock.StructureBuilder;
+import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 
@@ -11,15 +12,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MultiblockDescription {
-    public final static MultiblockDescription instance = new MultiblockDescription();
+public class MultiblockDescriptionRegistry {
+    public final static MultiblockDescriptionRegistry instance = new MultiblockDescriptionRegistry();
 
     /**
      * List of all structures
      */
     private final Map<ResourceLocation, StructurePattern> possibleStructures = new HashMap<>();
 
-    private MultiblockDescription() {
+    private MultiblockDescriptionRegistry() {
         register(new ResourceLocation(DivineRPG.MODID, "king_compressor"),
                 new StructureBuilder()
                         .aisle(

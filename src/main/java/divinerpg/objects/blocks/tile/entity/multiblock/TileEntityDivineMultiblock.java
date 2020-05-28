@@ -5,7 +5,7 @@ import divinerpg.events.server.SwapFactory;
 import divinerpg.objects.blocks.tile.entity.base.ModUpdatableTileEntity;
 import divinerpg.objects.blocks.tile.entity.base.rituals.IRitualConsumer;
 import divinerpg.objects.blocks.tile.entity.base.rituals.IRitualDescription;
-import divinerpg.objects.blocks.tile.entity.base.rituals.RitualRegistry;
+import divinerpg.registry.RitualRegistry;
 import divinerpg.utils.multiblock.StructureMatch;
 import divinerpg.utils.multiblock.StructurePattern;
 import net.minecraft.block.state.IBlockState;
