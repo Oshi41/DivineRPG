@@ -1,0 +1,24 @@
+{
+  "display": {
+    "icon": {
+      "item": "divinerpg:skythern_block"
+    },
+    "title": {
+      "translate": "advancement.divinerpg.twilight.enter_skythern"
+    },
+    "frame": "goal",
+    "description": {
+      "translate": "advancement.divinerpg.twilight.enter_skythern.desc"
+    },
+    "announce_to_chat": true
+  },
+  "parent": "divinerpg:twilight/enter_apalachia",
+   "criteria":{
+      "enter_skythern":{
+         "trigger":"minecraft:changed_dimension",
+         "conditions":{
+            "to":"divinerpg:skythern"
+         }
+      }
+   }
+}

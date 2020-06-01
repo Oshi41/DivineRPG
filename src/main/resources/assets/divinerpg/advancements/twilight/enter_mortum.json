@@ -1,0 +1,24 @@
+{
+   "display":{
+      "icon":{
+         "item":"divinerpg:mortum_block"
+      },
+      "title":{
+         "translate":"advancement.divinerpg.twilight.enter_mortum"
+      },
+      "frame":"goal",
+      "description":{
+         "translate":"advancement.divinerpg.twilight.enter_mortum.desc"
+      },
+      "announce_to_chat":true
+   },
+   "parent":"divinerpg:twilight/enter_skythern",
+   "criteria":{
+      "enter_mortum":{
+         "trigger":"minecraft:changed_dimension",
+         "conditions":{
+            "to":"divinerpg:mortum"
+         }
+      }
+   }
+}

@@ -1,0 +1,26 @@
+{
+  "display":{
+    "icon":{
+      "item":"divinerpg:skythern_heart"
+    },
+    "title":{
+      "translate":"advancement.divinerpg.twilight.kill_boss_experienced_cori"
+    },
+    "frame":"challenge",
+    "description":{
+      "translate":"advancement.divinerpg.twilight.kill_boss_experienced_cori.desc"
+    },
+    "announce_to_chat":true
+  },
+  "parent":"divinerpg:twilight/enter_skythern",
+  "criteria":{
+    "kill_boss_termasect":{
+      "trigger":"minecraft:player_killed_entity",
+      "conditions":{
+        "entity":{
+          "type":"divinerpg:experienced_cori"
+        }
+      }
+    }
+  }
+}
