@@ -5,6 +5,7 @@ import divinerpg.registry.PotionRegistry;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
@@ -29,6 +30,10 @@ public class GravityPotion extends Potion {
 
     public static void trySetEffect(EntityLivingBase e) {
         if (e == null || e.getEntityWorld() == null)
+            return;
+
+        // can't apply on such entity
+        if (e.hasNoGravity())
             return;
 
         PotionEffect effect = e.getActivePotionEffect(PotionRegistry.Gravity);
@@ -59,8 +64,8 @@ public class GravityPotion extends Potion {
         double appliedGravity = getGravity(entity);
         double gravityTick = amplifier / 100.0 * appliedGravity;
 
-        double toAdd = appliedGravity - gravityTick;
-        entity.motionY += toAdd;
+        // need to fix gravity difference
+        entity.motionY += appliedGravity - gravityTick;
     }
 
     @Override
@@ -69,12 +74,16 @@ public class GravityPotion extends Potion {
     }
 
     @Override
-    public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap attributeMapIn, int amplifier) {
-        super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
+    public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap map, int amplifier) {
+        super.removeAttributesModifiersFromEntity(entityLivingBaseIn, map, amplifier);
 
         // repeat effect
-
         trySetEffect(entityLivingBaseIn);
+    }
+
+    @Override
+    public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap attributeMapIn, int amplifier) {
+        super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
     }
 
     /**
@@ -84,17 +93,23 @@ public class GravityPotion extends Potion {
      * @return
      */
     private double getGravity(EntityLivingBase entity) {
-        if (!entity.isInLava() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
-            if (!entity.isElytraFlying()) {
-                BlockPos pos = new BlockPos(entity.posX, 0.0D, entity.posZ);
+        if (entity.isServerWorld() || entity.canPassengerSteer()) {
+            if (!entity.isInWater() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
+                if (!entity.isInLava() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
+                    if (!entity.isElytraFlying()) {
+                        if (!entity.isPotionActive(MobEffects.LEVITATION)) {
+                            BlockPos pos = new BlockPos(entity.posX, 0.0D, entity.posZ);
 
-                if (!entity.world.isRemote || entity.world.isBlockLoaded(pos) && entity.world.getChunkFromBlockCoords(pos).isLoaded()) {
-                    if (!entity.hasNoGravity()) {
-                        return 0.08D;
+                            if (!entity.world.isRemote || entity.world.isBlockLoaded(pos) && entity.world.getChunkFromBlockCoords(pos).isLoaded()) {
+                                return 0.08D;
+                            }
+                        }
                     }
-                } else if (entity.posY > 0.0D) {
-                    return 0.1D;
+                } else {
+                    return 0.02D;
                 }
+            } else {
+                return 0.02D;
             }
         }
 
