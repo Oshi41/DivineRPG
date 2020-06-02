@@ -1,9 +1,8 @@
-package divinerpg.events;
+package divinerpg.utils;
 
 import divinerpg.DivineRPG;
 import divinerpg.registry.BlockRegistry;
 import divinerpg.registry.DimensionRegistry;
-import divinerpg.utils.DivineTeleporter;
 import divinerpg.utils.portals.ServerPortal;
 import divinerpg.utils.portals.VetheaPortal;
 import divinerpg.utils.portals.description.*;

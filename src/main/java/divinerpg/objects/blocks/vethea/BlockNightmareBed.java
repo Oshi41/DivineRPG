@@ -1,11 +1,11 @@
 package divinerpg.objects.blocks.vethea;
 
-import divinerpg.events.DimensionHelper;
 import divinerpg.objects.blocks.tile.entity.TileEntityNightmareBed;
 import divinerpg.registry.BlockRegistry;
-import divinerpg.registry.DivineRPGTabs;
 import divinerpg.registry.DimensionRegistry;
+import divinerpg.registry.DivineRPGTabs;
 import divinerpg.registry.ItemRegistry;
+import divinerpg.utils.DimensionHelper;
 import divinerpg.utils.LocalizeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;

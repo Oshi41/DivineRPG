@@ -6,9 +6,7 @@ import divinerpg.registry.DimensionRegistry;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
-import net.minecraftforge.client.IRenderHandler;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.gen.IChunkGenerator;
 
 public class GalaxyWorldProvider extends WorldProvider {
     private final GalaxySkyRender skyRender;
@@ -16,6 +14,18 @@ public class GalaxyWorldProvider extends WorldProvider {
     public GalaxyWorldProvider() {
         skyRender = new GalaxySkyRender();
         biomeProvider = new BiomeProviderSingle(BiomeRegistry.biomeGalaxy);
+    }
+
+    @Override
+    protected void init() {
+        this.biomeProvider = new BiomeProviderSingle(BiomeRegistry.biomeGalaxy);
+        this.nether = false;
+        this.hasSkyLight = true;
+    }
+
+    @Override
+    public IChunkGenerator createChunkGenerator() {
+        return new GalaxyChunkGenerator(this.world);
     }
 
     @Override
@@ -43,9 +53,14 @@ public class GalaxyWorldProvider extends WorldProvider {
         return true;
     }
 
-    @Nullable
     @Override
-    public IRenderHandler getSkyRenderer() {
-        return skyRender;
+    public boolean canRespawnHere() {
+        return false;
     }
+
+    //    @Nullable
+//    @Override
+//    public IRenderHandler getSkyRenderer() {
+//        return skyRender;
+//    }
 }

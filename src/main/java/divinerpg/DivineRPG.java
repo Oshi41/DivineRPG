@@ -6,12 +6,13 @@ package divinerpg;
 import divinerpg.api.armor.registry.IArmorDescription;
 import divinerpg.config.GeneralConfig;
 import divinerpg.events.ArcanaTickHandler;
-import divinerpg.events.DimensionHelper;
 import divinerpg.events.EventEntityDrop;
+import divinerpg.events.GravityEvents;
 import divinerpg.events.enchants.WorldBreakEnchantHandler;
 import divinerpg.events.server.SwapFactory;
 import divinerpg.proxy.CommonProxy;
 import divinerpg.registry.*;
+import divinerpg.utils.DimensionHelper;
 import divinerpg.utils.UpdateChecker;
 import divinerpg.utils.Utils;
 import divinerpg.utils.attributes.AttributeFixer;
@@ -69,6 +70,7 @@ public class DivineRPG {
         MinecraftForge.EVENT_BUS.register(new ArcanaTickHandler());
         MinecraftForge.EVENT_BUS.register(new EventEntityDrop());
         MinecraftForge.EVENT_BUS.register(new WorldBreakEnchantHandler());
+        MinecraftForge.EVENT_BUS.register(new GravityEvents());
         MessageRegistry.initMessages();
         AttributeFixer.patchMaximumHealth();
     }

@@ -5,7 +5,6 @@ import divinerpg.dimensions.apalachia.BiomeApalachia;
 import divinerpg.dimensions.arcana.BiomeArcana;
 import divinerpg.dimensions.eden.BiomeEden;
 import divinerpg.dimensions.galaxy.GalaxyBiome;
-import divinerpg.dimensions.galaxy.GalaxyWorldProvider;
 import divinerpg.dimensions.iceika.BiomeIceika;
 import divinerpg.dimensions.mortum.BiomeMortum;
 import divinerpg.dimensions.skythern.BiomeSkythern;
@@ -71,6 +70,6 @@ public class BiomeRegistry {
         BiomeDictionary.addTypes(biomeIceika, Type.MAGICAL, Type.SNOWY);
         BiomeDictionary.addTypes(biomeArcana, Type.MAGICAL);
         BiomeDictionary.addTypes(biomeVethea, Type.MAGICAL, Type.SPOOKY);
-        BiomeDictionary.addTypes(biomeGalaxy, Type.MAGICAL);
+        BiomeDictionary.addTypes(biomeGalaxy, Type.END, Type.MAGICAL);
     }
 }

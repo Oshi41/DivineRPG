@@ -1,8 +1,8 @@
 package divinerpg.objects.items.iceika;
 
-import divinerpg.events.DimensionHelper;
 import divinerpg.objects.items.base.ItemMod;
 import divinerpg.registry.DivineRPGTabs;
+import divinerpg.utils.DimensionHelper;
 import divinerpg.utils.portals.description.IPortalDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.pattern.BlockPattern;

@@ -2,7 +2,7 @@ package divinerpg.utils.portals;
 
 import com.google.common.collect.Lists;
 import divinerpg.DivineRPG;
-import divinerpg.events.DimensionHelper;
+import divinerpg.utils.DimensionHelper;
 import divinerpg.utils.PositionHelper;
 import divinerpg.utils.Utils;
 import divinerpg.utils.portals.description.IPortalDescription;

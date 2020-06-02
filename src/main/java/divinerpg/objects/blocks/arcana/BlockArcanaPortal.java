@@ -1,8 +1,8 @@
 package divinerpg.objects.blocks.arcana;
 
 import divinerpg.DivineRPG;
-import divinerpg.events.DimensionHelper;
 import divinerpg.registry.DimensionRegistry;
+import divinerpg.utils.DimensionHelper;
 import divinerpg.utils.portals.description.IPortalDescription;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
