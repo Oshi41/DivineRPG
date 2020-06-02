@@ -49,8 +49,8 @@ public class GravityEvents {
             return;
         }
 
-        int maxBlockHieght = 3;
-        double allowedHeight = maxBlockHieght * (100.0 / amplifier) - maxBlockHieght;
-        e.setDistance((float) (e.getDistance() - allowedHeight));
+        double gravityFactor = amplifier / 100.0;
+
+        e.setDistance((float) (e.getDistance() * gravityFactor));
     }
 }
