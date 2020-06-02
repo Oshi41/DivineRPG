@@ -1,5 +1,6 @@
-package divinerpg.utils.fakeNetwork;
+package divinerpg.events;
 
+import divinerpg.utils.fakeNetwork.FakeNetHandlerPlayServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.Mod;

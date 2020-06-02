@@ -90,7 +90,7 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
         // 1 .. 30
         generateIsland(primer,
                 10 + rand.nextInt(20),
-                Blocks.STONE.getDefaultState(),
+                null,
                 Blocks.STONE.getDefaultState(),
                 (rand.nextInt(maxSize - minSize) + minSize) / 2);
 
@@ -144,6 +144,9 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
             f = (float) ((double) f - ((double) rand.nextInt(2) + 0.5D));
         }
+
+        if (top == null || top == main)
+            return;
 
         for (BlockPos pos : islandPoses) {
             if (primer.getBlockState(pos.getX(), pos.getY() + 1, pos.getZ()).getMaterial() == Material.AIR) {

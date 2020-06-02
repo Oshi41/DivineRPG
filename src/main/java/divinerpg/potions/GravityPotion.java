@@ -81,11 +81,6 @@ public class GravityPotion extends Potion {
         trySetEffect(entityLivingBaseIn);
     }
 
-    @Override
-    public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, AbstractAttributeMap attributeMapIn, int amplifier) {
-        super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-    }
-
     /**
      * Copy of entity gravity logic
      *
@@ -93,23 +88,23 @@ public class GravityPotion extends Potion {
      * @return
      */
     private double getGravity(EntityLivingBase entity) {
-        if (entity.isServerWorld() || entity.canPassengerSteer()) {
-            if (!entity.isInWater() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
-                if (!entity.isInLava() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
-                    if (!entity.isElytraFlying()) {
-                        if (!entity.isPotionActive(MobEffects.LEVITATION)) {
-                            BlockPos pos = new BlockPos(entity.posX, 0.0D, entity.posZ);
+        if (!entity.hasNoGravity()
+                && (entity.isServerWorld() || entity.canPassengerSteer())
+                && (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isFlying)) {
 
-                            if (!entity.world.isRemote || entity.world.isBlockLoaded(pos) && entity.world.getChunkFromBlockCoords(pos).isLoaded()) {
-                                return 0.08D;
-                            }
-                        }
-                    }
-                } else {
-                    return 0.02D;
-                }
-            } else {
+            if (entity.isInWater() || entity.isInLava()) {
                 return 0.02D;
+            }
+
+            if (!entity.isElytraFlying()) {
+                if (!entity.isPotionActive(MobEffects.LEVITATION)) {
+                    BlockPos pos = new BlockPos(entity.posX, 0.0D, entity.posZ);
+                    if (!entity.world.isRemote
+                            || entity.world.isBlockLoaded(pos)
+                            && entity.world.getChunkFromBlockCoords(pos).isLoaded()) {
+                        return 0.08D;
+                    }
+                }
             }
         }
 
