@@ -32,7 +32,7 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
         this.rand.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
         ChunkPrimer primer = new ChunkPrimer();
 
-        generateChunkBlocks(primer);
+        generateChunkBlocks(primer, new ChunkPos(x, z));
 
         generators.forEach((s, structure) -> structure.generate(world, x, z, primer));
         Chunk chunk = new Chunk(this.world, primer, x, z);
@@ -44,10 +44,17 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
     public void populate(int x, int z) {
         BlockPos pos = new ChunkPos(x, z).getBlock(0, 0, 0);
 
+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(
+                true,
+                this,
+                this.world,
+                this.rand,
+                x,
+                z,
+                false);
+
         Biome biome = this.world.getBiome(pos);
         biome.decorate(world, rand, pos);
-
-        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.world, this.rand, x, z, false);
     }
 
     @Override
@@ -89,31 +96,19 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
     }
 
 
-    private void generateChunkBlocks(ChunkPrimer primer) {
-        int minSize = 5;
+    private void generateChunkBlocks(ChunkPrimer primer, ChunkPos chunkPos) {
+        int minSize = 10;
         int maxSize = 14;
 
-        // bottom layer
-        // 1 .. 30
-        generateIsland(primer,
-                10 + rand.nextInt(20),
-                null,
-                Blocks.STONE.getDefaultState(),
-                (rand.nextInt(maxSize - minSize) + minSize) / 2);
+        int altitude = 60;
+        double waveSize = 16;
 
-        // middle layer
-        // 60 .. 90
-        generateIsland(primer,
-                70 + rand.nextInt(20),
-                Blocks.GRASS.getDefaultState(),
-                Blocks.DIRT.getDefaultState(),
-                (rand.nextInt(maxSize - minSize) + minSize) / 2);
+        double height = (Math.cos(chunkPos.x / waveSize) * Math.cos(chunkPos.z / waveSize)) * altitude;
+        int minHeight = 40;
 
-        minSize = 10;
-        // top layer
-        // 150 .. infinity
+
         generateIsland(primer,
-                160 + rand.nextInt(40),
+                (int) (altitude + height + minHeight + rand.nextInt(20)),
                 Blocks.GRASS.getDefaultState(),
                 Blocks.DIRT.getDefaultState(),
                 (rand.nextInt(maxSize - minSize) + minSize) / 2);

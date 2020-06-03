@@ -1,10 +1,10 @@
 package divinerpg.dimensions.galaxy;
 
-import divinerpg.dimensions.TwilightBiomeBase;
-import net.minecraft.init.Blocks;
+import divinerpg.DivineRPG;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
@@ -12,25 +12,14 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import java.awt.*;
 import java.util.Random;
 
-public class GalaxyBiome extends TwilightBiomeBase implements IGravityProvider {
+public class GalaxyBiome extends Biome implements IGravityProvider {
     private final int grassColor;
     private final int waterColor;
     private final int foliageColor;
 
     public GalaxyBiome() {
-        super(new BiomeProperties("galaxy"), "galaxy");
-        this.topBlock = Blocks.GRASS.getDefaultState();
-        this.fillerBlock = Blocks.DIRT.getDefaultState();
-        this.spawnableCreatureList.clear();
-        this.spawnableMonsterList.clear();
-        this.spawnableCaveCreatureList.clear();
-        this.spawnableWaterCreatureList.clear();
-        this.flowers.clear();
-
-        this.decorator.flowersPerChunk = 0;
-        this.decorator.gravelPatchesPerChunk = 0;
-        this.decorator.sandPatchesPerChunk = 0;
-        this.decorator.clayPerChunk = 0;
+        super(new BiomeProperties("galaxy"));
+        setRegistryName(DivineRPG.MODID, this.getBiomeName());
 
         grassColor = Color.MAGENTA.getRGB();
         waterColor = new Color(58, 53, 159, 255).getRGB();
@@ -41,19 +30,17 @@ public class GalaxyBiome extends TwilightBiomeBase implements IGravityProvider {
     public void decorate(World worldIn, Random rand, BlockPos pos) {
         ChunkPos chunkPos = new ChunkPos(pos);
 
-        if (TerrainGen.decorate(worldIn, rand, chunkPos, DecorateBiomeEvent.Decorate.EventType.TREE)) {
-            for (int j2 = 0; j2 < 5; ++j2) {
-                int x = rand.nextInt(16) + 8;
-                int z = rand.nextInt(16) + 8;
-                int y = 60 + rand.nextInt(100);
+        if (rand.nextInt(10) == 1 && TerrainGen.decorate(worldIn, rand, chunkPos, DecorateBiomeEvent.Decorate.EventType.TREE)) {
+            int x = rand.nextInt(16) + 8;
+            int z = rand.nextInt(16) + 8;
+            int y = worldIn.getHeight(x + pos.getX(), z + pos.getZ());
 
-                WorldGenAbstractTree worldgenabstracttree = BIG_TREE_FEATURE;
-                worldgenabstracttree.setDecorationDefaults();
-                BlockPos blockpos = chunkPos.getBlock(x, y, z);
+            WorldGenAbstractTree worldgenabstracttree = BIG_TREE_FEATURE;
+            worldgenabstracttree.setDecorationDefaults();
+            BlockPos blockpos = chunkPos.getBlock(x, y, z);
 
-                if (worldgenabstracttree.generate(worldIn, rand, blockpos)) {
-                    worldgenabstracttree.generateSaplings(worldIn, rand, blockpos);
-                }
+            if (worldgenabstracttree.generate(worldIn, rand, blockpos)) {
+                worldgenabstracttree.generateSaplings(worldIn, rand, blockpos);
             }
         }
 

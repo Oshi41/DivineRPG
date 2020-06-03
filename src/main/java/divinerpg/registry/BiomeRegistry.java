@@ -40,7 +40,7 @@ public class BiomeRegistry {
     @ObjectHolder("vethea")
     public static final Biome biomeVethea = new BiomeVethea();
     @ObjectHolder("galaxy")
-    public static Biome biomeGalaxy = new GalaxyBiome();
+    public static final Biome biomeGalaxy = new GalaxyBiome();
 
     @SubscribeEvent
     public static void registerBiomes(RegistryEvent.Register<Biome> event) {
@@ -70,6 +70,6 @@ public class BiomeRegistry {
         BiomeDictionary.addTypes(biomeIceika, Type.MAGICAL, Type.SNOWY);
         BiomeDictionary.addTypes(biomeArcana, Type.MAGICAL);
         BiomeDictionary.addTypes(biomeVethea, Type.MAGICAL, Type.SPOOKY);
-        BiomeDictionary.addTypes(biomeGalaxy, Type.END, Type.MAGICAL);
+        BiomeDictionary.addTypes(biomeGalaxy, Type.MAGICAL);
     }
 }
