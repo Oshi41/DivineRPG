@@ -308,7 +308,7 @@ public class EntityRegistry {
                 buildProjectileEntry(EntityKingRage.class, "king_rage"),
         };
 
-        if (GeneralConfig.generalOptions.debugMode) {
+        if (GeneralConfig.generalOptions.enableDebugMode) {
             DivineRPG.logger.info(DivineRPG.MODID + " entities have been loaded");
         }
 
