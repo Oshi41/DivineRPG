@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -41,6 +42,12 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
     @Override
     public void populate(int x, int z) {
+        BlockPos pos = new ChunkPos(x, z).getBlock(0, 0, 0);
+
+        Biome biome = this.world.getBiome(pos);
+        biome.decorate(world, rand, pos);
+
+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(true, this, this.world, this.rand, x, z, false);
     }
 
     @Override
