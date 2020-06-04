@@ -8,6 +8,9 @@ import divinerpg.capabilities.CapabilityHandler;
 import divinerpg.capabilities.arcana.Arcana;
 import divinerpg.capabilities.arcana.CapabilityArcana;
 import divinerpg.capabilities.armor.ArmorPowers;
+import divinerpg.capabilities.gravity.GravityHandler;
+import divinerpg.capabilities.gravity.GravityStorage;
+import divinerpg.capabilities.gravity.IGravity;
 import divinerpg.config.Config;
 import divinerpg.enums.ParticleType;
 import divinerpg.objects.blocks.tile.entity.*;
@@ -43,8 +46,10 @@ public class CommonProxy {
     public void init(FMLInitializationEvent e) {
         NetworkRegistry.INSTANCE.registerGuiHandler(DivineRPG.instance, new GUIHandler());
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+
         CapabilityManager.INSTANCE.register(IArcana.class, new CapabilityArcana(), Arcana::new);
         CapabilityManager.INSTANCE.register(IArmorPowers.class, new ArmorStorage(), ArmorPowers::new);
+        CapabilityManager.INSTANCE.register(IGravity.class, new GravityStorage(), GravityHandler::new);
     }
 
     public void postInit(FMLPostInitializationEvent e) {

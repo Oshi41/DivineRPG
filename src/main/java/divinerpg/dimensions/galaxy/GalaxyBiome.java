@@ -1,6 +1,7 @@
 package divinerpg.dimensions.galaxy;
 
 import divinerpg.DivineRPG;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
@@ -12,19 +13,24 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import java.awt.*;
 import java.util.Random;
 
-public class GalaxyBiome extends Biome implements IGravityProvider {
+public class GalaxyBiome extends Biome {
     private final int grassColor;
     private final int waterColor;
     private final int foliageColor;
 
     public GalaxyBiome() {
-        super(new BiomeProperties("galaxy"));
+        super(new BiomeProperties("Galaxy"));
         setRegistryName(DivineRPG.MODID, "galaxy");
 
         spawnableWaterCreatureList.clear();
         spawnableCaveCreatureList.clear();
         spawnableMonsterList.clear();
         spawnableCreatureList.clear();
+        flowers.clear();
+        decorator.flowersPerChunk = 0;
+        decorator.grassPerChunk = 0;
+        topBlock = Blocks.GRASS.getDefaultState();
+        fillerBlock = Blocks.DIRT.getDefaultState();
 
 
         grassColor = Color.MAGENTA.getRGB();
@@ -73,10 +79,5 @@ public class GalaxyBiome extends Biome implements IGravityProvider {
     @Override
     public int getWaterColorMultiplier() {
         return waterColor;
-    }
-
-    @Override
-    public int gravity() {
-        return 20;
     }
 }

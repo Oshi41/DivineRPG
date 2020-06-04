@@ -39,7 +39,6 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
         generators.forEach((s, structure) -> structure.generate(world, x, z, primer));
         Chunk chunk = new Chunk(this.world, primer, x, z);
         chunk.generateSkylightMap();
-
         world.profiler.endSection();
         return chunk;
     }

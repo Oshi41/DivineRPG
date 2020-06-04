@@ -1,58 +1,60 @@
 package divinerpg.events;
 
 import divinerpg.DivineRPG;
-import divinerpg.potions.GravityPotion;
-import divinerpg.registry.PotionRegistry;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import divinerpg.capabilities.gravity.GravityProvider;
+import divinerpg.capabilities.gravity.IGravity;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber(modid = DivineRPG.MODID)
+import javax.annotation.Nullable;
+
 public class GravityEvents {
-
-    @SubscribeEvent
-    public void onLivingTick(LivingEvent.LivingUpdateEvent e) {
-        if (e.getEntityLiving() == null
-                || e.getEntityLiving().getEntityWorld() == null)
-            return;
-
-        EntityLivingBase entity = e.getEntityLiving();
-
-        entity.getEntityWorld().profiler.startSection("GravityEvents");
-
-        // detecting special gravity potion
-        PotionEffect effect = entity.getActivePotionEffect(PotionRegistry.Gravity);
-
-        // recheck it only on last tick
-        if (effect == null || effect.getDuration() <= 1)
-            GravityPotion.trySetEffect(entity);
-
-        entity.getEntityWorld().profiler.endSection();
+    @Nullable
+    private IGravity getFromWorld(World world) {
+        return world != null && world.hasCapability(GravityProvider.GravityCapability, null)
+                ? world.getCapability(GravityProvider.GravityCapability, null)
+                : null;
     }
 
     @SubscribeEvent
-    public void onFallEvent(LivingFallEvent e) {
-        if (e.isCanceled())
+    public void onFall(LivingFallEvent e) {
+        IGravity gravity = getFromWorld(e.getEntity().getEntityWorld());
+        if (gravity == null)
             return;
 
-        PotionEffect effect = e.getEntityLiving().getActivePotionEffect(PotionRegistry.Gravity);
-        if (effect == null)
+        e.setDistance((float) (e.getDistance() - gravity.maxNoHarmJumpHeight()));
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.WorldTickEvent e) {
+        if (e.phase != TickEvent.Phase.END)
             return;
 
-        int amplifier = effect.getAmplifier();
-        if (amplifier == 100)
-            return;
+        IGravity gravity = getFromWorld(e.world);
 
-        if (amplifier == 0) {
-            e.setCanceled(true);
-            return;
+        if (gravity != null) {
+            gravity.applyForWorld(e.world);
         }
+    }
 
-        double gravityFactor = amplifier / 100.0;
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent e) {
+        if (e.phase != TickEvent.Phase.END
+                || e.side != Side.CLIENT
+                || DivineRPG.proxy.getPlayer() == null)
+            return;
 
-        e.setDistance((float) (e.getDistance() * gravityFactor));
+        if (net.minecraft.client.Minecraft.getMinecraft().isGamePaused())
+            return;
+
+        World world = DivineRPG.proxy.getPlayer().getEntityWorld();
+
+        IGravity gravity = getFromWorld(world);
+        if (gravity != null) {
+            gravity.applyForWorld(world);
+        }
     }
 }
