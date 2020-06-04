@@ -19,7 +19,13 @@ public class GalaxyBiome extends Biome implements IGravityProvider {
 
     public GalaxyBiome() {
         super(new BiomeProperties("galaxy"));
-        setRegistryName(DivineRPG.MODID, this.getBiomeName());
+        setRegistryName(DivineRPG.MODID, "galaxy");
+
+        spawnableWaterCreatureList.clear();
+        spawnableCaveCreatureList.clear();
+        spawnableMonsterList.clear();
+        spawnableCreatureList.clear();
+
 
         grassColor = Color.MAGENTA.getRGB();
         waterColor = new Color(58, 53, 159, 255).getRGB();
@@ -55,18 +61,18 @@ public class GalaxyBiome extends Biome implements IGravityProvider {
     }
 
     @Override
-    public int getGrassColorAtPos(BlockPos pos) {
+    public int getModdedBiomeFoliageColor(int original) {
+        return foliageColor;
+    }
+
+    @Override
+    public int getModdedBiomeGrassColor(int original) {
         return grassColor;
     }
 
     @Override
     public int getWaterColorMultiplier() {
         return waterColor;
-    }
-
-    @Override
-    public int getFoliageColorAtPos(BlockPos pos) {
-        return foliageColor;
     }
 
     @Override

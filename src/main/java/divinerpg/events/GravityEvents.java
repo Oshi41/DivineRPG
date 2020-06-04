@@ -21,14 +21,16 @@ public class GravityEvents {
 
         EntityLivingBase entity = e.getEntityLiving();
 
+        entity.getEntityWorld().profiler.startSection("GravityEvents");
+
         // detecting special gravity potion
         PotionEffect effect = entity.getActivePotionEffect(PotionRegistry.Gravity);
 
         // recheck it only on last tick
-        if (effect != null && effect.getDuration() > 1)
-            return;
+        if (effect == null || effect.getDuration() <= 1)
+            GravityPotion.trySetEffect(entity);
 
-        GravityPotion.trySetEffect(entity);
+        entity.getEntityWorld().profiler.endSection();
     }
 
     @SubscribeEvent

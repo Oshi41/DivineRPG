@@ -33,11 +33,6 @@ public class GalaxyWorldProvider extends WorldProvider {
     }
 
     @Override
-    public boolean isDaytime() {
-        return true;
-    }
-
-    @Override
     public boolean canRespawnHere() {
         return false;
     }
@@ -45,6 +40,11 @@ public class GalaxyWorldProvider extends WorldProvider {
     @Override
     public boolean isSurfaceWorld() {
         return false;
+    }
+
+    @Override
+    public int getAverageGroundLevel() {
+        return 70;
     }
 
     @Override

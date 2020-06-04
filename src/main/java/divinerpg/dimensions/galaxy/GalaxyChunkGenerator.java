@@ -29,6 +29,8 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
     @Override
     public Chunk generateChunk(int x, int z) {
+        world.profiler.startSection("GalaxyChunkGeneration");
+
         this.rand.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
         ChunkPrimer primer = new ChunkPrimer();
 
@@ -37,6 +39,8 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
         generators.forEach((s, structure) -> structure.generate(world, x, z, primer));
         Chunk chunk = new Chunk(this.world, primer, x, z);
         chunk.generateSkylightMap();
+
+        world.profiler.endSection();
         return chunk;
     }
 
@@ -55,6 +59,15 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
         Biome biome = this.world.getBiome(pos);
         biome.decorate(world, rand, pos);
+
+        net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(
+                false,
+                this,
+                this.world,
+                this.rand,
+                x,
+                z,
+                false);
     }
 
     @Override
@@ -65,7 +78,8 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
     @Override
     public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
-        return null;
+        Biome biome = this.world.getBiomeProvider().getBiome(pos);
+        return biome.getSpawnableList(creatureType);
     }
 
     @Nullable
