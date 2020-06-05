@@ -68,7 +68,7 @@ public class GravityHandler implements IGravity {
             return 0;
 
         if (entity instanceof EntityItem)
-            return 0.4;
+            return 0.04;
 
         // cant apply on flying player
         if (entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying)

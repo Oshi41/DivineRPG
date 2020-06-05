@@ -38,6 +38,16 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
         generators.forEach((s, structure) -> structure.generate(world, x, z, primer));
         Chunk chunk = new Chunk(this.world, primer, x, z);
+
+        byte[] abyte = chunk.getBiomeArray();
+
+        Biome[] biomesForGeneration = new Biome[abyte.length];
+        biomesForGeneration = this.world.getBiomeProvider().getBiomes(biomesForGeneration, x * 16, z * 16, 16, 16);
+
+        for (int i = 0; i < abyte.length; ++i) {
+            abyte[i] = (byte) Biome.getIdForBiome(biomesForGeneration[i]);
+        }
+
         chunk.generateSkylightMap();
         world.profiler.endSection();
         return chunk;
