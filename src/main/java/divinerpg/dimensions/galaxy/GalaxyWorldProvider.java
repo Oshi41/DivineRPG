@@ -24,6 +24,15 @@ public class GalaxyWorldProvider extends WorldProvider {
     }
 
     @Override
+    protected void generateLightBrightnessTable() {
+        for (int i = 0; i < 16; i++) {
+            float multiplier = i / 15.0F;
+            float minHeight = 0.05F;
+            lightBrightnessTable[i] = minHeight + (1 - minHeight) * multiplier;
+        }
+    }
+
+    @Override
     public IChunkGenerator createChunkGenerator() {
         return new GalaxyChunkGenerator(this.world);
     }
