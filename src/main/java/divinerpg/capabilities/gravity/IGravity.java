@@ -1,9 +1,5 @@
 package divinerpg.capabilities.gravity;
 
-import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-
 public interface IGravity {
     /**
      * 1 means normal gravity
@@ -20,13 +16,6 @@ public interface IGravity {
      * @param value
      */
     void setGravityMultiplier(double value);
-
-    /**
-     * Applying gravitation for world. Should call every tick
-     *
-     * @param world
-     */
-    void applyForWorld(@Nonnull World world);
 
     /**
      * Max jump height. Default is 3

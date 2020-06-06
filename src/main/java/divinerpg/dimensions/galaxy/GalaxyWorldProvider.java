@@ -1,6 +1,5 @@
 package divinerpg.dimensions.galaxy;
 
-import divinerpg.capabilities.gravity.GravityProvider;
 import divinerpg.registry.BiomeRegistry;
 import divinerpg.registry.DimensionRegistry;
 import net.minecraft.util.math.BlockPos;
@@ -10,7 +9,6 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -130,11 +128,5 @@ public class GalaxyWorldProvider extends WorldProvider {
     @Override
     public String getSaveFolder() {
         return "Galaxy";
-    }
-
-    @Nullable
-    @Override
-    public ICapabilityProvider initCapabilities() {
-        return new GravityProvider(0.2);
     }
 }

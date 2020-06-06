@@ -102,7 +102,7 @@ public class CommonProxy {
         GameRegistry.registerTileEntity(TileEntityPedestal.class, DivineRPG.MODID + ":te_pedestal");
     }
 
-    public void spawnParticle(World world, ParticleType particle, double z, double x, double y, double velX,
+    public void spawnParticle(World world, ParticleType particle, double x, double y, double z, double velX,
                               double velY, double velZ) {
     }
 

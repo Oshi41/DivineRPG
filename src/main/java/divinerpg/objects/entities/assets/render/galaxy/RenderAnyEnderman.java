@@ -1,11 +1,9 @@
 package divinerpg.objects.entities.assets.render.galaxy;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelEnderman;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,6 +23,7 @@ public class RenderAnyEnderman extends RenderLiving<EntityLiving> {
         super(renderManagerIn, new ModelEnderman(0.0F), 0.5F);
         this.texture = texture;
         this.addLayer(new LayerEndermanEyes(this));
+        this.addLayer(new LayerEndermanHeldBlock(this));
     }
 
     public ModelEnderman getMainModel() {
@@ -34,13 +33,12 @@ public class RenderAnyEnderman extends RenderLiving<EntityLiving> {
     /**
      * Renders the desired {@code T} type Entity.
      */
-    public void doRender(EntityEnderman entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        IBlockState iblockstate = entity.getHeldBlockState();
+    public void doRender(EntityLiving entity, double x, double y, double z, float entityYaw, float partialTicks) {
         ModelEnderman modelenderman = this.getMainModel();
-        modelenderman.isCarrying = iblockstate != null;
-        modelenderman.isAttacking = entity.isScreaming();
+        modelenderman.isCarrying = !entity.getHeldItemMainhand().isEmpty();
+        modelenderman.isAttacking = entity.getAttackTarget() != null;
 
-        if (entity.isScreaming()) {
+        if (modelenderman.isAttacking) {
             double d0 = 0.02D;
             x += this.rnd.nextGaussian() * 0.02D;
             z += this.rnd.nextGaussian() * 0.02D;
