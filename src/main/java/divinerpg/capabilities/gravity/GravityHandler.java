@@ -1,6 +1,7 @@
 package divinerpg.capabilities.gravity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,7 +40,8 @@ public class GravityHandler implements IGravity {
         if (getGravityMultiplier() == 1)
             return;
 
-        world.getLoadedEntityList().parallelStream()
+        world.loadedEntityList
+                .parallelStream()
                 .forEach(this::applyGravity);
     }
 
@@ -72,6 +74,10 @@ public class GravityHandler implements IGravity {
 
         // cant apply on flying player
         if (entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying)
+            return 0;
+
+        // already flying entity
+        if (entity instanceof EntityFlying || entity instanceof net.minecraft.entity.passive.EntityFlying)
             return 0;
 
         if (entity instanceof EntityLivingBase) {

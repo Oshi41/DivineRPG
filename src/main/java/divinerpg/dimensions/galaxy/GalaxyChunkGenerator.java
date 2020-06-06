@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
@@ -40,7 +41,6 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
         Chunk chunk = new Chunk(this.world, primer, x, z);
 
         byte[] abyte = chunk.getBiomeArray();
-
         Biome[] biomesForGeneration = new Biome[abyte.length];
         biomesForGeneration = this.world.getBiomeProvider().getBiomes(biomesForGeneration, x * 16, z * 16, 16, 16);
 
@@ -68,6 +68,8 @@ public class GalaxyChunkGenerator implements IChunkGenerator {
 
         Biome biome = this.world.getBiome(pos);
         biome.decorate(world, rand, pos);
+
+        WorldEntitySpawner.performWorldGenSpawning(this.world, biome, pos.getX() + 8, pos.getZ() + 8, 16, 16, this.rand);
 
         net.minecraftforge.event.ForgeEventFactory.onChunkPopulate(
                 false,

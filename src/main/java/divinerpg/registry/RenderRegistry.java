@@ -7,6 +7,7 @@ import divinerpg.objects.entities.assets.model.twilight.*;
 import divinerpg.objects.entities.assets.model.vanilla.*;
 import divinerpg.objects.entities.assets.model.vethea.*;
 import divinerpg.objects.entities.assets.render.*;
+import divinerpg.objects.entities.assets.render.galaxy.LargeGhastRender;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostArcher;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostCloud;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrosty;
@@ -26,17 +27,14 @@ import divinerpg.objects.entities.entity.arcana.*;
 import divinerpg.objects.entities.entity.arcana.death.EntityDeathHound;
 import divinerpg.objects.entities.entity.arcana.death.EntityDeathcryx;
 import divinerpg.objects.entities.entity.boss.*;
+import divinerpg.objects.entities.entity.boss.ayeraco.*;
 import divinerpg.objects.entities.entity.eden.*;
+import divinerpg.objects.entities.entity.galaxy.LargeGhast;
 import divinerpg.objects.entities.entity.iceika.*;
 import divinerpg.objects.entities.entity.mortum.*;
 import divinerpg.objects.entities.entity.projectiles.*;
 import divinerpg.objects.entities.entity.skythern.*;
-import divinerpg.objects.entities.entity.skythern.EntityAdvancedCori;
-import divinerpg.objects.entities.entity.boss.EntityExperiencedCori;
-import divinerpg.objects.entities.entity.eden.EntityWeakCori;
-import divinerpg.objects.entities.entity.wildwood.EntityMage;
 import divinerpg.objects.entities.entity.vanilla.*;
-import divinerpg.objects.entities.entity.boss.ayeraco.*;
 import divinerpg.objects.entities.entity.vethea.*;
 import divinerpg.objects.entities.entity.wildwood.*;
 import net.minecraft.client.model.ModelBiped;
@@ -276,6 +274,9 @@ public class RenderRegistry {
         registerRender(EntityWreck.class, RenderWreck::new);
         registerRender(EntityZone.class, manager -> new RenderDivineMob(manager, new ModelZone(), new ResourceLocation(DivineRPG.MODID, "textures/entity/zone.png")));
         registerRender(EntityZoragon.class, manager -> new RenderDivineFlyingMob(manager, new ModelZoragon(), new ResourceLocation(DivineRPG.MODID, "textures/entity/zoragon.png")));
+
+        // Galaxy
+        registerRender(LargeGhast.class, LargeGhastRender::new);
     }
 
     /**

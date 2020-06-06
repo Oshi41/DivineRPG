@@ -53,33 +53,23 @@ public abstract class EntityDivineFlyingMob extends EntityFlying implements IMob
         getDataManager().register(TargetData, Optional.absent());
     }
 
-    @Nullable
     @Override
-    public EntityLivingBase getAttackTarget() {
-        EntityLivingBase target = super.getAttackTarget();
+    public void onUpdate() {
+        super.onUpdate();
+
         EntityDataManager manager = getDataManager();
 
-        // is manager wisn't changed, return super method result
-        if (!manager.isDirty()) {
-            return target;
+        if (manager.isDirty()) {
+            // getting id fro manager
+            UUID id = manager.get(TargetData).orNull();
+
+            EntityLivingBase target = getAttackTarget();
+
+            // new value was applied
+            if (!Objects.equals(target == null ? null : target.getUniqueID(), id)) {
+                setAttackTarget(findByUuid(world, id));
+            }
         }
-
-        // getting id fro manager
-        UUID id = manager.get(TargetData).orNull();
-
-        // same target ID return
-        if (Objects.equals(target == null ? null : target.getUniqueID(), id)) {
-            return target;
-        }
-
-        // searches entity from id
-        target = findByUuid(world, id);
-
-        // set here new target
-        setAttackTarget(target);
-
-        // returning it
-        return target;
     }
 
     @Override

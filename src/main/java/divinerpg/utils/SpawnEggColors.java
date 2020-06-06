@@ -1,25 +1,8 @@
 package divinerpg.utils;
 
+import java.awt.*;
+
 public class SpawnEggColors {
-
-    public enum Dimension {
-        OVERWORLD, NETHER, END, ICEIKA, EDEN, WILDWOOD, APALACHIA, SKYTHERN, MORTUM, ARCANA, VETHEA, BOSS
-    }
-
-    private final int primaryColor, secondaryColor;
-
-    private SpawnEggColors(int primary, int secondary) {
-        this.primaryColor = primary;
-        this.secondaryColor = secondary;
-    }
-
-    public int getPrimaryColor() {
-        return this.primaryColor;
-    }
-
-    public int getSecondaryColor() {
-        return this.secondaryColor;
-    }
 
     public static SpawnEggColors getColorsForDimension(Dimension dimension) {
         switch (dimension) {
@@ -56,11 +39,33 @@ public class SpawnEggColors {
             case VETHEA:
                 return new SpawnEggColors(18012, 1504400);
 
+            case GALAXY:
+                return new SpawnEggColors(Color.PINK.getRGB(), Color.CYAN.getRGB());
+
             case BOSS:
                 return new SpawnEggColors(11801600, 1315860);
 
             default:
                 return new SpawnEggColors(16448250, 328965);
         }
+    }
+
+    private final int primaryColor, secondaryColor;
+
+    private SpawnEggColors(int primary, int secondary) {
+        this.primaryColor = primary;
+        this.secondaryColor = secondary;
+    }
+
+    public int getPrimaryColor() {
+        return this.primaryColor;
+    }
+
+    public int getSecondaryColor() {
+        return this.secondaryColor;
+    }
+
+    public enum Dimension {
+        OVERWORLD, NETHER, END, ICEIKA, EDEN, WILDWOOD, APALACHIA, SKYTHERN, MORTUM, ARCANA, VETHEA, GALAXY, BOSS
     }
 }

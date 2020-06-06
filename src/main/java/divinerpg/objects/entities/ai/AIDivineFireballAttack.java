@@ -109,7 +109,9 @@ public class AIDivineFireballAttack extends EntityAIBase {
 
             if (this.attackTimer == attackDelay) {
                 playSound(onShoot);
-                world.spawnEntity(createFireballFunc.apply(parentEntity, entitylivingbase));
+                Entity bullet = createFireballFunc.apply(parentEntity, entitylivingbase);
+                if (bullet != null)
+                    world.spawnEntity(bullet);
                 this.attackTimer = attackDelay * -2;
             }
         } else if (this.attackTimer > 0) {
