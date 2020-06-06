@@ -7,8 +7,8 @@ import divinerpg.objects.entities.assets.model.twilight.*;
 import divinerpg.objects.entities.assets.model.vanilla.*;
 import divinerpg.objects.entities.assets.model.vethea.*;
 import divinerpg.objects.entities.assets.render.*;
-import divinerpg.objects.entities.assets.render.galaxy.AngryEndermanRender;
 import divinerpg.objects.entities.assets.render.galaxy.LargeGhastRender;
+import divinerpg.objects.entities.assets.render.galaxy.RenderAnyEnderman;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostArcher;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostCloud;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrosty;
@@ -286,7 +286,7 @@ public class RenderRegistry {
 
         // Galaxy
         registerRender(EntityLargeGhast.class, LargeGhastRender::new);
-        registerRender(EntityAngryEnderman.class, AngryEndermanRender::new);
+        registerRender(EntityAngryEnderman.class, RenderAnyEnderman::new);
     }
 
     /**
