@@ -10,7 +10,8 @@ import divinerpg.objects.entities.entity.arcana.death.EntityDeathcryx;
 import divinerpg.objects.entities.entity.boss.*;
 import divinerpg.objects.entities.entity.boss.ayeraco.*;
 import divinerpg.objects.entities.entity.eden.*;
-import divinerpg.objects.entities.entity.galaxy.LargeGhast;
+import divinerpg.objects.entities.entity.galaxy.EntityAngryEnderman;
+import divinerpg.objects.entities.entity.galaxy.EntityLargeGhast;
 import divinerpg.objects.entities.entity.iceika.*;
 import divinerpg.objects.entities.entity.mortum.*;
 import divinerpg.objects.entities.entity.projectiles.*;
@@ -220,7 +221,8 @@ public class EntityRegistry {
                 buildEntityEntry(EntityZoragon.class, "zoragon", VETHEA),
 
                 // galaxy
-                buildEntityEntry(LargeGhast.class, "large_ghast", GALAXY),
+                buildEntityEntry(EntityLargeGhast.class, "large_ghast", GALAXY),
+                buildEntityEntry(EntityAngryEnderman.class, "cosmic_enderman", GALAXY),
 
                 // Boss
                 buildEntityEntry(EntityAncientEntity.class, "ancient_entity", BOSS),

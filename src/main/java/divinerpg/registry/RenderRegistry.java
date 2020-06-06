@@ -7,6 +7,7 @@ import divinerpg.objects.entities.assets.model.twilight.*;
 import divinerpg.objects.entities.assets.model.vanilla.*;
 import divinerpg.objects.entities.assets.model.vethea.*;
 import divinerpg.objects.entities.assets.render.*;
+import divinerpg.objects.entities.assets.render.galaxy.AngryEndermanRender;
 import divinerpg.objects.entities.assets.render.galaxy.LargeGhastRender;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostArcher;
 import divinerpg.objects.entities.assets.render.iceika.RenderFrostCloud;
@@ -29,7 +30,8 @@ import divinerpg.objects.entities.entity.arcana.death.EntityDeathcryx;
 import divinerpg.objects.entities.entity.boss.*;
 import divinerpg.objects.entities.entity.boss.ayeraco.*;
 import divinerpg.objects.entities.entity.eden.*;
-import divinerpg.objects.entities.entity.galaxy.LargeGhast;
+import divinerpg.objects.entities.entity.galaxy.EntityAngryEnderman;
+import divinerpg.objects.entities.entity.galaxy.EntityLargeGhast;
 import divinerpg.objects.entities.entity.iceika.*;
 import divinerpg.objects.entities.entity.mortum.*;
 import divinerpg.objects.entities.entity.projectiles.*;
@@ -276,7 +278,8 @@ public class RenderRegistry {
         registerRender(EntityZoragon.class, manager -> new RenderDivineFlyingMob(manager, new ModelZoragon(), new ResourceLocation(DivineRPG.MODID, "textures/entity/zoragon.png")));
 
         // Galaxy
-        registerRender(LargeGhast.class, LargeGhastRender::new);
+        registerRender(EntityLargeGhast.class, LargeGhastRender::new);
+        registerRender(EntityAngryEnderman.class, AngryEndermanRender::new);
     }
 
     /**

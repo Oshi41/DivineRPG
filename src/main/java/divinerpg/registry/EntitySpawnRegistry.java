@@ -5,7 +5,8 @@ import divinerpg.config.GeneralConfig;
 import divinerpg.objects.entities.entity.apalachia.*;
 import divinerpg.objects.entities.entity.arcana.*;
 import divinerpg.objects.entities.entity.eden.*;
-import divinerpg.objects.entities.entity.galaxy.LargeGhast;
+import divinerpg.objects.entities.entity.galaxy.EntityAngryEnderman;
+import divinerpg.objects.entities.entity.galaxy.EntityLargeGhast;
 import divinerpg.objects.entities.entity.iceika.*;
 import divinerpg.objects.entities.entity.mortum.*;
 import divinerpg.objects.entities.entity.skythern.*;
@@ -36,11 +37,12 @@ public class EntitySpawnRegistry {
     public static void initSpawns() {
         for (Biome biome : ForgeRegistries.BIOMES.getValues())
             if (biome.equals(BiomeRegistry.biomeGalaxy)) {
-                EntityRegistry.addSpawn(LargeGhast.class, 1, 1, 1, EnumCreatureType.MONSTER, biome);
+                EntityRegistry.addSpawn(EntityLargeGhast.class, 1, 1, 1, EnumCreatureType.MONSTER, biome);
+                EntityRegistry.addSpawn(EntityAngryEnderman.class, 10, 1, 4, EnumCreatureType.MONSTER, biome);
 
-                EntityRegistry.addSpawn(EntityCow.class, 10, 1, 1, EnumCreatureType.MONSTER, biome);
-                EntityRegistry.addSpawn(EntitySheep.class, 10, 1, 1, EnumCreatureType.MONSTER, biome);
-                EntityRegistry.addSpawn(EntityPig.class, 10, 1, 1, EnumCreatureType.MONSTER, biome);
+                EntityRegistry.addSpawn(EntityCow.class, 10, 1, 1, EnumCreatureType.CREATURE, biome);
+                EntityRegistry.addSpawn(EntitySheep.class, 10, 1, 1, EnumCreatureType.CREATURE, biome);
+                EntityRegistry.addSpawn(EntityPig.class, 10, 1, 1, EnumCreatureType.CREATURE, biome);
             } else if (biome.equals(BiomeRegistry.biomeIceika)) {
                 EntityRegistry.addSpawn(EntityAlicanto.class, 2, 1, 4, EnumCreatureType.MONSTER, biome);
                 EntityRegistry.addSpawn(EntityFractite.class, 1, 1, 1, EnumCreatureType.MONSTER, biome);

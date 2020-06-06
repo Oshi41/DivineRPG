@@ -1,6 +1,6 @@
 package divinerpg.objects.entities.assets.render.galaxy;
 
-import divinerpg.objects.entities.entity.galaxy.LargeGhast;
+import divinerpg.objects.entities.entity.galaxy.EntityLargeGhast;
 import net.minecraft.client.model.ModelGhast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 
-public class LargeGhastRender extends RenderLiving<LargeGhast> {
+public class LargeGhastRender extends RenderLiving<EntityLargeGhast> {
     private static final ResourceLocation GHAST_TEXTURES = new ResourceLocation("textures/entity/ghast/ghast.png");
     private static final ResourceLocation GHAST_SHOOTING_TEXTURES = new ResourceLocation("textures/entity/ghast/ghast_shooting.png");
 
@@ -21,7 +21,7 @@ public class LargeGhastRender extends RenderLiving<LargeGhast> {
      * Allows the render to do state modifications necessary before the model is rendered.
      */
     @Override
-    protected void preRenderCallback(LargeGhast entitylivingbaseIn, float partialTickTime) {
+    protected void preRenderCallback(EntityLargeGhast entitylivingbaseIn, float partialTickTime) {
         float color = 1.0F;
         float scale = 7.5F;
 
@@ -31,7 +31,7 @@ public class LargeGhastRender extends RenderLiving<LargeGhast> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(LargeGhast entity) {
+    protected ResourceLocation getEntityTexture(EntityLargeGhast entity) {
         return entity.getAttackingEntity() != null
                 ? GHAST_SHOOTING_TEXTURES
                 : GHAST_TEXTURES;

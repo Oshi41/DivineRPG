@@ -10,9 +10,9 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class LargeGhast extends EntityDivineFlyingMob {
+public class EntityLargeGhast extends EntityDivineFlyingMob {
 
-    public LargeGhast(World world) {
+    public EntityLargeGhast(World world) {
         super(world);
         setSize(7, 7);
     }
@@ -27,7 +27,7 @@ public class LargeGhast extends EntityDivineFlyingMob {
     protected AIDivineFireballAttack createShootAI() {
         return new AIDivineFireballAttack(this,
                 this::attackEntity,
-                20 * 5,
+                40,
                 100,
                 SoundEvents.ENTITY_GHAST_WARN,
                 SoundEvents.ENTITY_GHAST_SHOOT);

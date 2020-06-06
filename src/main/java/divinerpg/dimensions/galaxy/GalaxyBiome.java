@@ -19,7 +19,8 @@ public class GalaxyBiome extends Biome {
     private final int foliageColor;
 
     public GalaxyBiome() {
-        super(new BiomeProperties("Galaxy"));
+        super(new BiomeProperties("Galaxy")
+                .setRainDisabled());
         setRegistryName(DivineRPG.MODID, "galaxy");
 
         spawnableWaterCreatureList.clear();
@@ -37,6 +38,7 @@ public class GalaxyBiome extends Biome {
         waterColor = new Color(58, 53, 159, 255).getRGB();
         foliageColor = new Color(81, 175, 176, 255).getRGB();
     }
+
 
     @Override
     public void decorate(World worldIn, Random rand, BlockPos pos) {

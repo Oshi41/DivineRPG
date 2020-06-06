@@ -212,6 +212,7 @@ public class Config {
             put(new ResourceLocation(DivineRPG.MODID, "moon_wolf"), new MobStatInfo(200.0, 1.0, 0.0));
             put(new ResourceLocation(DivineRPG.MODID, "ancient_king"), new MobStatInfo(200.0, 10, 20.0));
             put(new ResourceLocation(DivineRPG.MODID, "large_ghast"), new MobStatInfo(50, 0, 0));
+            put(new ResourceLocation(DivineRPG.MODID, "cosmic_enderman"), new MobStatInfo(40, 8, 0));
         }};
 
         defaultModStates.forEach((location, mobStatInfo) -> {
