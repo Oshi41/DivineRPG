@@ -37,7 +37,6 @@ public class EntityJackOMan extends EntityDivineVillager {
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote) {
             player.openGui(DivineRPG.instance, GUIHandler.JACK_O_MAN_GUI_ID, this.world, getEntityId(), 0, 0);
-            CriteriaTriggers.VILLAGER_TRADE.trigger((EntityPlayerMP) player, this, ItemStack.EMPTY);
         }
         return super.processInteract(player, hand);
     }
@@ -72,7 +71,7 @@ public class EntityJackOMan extends EntityDivineVillager {
     }
 
     @Override
-    public void addRecipies(MerchantRecipeList list) {
+    public void addRecipes(MerchantRecipeList list) {
         list.addAll(getAllRecipies());
     }
 

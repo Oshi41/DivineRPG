@@ -34,13 +34,12 @@ public class EntityWorkshopMerchant extends EntityDivineVillager {
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote) {
             player.openGui(DivineRPG.instance, GUIHandler.WORKSHOP_MERCHANT_GUI_ID, this.world, getEntityId(), 0, 0);
-            CriteriaTriggers.VILLAGER_TRADE.trigger((EntityPlayerMP) player, this, ItemStack.EMPTY);
         }
         return super.processInteract(player, hand);
     }
 
     @Override
-    public void addRecipies(MerchantRecipeList list) {
+    public void addRecipes(MerchantRecipeList list) {
         list.addAll(getAllRecipies());
     }
 

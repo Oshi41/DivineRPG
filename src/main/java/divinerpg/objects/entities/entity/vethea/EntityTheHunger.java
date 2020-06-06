@@ -30,14 +30,13 @@ public class EntityTheHunger extends EntityDivineVillager {
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
         if (!this.world.isRemote) {
             player.openGui(DivineRPG.instance, GUIHandler.THE_HUNGER_GUI_ID, this.world, getEntityId(), 0, 0);
-            CriteriaTriggers.VILLAGER_TRADE.trigger((EntityPlayerMP) player, this, ItemStack.EMPTY);
         }
         return super.processInteract(player, hand);
     }
 
 
     @Override
-    public void addRecipies(MerchantRecipeList recipes) {
+    public void addRecipes(MerchantRecipeList recipes) {
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.dirtyPearls, 1, 0), new ItemStack(ItemRegistry.dreamCarrot, 2, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.dirtyPearls, 3, 0), new ItemStack(ItemRegistry.dreamMelon, 4, 0)));
         recipes.add(new MerchantRecipe(new ItemStack(ItemRegistry.dirtyPearls, 5, 0), new ItemStack(ItemRegistry.dreamPie, 5, 0)));

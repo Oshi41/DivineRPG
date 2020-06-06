@@ -1,18 +1,13 @@
-package divinerpg.structure.template;
+package divinerpg.structure.base;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.gen.structure.StructureComponentTemplate;
 import net.minecraft.world.gen.structure.StructureStart;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.concurrent.atomic.AtomicReference;
-
-public class DivineStructureStart extends StructureStart {
-
+public abstract class DivineStructureStart extends StructureStart {
 
     /**
      * NBT creating ctor
@@ -47,19 +42,21 @@ public class DivineStructureStart extends StructureStart {
      */
     public DivineStructureStart(ResourceLocation location, TemplateManager manager, int chunkX, int y, int chunkZ, int structureSizeX, int structureSizeZ) {
         super(chunkX, chunkZ);
+        this.setupComponents(location, manager, chunkX, y, chunkZ, structureSizeX, structureSizeZ);
+        this.updateBoundingBox();
+    }
 
+    private void setupComponents(ResourceLocation location, TemplateManager manager, int chunkX, int y, int chunkZ, int structureSizeX, int structureSizeZ) {
         for(int x = 0; x < structureSizeX; x++) {
             for(int z = 0; z < structureSizeZ; z++) {
                 String fileName = "[" + x + ", " + z + "]";
                 ResourceLocation partLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath() + "/" + fileName);
                 BlockPos pos = fromString(fileName, chunkX, chunkZ).getBlock(0, y, 0);
-                components.add(new DivineStructureComponentTemplate(manager, partLocation, pos));
+                System.out.println(partLocation);
+                components.add(this.getComponent(manager, partLocation, pos));
             }
         }
-
-        this.updateBoundingBox();
     }
-
     /**
      * Parse from ChunkPos.ToString
      *
@@ -73,30 +70,5 @@ public class DivineStructureStart extends StructureStart {
         return new ChunkPos(xOffset + Integer.parseInt(numbers[0]), zOffset + Integer.parseInt(numbers[1]));
     }
 
-    /**
-     * Tries to load resource folder
-     *
-     * @param structureFolder - location of folder with structures
-     * @param result          - result reference
-     * @return - Is loaded successfullt
-     */
-    private boolean tryGetFile(ResourceLocation structureFolder, AtomicReference<File> result) {
-        // Find URL of resource
-        URL folder = this.getClass().getResource("/assets/" + structureFolder.getResourceDomain() + "/structures/" + structureFolder.getResourcePath());
-        File dir;
-        try {
-            // creating File
-            dir = new File(folder.toURI());
-            // checking if it is a directory
-            if (!dir.isDirectory())
-                return false;
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        result.set(dir);
-        return true;
-    }
+    protected abstract StructureComponentTemplate getComponent(TemplateManager manager, ResourceLocation location, BlockPos pos);
 }

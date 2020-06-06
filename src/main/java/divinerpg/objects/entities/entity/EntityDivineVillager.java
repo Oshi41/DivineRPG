@@ -4,6 +4,7 @@ import divinerpg.objects.entities.entity.iceika.EntityWorkshopMerchant;
 import divinerpg.objects.entities.entity.iceika.EntityWorkshopTinkerer;
 import divinerpg.objects.entities.entity.vethea.EntityTheHunger;
 import divinerpg.utils.LocalizeUtils;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -15,6 +16,7 @@ import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,11 +31,8 @@ import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 public abstract class EntityDivineVillager extends EntityVillager {
-    private UUID lastBuyingPlayer;
-    private EntityPlayer buyingPlayer;
     private MerchantRecipeList buyingList;
     private final String[] messages;
 
@@ -121,7 +120,7 @@ public abstract class EntityDivineVillager extends EntityVillager {
         player.sendMessage(message);
     }
 
-    public abstract void addRecipies(MerchantRecipeList list);
+    public abstract void addRecipes(MerchantRecipeList list);
 
     @Override
     public EntityVillager createChild(EntityAgeable ageable) {
@@ -152,12 +151,8 @@ public abstract class EntityDivineVillager extends EntityVillager {
     public void useRecipe(MerchantRecipe recipe) {
         recipe.incrementToolUses();
 
-        if (recipe.getToolUses() == 1) {
-            if (this.buyingPlayer != null) {
-                this.lastBuyingPlayer = this.buyingPlayer.getUniqueID();
-            } else {
-                this.lastBuyingPlayer = null;
-            }
+        if (this.getCustomer() != null && this.getCustomer() instanceof EntityPlayerMP) {
+            CriteriaTriggers.VILLAGER_TRADE.trigger((EntityPlayerMP)this.getCustomer(), this, recipe.getItemToSell());
         }
     }
 
@@ -176,7 +171,7 @@ public abstract class EntityDivineVillager extends EntityVillager {
     private void addDefaultEquipmentAndRecipies(int par1) {
         MerchantRecipeList rec = new MerchantRecipeList();
 
-        addRecipies(rec);
+        addRecipes(rec);
 
         if (this.buyingList == null) {
             this.buyingList = new MerchantRecipeList();
