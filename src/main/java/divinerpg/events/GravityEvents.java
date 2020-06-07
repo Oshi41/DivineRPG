@@ -24,80 +24,76 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GravityEvents {
     /**
      * List of gravity chunks
      */
-    private final Cache<World, Cache<IGravity, Boolean>> gravityChunks;
+    private final Cache<World, Cache<Chunk, IGravity>> gravityChunks;
     /**
      * List of entities with own gravity
      */
-    private final Cache<IGravity, Boolean> gravityEntities;
+    private final Cache<Entity, IGravity> gravityEntities;
     /**
      * List of tiles with
      */
-    private final Cache<World, Cache<IGravity, Boolean>> tiles;
+    private final Cache<World, Cache<TileEntity, IGravity>> tiles;
 
     public GravityEvents() {
-        tiles = CacheBuilder.newBuilder().weakKeys().build();
-        gravityChunks = CacheBuilder.newBuilder().weakKeys().build();
-        gravityEntities = CacheBuilder.newBuilder().weakKeys().build();
+        tiles = CacheBuilder.newBuilder().weakKeys().softValues().build();
+        gravityChunks = CacheBuilder.newBuilder().weakKeys().softValues().build();
+        gravityEntities = CacheBuilder.newBuilder().weakKeys().softValues().build();
     }
 
     // region Add/remove handlers
 
     @SubscribeEvent
-    public void onEntityGravityChanged(final GravityChangedEvent<Entity> e) {
-        IGravity cap = e.getCap();
+    public void onWorldGravityChanged(final GravityChangedEvent<Chunk> e) {
+        World world = e.getObject().getWorld();
+        Cache<Chunk, IGravity> cache = gravityChunks.getIfPresent(world);
 
-        if (cap.getGravityMultiplier() == 1) {
-            gravityEntities.invalidate(cap);
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder().weakKeys().weakValues().build();
+            gravityChunks.put(world, cache);
+        }
+
+        if (e.getCap().getGravityMultiplier() == 1) {
+            cache.invalidate(e.getObject());
         } else {
-            gravityEntities.put(cap, true);
+            cache.put(e.getObject(), e.getCap());
         }
     }
 
     @SubscribeEvent
-    public void onWorldGravityChanged(final GravityChangedEvent<Chunk> e) {
+    public void onEntityGravityChanged(final GravityChangedEvent<Entity> e) {
+        Entity entity = e.getObject();
         IGravity cap = e.getCap();
-        World world = e.getObject().getWorld();
-
-        Cache<IGravity, Boolean> set = gravityChunks.getIfPresent(world);
-        if (set == null) {
-            set = CacheBuilder.newBuilder().weakKeys().build();
-            gravityChunks.put(world, set);
-        }
-
 
         if (cap.getGravityMultiplier() == 1) {
-            set.invalidate(cap);
+            gravityEntities.invalidate(entity);
         } else {
-            set.put(cap, true);
+            gravityEntities.put(entity, cap);
         }
     }
 
     @SubscribeEvent
     public void onTileGravityChanged(final GravityChangedEvent<TileEntity> e) {
-        IGravity cap = e.getCap();
         World world = e.getObject().getWorld();
+        Cache<TileEntity, IGravity> cache = tiles.getIfPresent(world);
 
-        Cache<IGravity, Boolean> set = tiles.getIfPresent(world);
-        if (set == null) {
-            set = CacheBuilder.newBuilder().weakKeys().build();
-            gravityChunks.put(world, set);
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder().weakKeys().weakValues().build();
+            tiles.put(world, cache);
         }
 
-        if (cap.getGravityMultiplier() == 1) {
-            set.invalidate(cap);
+        if (e.getCap().getGravityMultiplier() == 1) {
+            cache.invalidate(e.getObject());
         } else {
-            set.put(cap, true);
+            cache.put(e.getObject(), e.getCap());
         }
     }
 
@@ -151,39 +147,25 @@ public class GravityEvents {
             world.profiler.startSection("WorldGravity");
         }
 
-        Cache<IGravity, Boolean> chunks = gravityChunks.getIfPresent(world);
-        if (chunks != null && chunks.size() > 0) {
-            chunks.asMap().keySet().forEach(gravity -> {
-                ICapabilityProvider owner = gravity.getOwner();
-                if (owner instanceof Chunk) {
-                    applyForChunk((Chunk) owner, gravity);
-                }
-            });
+        // Chunks at first
+        Cache<Chunk, IGravity> chunksMap = gravityChunks.getIfPresent(world);
+        if (chunksMap != null && chunksMap.size() > 0) {
+            chunksMap.asMap().forEach(this::applyForChunk);
         }
 
-        Cache<IGravity, Boolean> tiles = this.tiles.getIfPresent(world);
-        if (tiles != null && tiles.size() > 0) {
-            chunks.asMap().keySet().forEach(gravity -> {
-                ICapabilityProvider owner = gravity.getOwner();
-                if (owner instanceof TileEntity) {
-                    applyForTile((TileEntity) owner, gravity);
-                }
-            });
+        // Tiles than
+        Cache<TileEntity, IGravity> tilesMap = tiles.getIfPresent(world);
+        if (tilesMap != null && tilesMap.size() > 0) {
+            tilesMap.asMap().forEach(this::applyForTile);
         }
 
-        Map<Entity, IGravity> entities = gravityEntities.asMap().keySet()
-                .stream()
-                .filter(x -> x.getOwner() instanceof Entity)
-                .filter(x -> Objects.equals(world, ((Entity) x.getOwner()).world))
-                .collect(Collectors.toMap(x -> ((Entity) x.getOwner()), x -> x));
+        // Entities
+        gravityEntities.asMap().entrySet().stream()
+                .filter(x -> x.getKey().getEntityWorld() == world)
+                .forEach(x -> applyForEntity(x.getKey(), x.getValue()));
 
-        entities.forEach((entity, iGravity) -> {
-            GravityAffectedEvent<Entity> event = new GravityAffectedEvent<>(Entity.class, entity, iGravity);
-            MinecraftForge.EVENT_BUS.post(event);
-            applyForEvent(event, iGravity);
-        });
-
-        if (world.getTotalWorldTime() % (20 * 60) == 1) {
+        // regular clean up
+        if (world.getTotalWorldTime() % (20 * 20) == 1) {
             cleanUp();
         }
 
@@ -219,7 +201,7 @@ public class GravityEvents {
             return;
 
         if (chunk.getWorld().profiler != null) {
-            chunk.getWorld().profiler.startSection("ChunkGravity");
+            chunk.getWorld().profiler.startSection("TileGravity");
         }
 
         if (chunk.getWorld().isRemote)
@@ -231,6 +213,24 @@ public class GravityEvents {
 
         if (chunk.getWorld().profiler != null) {
             chunk.getWorld().profiler.endSection();
+        }
+    }
+
+    private void applyForEntity(Entity entity, IGravity gravity) {
+        if (entity == null || gravity == null || gravity.getGravityMultiplier() == 1)
+            return;
+
+        if (entity.getEntityWorld().profiler != null) {
+            entity.getEntityWorld().profiler.startSection("EntityGravity");
+        }
+
+        GravityAffectedEvent<Entity> event = new GravityAffectedEvent<>(Entity.class, entity, gravity);
+        MinecraftForge.EVENT_BUS.post(event);
+        applyForEvent(event, gravity);
+
+
+        if (entity.getEntityWorld().profiler != null) {
+            entity.getEntityWorld().profiler.endSection();
         }
     }
 
@@ -246,16 +246,17 @@ public class GravityEvents {
     }
 
     private void cleanUp() {
-        gravityChunks.cleanUp();
-        gravityEntities.cleanUp();
-        tiles.cleanUp();
-
         gravityChunks.getAllPresent(gravityChunks.asMap().keySet())
                 .forEach((world, cache) -> cache.cleanUp());
 
         tiles.getAllPresent(tiles.asMap().keySet())
                 .forEach((world, cache) -> cache.cleanUp());
+
+        gravityChunks.cleanUp();
+        gravityEntities.cleanUp();
+        tiles.cleanUp();
     }
+
     // endregion
 
     private void changeVelocity(Entity entity, IGravity cap) {
