@@ -22,6 +22,7 @@ public class CapabilityHandler {
         if (event.getObject() instanceof EntityPlayer) {
             event.addCapability(ARCANA_CAP, new ArcanaProvider());
             event.addCapability(ArmorCapabilityID, new ArmorProvider((EntityPlayer) event.getObject()));
+            event.addCapability(GravityCapabilityID, new GravityProvider(1, event.getObject()));
         }
     }
 
@@ -35,7 +36,7 @@ public class CapabilityHandler {
                         ? 1.5
                         : 0.2;
 
-                event.addCapability(GravityCapabilityID, new GravityProvider(multiplier));
+                event.addCapability(GravityCapabilityID, new GravityProvider(multiplier, event.getObject()));
             }
         }
     }

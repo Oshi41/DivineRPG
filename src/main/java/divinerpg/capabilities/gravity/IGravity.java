@@ -1,5 +1,9 @@
 package divinerpg.capabilities.gravity;
 
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
+import javax.annotation.Nullable;
+
 public interface IGravity {
     /**
      * 1 means normal gravity
@@ -16,6 +20,14 @@ public interface IGravity {
      * @param value
      */
     void setGravityMultiplier(double value);
+
+    /**
+     * Gets attached owner
+     *
+     * @return
+     */
+    @Nullable
+    ICapabilityProvider getOwner();
 
     /**
      * Max jump height. Default is 3
