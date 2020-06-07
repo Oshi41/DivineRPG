@@ -1,4 +1,4 @@
-package divinerpg.structure.vethea.temple1;
+package divinerpg.structure.vethea.hive;
 
 import divinerpg.DivineRPG;
 import divinerpg.structure.base.DivineFixedAltitudeStructure;
@@ -7,14 +7,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureStart;
 
-public class Temple1 extends DivineFixedAltitudeStructure {
+public class Hive extends DivineFixedAltitudeStructure {
 
-    public Temple1(World world, int chunkDistance, int spawnAltitude) {
-        super(world, "Temple1", new ResourceLocation(DivineRPG.MODID, "vethea/layer2/temple1"), chunkDistance, spawnAltitude);
+    public Hive(World world, int chunkDistance, int spawnAltitude) {
+        super(world, "Hive", new ResourceLocation(DivineRPG.MODID, "vethea/layer2/hive"), chunkDistance, spawnAltitude);
     }
 
     @Override
     protected StructureStart getStructureStart(int x, int z) {
-        return new Temple1Start(folder, manager, x, spawnAltitude, z);
+        return new HiveStart(folder, manager, x, spawnAltitude, z);
     }
 }
